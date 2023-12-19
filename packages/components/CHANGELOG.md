@@ -16,6 +16,7 @@
 
 ### Bug Fixes
 
+-   `ColorPicker`: Replace color copy button icon with visible text ([#57168](https://github.com/WordPress/gutenberg/pull/57168)).
 -   `BoxControl`: Better respect for the `min` prop in the Range Slider ([#67819](https://github.com/WordPress/gutenberg/pull/67819)).
 
 ### Experimental
