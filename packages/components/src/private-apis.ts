@@ -9,6 +9,7 @@ import { Tabs } from './tabs';
 import { kebabCase } from './utils/strings';
 import { lock } from './lock-unlock';
 import Badge from './badge';
+import { ImageCropper, ImageCropperContext } from './image-cropper';
 
 export const privateApis = {};
 lock( privateApis, {
@@ -19,4 +20,6 @@ lock( privateApis, {
 	Menu,
 	kebabCase,
 	Badge,
+	ImageCropper,
+	ImageCropperContext,
 } );
