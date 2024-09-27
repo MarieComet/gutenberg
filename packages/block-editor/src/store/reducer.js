@@ -2250,8 +2250,6 @@ function getDerivedBlockEditingModesForTree(
 	isNavMode = false,
 	treeClientId = ''
 ) {
-	const isZoomedOut =
-		state?.zoomLevel < 100 || state?.zoomLevel === 'auto-scaled';
 	const derivedBlockEditingModes = new Map();
 
 	// When there are sections, the majority of blocks are disabled,
@@ -2267,7 +2265,7 @@ function getDerivedBlockEditingModesForTree(
 
 	traverseBlockTree( state, treeClientId, ( block ) => {
 		const { clientId, name: blockName } = block;
-		if ( isZoomedOut || isNavMode ) {
+		if ( isNavMode ) {
 			// If the root block is the section root set its editing mode to contentOnly.
 			if ( clientId === sectionRootClientId ) {
 				derivedBlockEditingModes.set( clientId, 'contentOnly' );
@@ -2289,7 +2287,6 @@ function getDerivedBlockEditingModesForTree(
 			// disabled.
 			// If the tree root is not in a section, set its editing mode to disabled.
 			if (
-				isZoomedOut ||
 				! findParentInClientIdsList( state, clientId, sectionClientIds )
 			) {
 				derivedBlockEditingModes.set( clientId, 'disabled' );

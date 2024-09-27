@@ -38,7 +38,6 @@ import {
 	getContentLockingParent,
 	getTemporarilyEditingAsBlocks,
 	getTemporarilyEditingFocusModeToRevert,
-	getSectionRootClientId,
 	isSectionBlock,
 	getParentSectionBlock,
 	isZoomOut,
@@ -2941,33 +2940,18 @@ export const __unstableGetVisibleBlocks = createSelector(
 );
 
 export function __unstableHasActiveBlockOverlayActive( state, clientId ) {
-	// Prevent overlay on blocks with a non-default editing mode. If the mdoe is
-	// 'disabled' then the overlay is redundant since the block can't be
-	// selected. If the mode is 'contentOnly' then the overlay is redundant
-	// since there will be no controls to interact with once selected.
-	if ( getBlockEditingMode( state, clientId ) !== 'default' ) {
-		return false;
-	}
-
 	// If the block editing is locked, the block overlay is always active.
 	if ( ! canEditBlock( state, clientId ) ) {
 		return true;
 	}
 
-	// In zoom-out mode, the block overlay is always active for section level blocks.
-	if ( isZoomOut( state ) ) {
-		const sectionRootClientId = getSectionRootClientId( state );
-		if ( sectionRootClientId ) {
-			const sectionClientIds = getBlockOrder(
-				state,
-				sectionRootClientId
-			);
-			if ( sectionClientIds?.includes( clientId ) ) {
-				return true;
-			}
-		} else if ( clientId && ! getBlockRootClientId( state, clientId ) ) {
-			return true;
-		}
+	// Section blocks need to be selected first before being able to select their children.
+	if (
+		isSectionBlock( state, clientId ) &&
+		! isBlockSelected( state, clientId ) &&
+		! hasSelectedInnerBlock( state, clientId, true )
+	) {
+		return true;
 	}
 
 	// In navigation mode, the block overlay is active when the block is not
@@ -3043,14 +3027,15 @@ export const getBlockEditingMode = createRegistrySelector(
 				clientId = '';
 			}
 
-			const isNavMode = isNavigationMode( state );
+			const isNavModeLike =
+				isNavigationMode( state ) || isZoomOut( state );
 
 			// If the editor is currently not in navigation mode, check if the clientId
 			// has an editing mode set in the regular derived map.
 			// There may be an editing mode set here for synced patterns or in zoomed out
 			// mode.
 			if (
-				! isNavMode &&
+				! isNavModeLike &&
 				state.derivedBlockEditingModes?.has( clientId )
 			) {
 				return state.derivedBlockEditingModes.get( clientId );
@@ -3059,7 +3044,7 @@ export const getBlockEditingMode = createRegistrySelector(
 			// If the editor *is* in navigation mode, the block editing mode states
 			// are stored in the derivedNavModeBlockEditingModes map.
 			if (
-				isNavMode &&
+				isNavModeLike &&
 				state.derivedNavModeBlockEditingModes?.has( clientId )
 			) {
 				return state.derivedNavModeBlockEditingModes.get( clientId );
