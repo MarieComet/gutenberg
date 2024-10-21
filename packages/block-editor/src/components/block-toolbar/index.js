@@ -70,7 +70,6 @@ export function PrivateBlockToolbar( {
 		hasParentPattern,
 		hasContentOnlyLocking,
 		showShuffleButton,
-		showSlots,
 		showGroupButtons,
 		showLockButtons,
 		showSwitchSectionStyleButton,
@@ -148,7 +147,6 @@ export function PrivateBlockToolbar( {
 			hasParentPattern: _hasParentPattern,
 			hasContentOnlyLocking: _hasTemplateLock,
 			showShuffleButton: _isZoomOut,
-			showSlots: ! _isZoomOut,
 			showGroupButtons: ! _isZoomOut,
 			showLockButtons: ! _isZoomOut,
 			showSwitchSectionStyleButton: _isZoomOut,
@@ -239,7 +237,7 @@ export function PrivateBlockToolbar( {
 				{ showSwitchSectionStyleButton && (
 					<SwitchSectionStyle clientId={ blockClientIds[ 0 ] } />
 				) }
-				{ shouldShowVisualToolbar && showSlots && (
+				{ shouldShowVisualToolbar && (
 					<>
 						<BlockControls.Slot
 							group="parent"
