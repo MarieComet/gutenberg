@@ -2976,7 +2976,8 @@ export function __unstableHasActiveBlockOverlayActive( state, clientId ) {
 	);
 	const shouldEnableIfUnselected = blockSupportDisable
 		? false
-		: areInnerBlocksControlled( state, clientId );
+		: areInnerBlocksControlled( state, clientId ) &&
+		  clientId !== getSectionRootClientId( state, clientId );
 
 	return (
 		shouldEnableIfUnselected &&
