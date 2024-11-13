@@ -18,6 +18,8 @@ import {
 	ToolbarItem,
 	DropdownMenu,
 	Popover,
+	SVG,
+	Path,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -330,6 +332,7 @@ export default function Image( {
 	const [ isEditingImage, setIsEditingImage ] = useState( false );
 	const [ externalBlob, setExternalBlob ] = useState();
 	const [ hasImageErrored, setHasImageErrored ] = useState( false );
+	const [ hasImageLoaded, setHasImageLoaded ] = useState( false );
 	const hasNonContentControls = blockEditingMode === 'default';
 	const isContentOnlyMode = blockEditingMode === 'contentOnly';
 	const isResizable =
@@ -400,6 +403,7 @@ export default function Image( {
 
 	function onImageError() {
 		setHasImageErrored( true );
+		setHasImageLoaded( false );
 
 		// Check if there's an embed block that handles this URL, e.g., instagram URL.
 		// See: https://github.com/WordPress/gutenberg/pull/11472
@@ -415,6 +419,7 @@ export default function Image( {
 			loadedNaturalWidth: event.target?.naturalWidth,
 			loadedNaturalHeight: event.target?.naturalHeight,
 		} );
+		setHasImageLoaded( true );
 	}
 
 	function onSetHref( props ) {
@@ -906,6 +911,22 @@ export default function Image( {
 		postId
 	);
 
+	const lightboxTriggerPreview = (
+		<span className="lightbox-trigger-preview">
+			<SVG
+				xmlns="http://www.w3.org/2000/svg"
+				width="12"
+				height="12"
+				viewBox="0 0 12 12"
+			>
+				<Path
+					fill="#fff"
+					d="M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z"
+				/>
+			</SVG>
+		</span>
+	);
+
 	let img =
 		temporaryURL && hasImageErrored ? (
 			// Show a placeholder during upload when the blob URL can't be loaded. This can
@@ -942,6 +963,10 @@ export default function Image( {
 						...shadowProps.style,
 					} }
 				/>
+				{ lightboxChecked &&
+					hasImageLoaded &&
+					! temporaryURL &&
+					lightboxTriggerPreview }
 				{ temporaryURL && <Spinner /> }
 			</>
 			/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */
