@@ -43,6 +43,13 @@ figure.wp-block-image:not(.wp-block) {
 		top: $grid-unit-20;
 		width: $grid-unit-30;
 		z-index: 100;
+		color: $white;
+
+		&.lightbox-trigger-preview__has-text {
+			width: auto;
+			padding: 0 $grid-unit-10;
+			font-size: $font-size-small;
+		}
 	}
 }
 

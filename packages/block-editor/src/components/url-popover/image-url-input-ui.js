@@ -47,6 +47,8 @@ const ImageURLInputUI = ( {
 	lightboxEnabled,
 	onSetLightbox,
 	resetLightbox,
+	onSetLightboxIcon,
+	lightboxIconEnabled,
 } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	// Use internal state instead of a ref to make sure that the component
@@ -277,6 +279,15 @@ const ImageURLInputUI = ( {
 							onSetLightbox?.( false );
 						} }
 						size="compact"
+					/>
+					<Button
+						icon={ fullscreen }
+						label={ __( 'Show icon' ) }
+						onClick={ () => {
+							onSetLightboxIcon( ! lightboxIconEnabled );
+						} }
+						size="compact"
+						isPressed={ lightboxIconEnabled }
 					/>
 				</div>
 			);

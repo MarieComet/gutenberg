@@ -429,15 +429,28 @@ export default function Image( {
 	function onSetLightbox( enable ) {
 		if ( enable && ! lightboxSetting?.enabled ) {
 			setAttributes( {
-				lightbox: { enabled: true },
+				lightbox: { enabled: true, hasIcon: true },
 			} );
 		} else if ( ! enable && lightboxSetting?.enabled ) {
 			setAttributes( {
-				lightbox: { enabled: false },
+				lightbox: { enabled: false, hasIcon: true },
 			} );
 		} else {
 			setAttributes( {
 				lightbox: undefined,
+			} );
+		}
+	}
+
+	function onSetLightboxIcon( enable ) {
+		const enabled = lightboxSetting?.enabled ? false : true;
+		if ( enable ) {
+			setAttributes( {
+				lightbox: { enabled, hasIcon: true },
+			} );
+		} else {
+			setAttributes( {
+				lightbox: { enabled, hasIcon: false },
 			} );
 		}
 	}
@@ -543,6 +556,8 @@ export default function Image( {
 
 	const lightboxChecked =
 		!! lightbox?.enabled || ( ! lightbox && !! lightboxSetting?.enabled );
+
+	const lightboxIconEnabled = !! lightbox?.hasIcon;
 
 	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
@@ -748,6 +763,8 @@ export default function Image( {
 							lightboxEnabled={ lightboxChecked }
 							onSetLightbox={ onSetLightbox }
 							resetLightbox={ resetLightbox }
+							onSetLightboxIcon={ onSetLightboxIcon }
+							lightboxIconEnabled={ lightboxIconEnabled }
 						/>
 					) }
 					{ allowCrop && (
@@ -912,18 +929,28 @@ export default function Image( {
 	);
 
 	const lightboxTriggerPreview = (
-		<span className="lightbox-trigger-preview">
-			<SVG
-				xmlns="http://www.w3.org/2000/svg"
-				width="12"
-				height="12"
-				viewBox="0 0 12 12"
-			>
-				<Path
-					fill="#fff"
-					d="M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z"
-				/>
-			</SVG>
+		<span
+			className={
+				lightboxIconEnabled
+					? 'lightbox-trigger-preview'
+					: 'lightbox-trigger-preview lightbox-trigger-preview__has-text '
+			}
+		>
+			{ lightboxIconEnabled ? (
+				<SVG
+					xmlns="http://www.w3.org/2000/svg"
+					width="12"
+					height="12"
+					viewBox="0 0 12 12"
+				>
+					<Path
+						fill="#fff"
+						d="M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z"
+					/>
+				</SVG>
+			) : (
+				__( 'Enlarge' )
+			) }
 		</span>
 	);
 
