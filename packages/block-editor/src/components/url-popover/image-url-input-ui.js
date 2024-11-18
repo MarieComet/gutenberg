@@ -12,6 +12,8 @@ import {
 	ToggleControl,
 	TextControl,
 	__experimentalVStack as VStack,
+	// SVG,
+	// Rect,
 } from '@wordpress/components';
 import {
 	Icon,
@@ -32,6 +34,24 @@ const LINK_DESTINATION_CUSTOM = 'custom';
 const LINK_DESTINATION_MEDIA = 'media';
 const LINK_DESTINATION_ATTACHMENT = 'attachment';
 const NEW_TAB_REL = [ 'noreferrer', 'noopener' ];
+
+/*
+const toggleLabel = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+		<Rect
+			x="4.75"
+			y="17.25"
+			width="5.5"
+			height="14.5"
+			transform="rotate(-90 4.75 17.25)"
+			stroke="currentColor"
+			fill="none"
+			strokeWidth="1.5"
+		/>
+		<Rect x="4" y="7" width="10" height="2" fill="currentColor" />
+	</SVG>
+);
+*/
 
 const ImageURLInputUI = ( {
 	linkDestination,
@@ -281,14 +301,16 @@ const ImageURLInputUI = ( {
 						size="compact"
 					/>
 					<Button
-						icon={ fullscreen }
-						label={ __( 'Show icon' ) }
+						// icon={ toggleLabel }
+						// label={ __( 'Show label' ) }
 						onClick={ () => {
 							onSetLightboxIcon( ! lightboxIconEnabled );
 						} }
 						size="compact"
-						isPressed={ lightboxIconEnabled }
-					/>
+						isPressed={ ! lightboxIconEnabled }
+					>
+						{ __( 'Show label' ) }
+					</Button>
 				</div>
 			);
 		} else if ( ! url || isEditingLink ) {
