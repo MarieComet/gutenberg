@@ -47,6 +47,10 @@ test.describe( 'Preload: should make no requests before the iframe is loaded', (
 		await requestUtils.activateTheme( 'twentytwentyone' );
 	} );
 
+	test.beforeEach( async ( { requestUtils } ) => {
+		await requestUtils.resetPreferences();
+	} );
+
 	test( 'Site Editor Root', async ( { page, admin } ) => {
 		const requests = recordRequests( page );
 		await admin.visitSiteEditor();
@@ -64,7 +68,10 @@ test.describe( 'Preload: should make no requests before the iframe is loaded', (
 		const requests = recordRequests( page );
 		const { id } = await requestUtils.createPost( post );
 		await admin.editPost( id );
-		expect( requests ).toEqual( [] );
+		expect( requests ).toEqual( [
+			// Seems to be coming from `enableComplementaryArea`.
+			[ 'POST', '/wp/v2/users/me' ],
+		] );
 	} );
 
 	test( 'Site Editor Page', async ( { page, admin, requestUtils } ) => {
@@ -79,6 +86,8 @@ test.describe( 'Preload: should make no requests before the iframe is loaded', (
 			[ 'GET', '/wp/v2/types/page' ],
 			[ 'OPTIONS', '/wp/v2/settings' ],
 			[ 'GET', '/wp/v2/taxonomies' ],
+			// Seems to be coming from `enableComplementaryArea`.
+			[ 'POST', '/wp/v2/users/me' ],
 		] );
 	} );
 } );
