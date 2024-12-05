@@ -29,7 +29,8 @@
 	"types": "build-types",
 	"dependencies": {
 		"@wordpress/a11y": "*",
-		"@wordpress/interactivity": "*"
+		"@wordpress/interactivity": "*",
+		"dynamic-importmap": "^0.1.0"
 	},
 	"publishConfig": {
 		"access": "public"
