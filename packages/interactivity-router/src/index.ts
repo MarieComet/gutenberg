@@ -7,7 +7,11 @@ import { store, privateApis, getConfig } from '@wordpress/interactivity';
  * Internal dependencies
  */
 import { generateCSSStyleSheets } from './assets/styles';
-import { preloadModules, importModules } from './assets/scripts';
+import {
+	preloadModules,
+	importModules,
+	setModuleAsImported,
+} from './assets/scripts';
 
 const {
 	directivePrefix,
@@ -191,6 +195,9 @@ window.addEventListener( 'popstate', async () => {
 // Initialize the router and cache the initial page using the initial vDOM.
 // Once this code is tested and more mature, the head should be updated for
 // region based navigation as well.
+window.document
+	.querySelectorAll< HTMLScriptElement >( 'script[type=module][src]' )
+	.forEach( ( { src } ) => setModuleAsImported( src ) );
 pages.set(
 	getPagePath( window.location.href ),
 	Promise.resolve(
