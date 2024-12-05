@@ -1871,10 +1871,15 @@ export function canMoveBlock( state, clientId ) {
 	}
 
 	const rootClientId = getBlockRootClientId( state, clientId );
-	if ( getTemplateLock( state, rootClientId ) === 'all' ) {
+	const templateLock = getTemplateLock( state, rootClientId );
+	if (
+		getTemplateLock( state, rootClientId ) === 'all' ||
+		templateLock === 'contentOnly'
+	) {
 		return false;
 	}
-	return getBlockEditingMode( state, rootClientId ) !== 'disabled';
+	const editingMode = getBlockEditingMode( state, rootClientId );
+	return editingMode !== 'disabled' && editingMode !== 'contentOnly';
 }
 
 /**
