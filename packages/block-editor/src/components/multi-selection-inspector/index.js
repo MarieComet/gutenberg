@@ -1,13 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { sprintf, __, _n } from '@wordpress/i18n';
+import { sprintf, _n, _x } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { copy } from '@wordpress/icons';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	__experimentalText as Text,
+	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
 
 /**
@@ -15,6 +15,9 @@ import {
  */
 import BlockIcon from '../block-icon';
 import { store as blockEditorStore } from '../../store';
+import { unlock } from '../../lock-unlock';
+
+const { Badge } = unlock( componentsPrivateApis );
 
 export default function MultiSelectionInspector() {
 	const { selectedBlockCount, isUsingBindings } = useSelect( ( select ) => {
@@ -50,12 +53,12 @@ export default function MultiSelectionInspector() {
 					) }
 				</p>
 				{ isUsingBindings && (
-					<Text
-						as="p"
-						className="block-editor-multi-selection-inspector__card-description"
-					>
-						{ __( 'These blocks are connected.' ) }
-					</Text>
+					<Badge>
+						{ _x(
+							'Connected.',
+							'multiple blocks connected to a bound source'
+						) }
+					</Badge>
 				) }
 			</VStack>
 		</HStack>

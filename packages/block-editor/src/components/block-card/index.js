@@ -12,9 +12,9 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	privateApis as componentsPrivateApis,
-} from '@wordpress/components';
+} from '@wordpress/	components';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
-import { __, isRTL } from '@wordpress/i18n';
+import { __, _x, isRTL } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
@@ -86,6 +86,14 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 						{ !! name?.length ? name : title }
 					</span>
 					{ !! name?.length && <Badge>{ title }</Badge> }
+					{ isUsingBindings && (
+						<Badge>
+							{ _x(
+								'Connected.',
+								'block connected to a bound source'
+							) }
+						</Badge>
+					) }
 				</h2>
 				{ description && (
 					<Text
@@ -93,14 +101,6 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 						className="block-editor-block-card__description"
 					>
 						{ description }
-					</Text>
-				) }
-				{ isUsingBindings && (
-					<Text
-						as="p"
-						className="block-editor-block-card__description"
-					>
-						{ __( 'This blocks is connected.' ) }
 					</Text>
 				) }
 			</VStack>
