@@ -74,6 +74,10 @@ jobs:
             - name: Build Web Driver Agent (if needed)
               run: test -d packages/react-native-editor/ios/build/WDA || npm run native test:e2e:build-wda
 
+            - name: Ensure Appium port is available
+              run: |
+                  lsof -ti:4723 | xargs kill -9 || true
+
             - name: Run iOS Device Tests
               run: TEST_RN_PLATFORM=ios npm run native device-tests:local  ${{ matrix.native-test-name }}
 
