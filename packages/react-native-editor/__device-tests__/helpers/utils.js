@@ -173,6 +173,8 @@ const setupDriver = async () => {
 	const driver = await remote( {
 		...serverConfig,
 		logLevel: 'error',
+		// Mitigate driver setup instability by doubling the default timeout
+		connectionRetryTimeout: 240000,
 		capabilities: {
 			platformName: PLATFORM_NAME,
 			...prefixKeysWithAppium( desiredCaps ),
