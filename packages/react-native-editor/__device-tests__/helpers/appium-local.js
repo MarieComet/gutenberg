@@ -12,7 +12,8 @@ const start = ( { port = 4723, flags } ) =>
 			'--log',
 			'./appium-out.log',
 			'--log-no-colors',
-			'--log-level debug',
+			'--log-level',
+			'debug',
 			'--relaxed-security', // Needed for mobile:shell commend for text entry on Android
 			flags,
 		].filter( Boolean );
