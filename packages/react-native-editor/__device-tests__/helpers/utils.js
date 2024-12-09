@@ -170,17 +170,24 @@ const setupDriver = async () => {
 		? serverConfigs.local
 		: serverConfigs.sauce;
 
-	const driver = await remote( {
-		...serverConfig,
-		logLevel: 'error',
-		// Mitigate driver setup instability by doubling the default timeout
-		connectionRetryTimeout: 240000,
-		capabilities: {
-			platformName: PLATFORM_NAME,
-			...prefixKeysWithAppium( desiredCaps ),
-			...sauceOptionsConfig,
-		},
-	} );
+	let driver;
+	try {
+		driver = await remote( {
+			...serverConfig,
+			logLevel: 'error',
+			// Mitigate driver setup instability by doubling the default timeout
+			connectionRetryTimeout: 240000,
+			capabilities: {
+				platformName: PLATFORM_NAME,
+				...prefixKeysWithAppium( desiredCaps ),
+				...sauceOptionsConfig,
+			},
+		} );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error setting up the driver:', error );
+		throw error;
+	}
 
 	await driver.setOrientation( 'PORTRAIT' );
 	return driver;
