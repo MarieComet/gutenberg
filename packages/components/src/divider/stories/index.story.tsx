@@ -24,7 +24,7 @@ const meta: Meta< typeof Divider > = {
 			control: { type: 'text' },
 		},
 		wrapElement: {
-			control: { type: false },
+			control: false,
 		},
 		ref: {
 			table: {

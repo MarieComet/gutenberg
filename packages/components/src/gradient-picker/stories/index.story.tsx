@@ -22,7 +22,7 @@ const meta: Meta< typeof GradientPicker > = {
 		actions: { argTypesRegex: '^on.*' },
 	},
 	argTypes: {
-		value: { control: { type: false } },
+		value: { control: false },
 	},
 };
 export default meta;

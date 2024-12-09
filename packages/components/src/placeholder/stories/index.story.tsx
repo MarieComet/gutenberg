@@ -21,9 +21,9 @@ const meta: Meta< typeof Placeholder > = {
 	component: Placeholder,
 	title: 'Components/Placeholder',
 	argTypes: {
-		children: { control: { type: false } },
-		notices: { control: { type: false } },
-		preview: { control: { type: false } },
+		children: { control: false },
+		notices: { control: false },
+		preview: { control: false },
 		icon: {
 			control: { type: 'select' },
 			options: Object.keys( ICONS ),

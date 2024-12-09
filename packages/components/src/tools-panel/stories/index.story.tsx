@@ -31,9 +31,9 @@ const meta: Meta< typeof ToolsPanel > = {
 	// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 	subcomponents: { ToolsPanelItem },
 	argTypes: {
-		as: { control: { type: false } },
-		children: { control: { type: false } },
-		panelId: { control: { type: false } },
+		as: { control: false },
+		children: { control: false },
+		panelId: { control: false },
 		resetAll: { action: 'resetAll' },
 	},
 	parameters: {

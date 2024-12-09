@@ -20,9 +20,9 @@ const meta: Meta< typeof Slot > = {
 	// @ts-expect-error - See https://github.com/storybookjs/storybook/issues/23170
 	subcomponents: { Fill, SlotFillProvider },
 	argTypes: {
-		name: { control: { type: false } },
+		name: { control: false },
 		as: { control: { type: 'text' } },
-		fillProps: { control: { type: false } },
+		fillProps: { control: false },
 	},
 	parameters: {
 		controls: { expanded: true },

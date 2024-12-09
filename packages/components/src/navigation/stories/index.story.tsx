@@ -39,10 +39,10 @@ const meta: Meta< typeof Navigation > = {
 		NavigationMenu,
 	},
 	argTypes: {
-		activeItem: { control: { type: false } },
-		activeMenu: { control: { type: false } },
-		children: { control: { type: false } },
-		onActivateMenu: { control: { type: false } },
+		activeItem: { control: false },
+		activeMenu: { control: false },
+		children: { control: false },
+		onActivateMenu: { control: false },
 	},
 	parameters: {
 		actions: { argTypesRegex: '^on.*' },
