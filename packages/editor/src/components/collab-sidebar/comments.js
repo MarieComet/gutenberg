@@ -362,9 +362,9 @@ const CommentBoard = ( { thread, onResolve, onEdit, onDelete, status } ) => {
 			) }
 		</>
 	);
-}
+};
 
-const ThreadWrapper = ( { children, thread, classNames } ) => {
+const ThreadWrapper = ( { children, thread, classNames, onClick } ) => {
 	const blockRef = useRef();
 	useBlockElementRef( thread.clientId, blockRef );
 
@@ -384,6 +384,7 @@ const ThreadWrapper = ( { children, thread, classNames } ) => {
 			ref={ refs.setFloating }
 			className={ classNames }
 			spacing="3"
+			onclick={ onClick }
 			style={ {
 				position: 'absolute',
 				top: y ?? 0,

@@ -296,19 +296,23 @@ export default function CollabSidebar() {
 			return { resultComments: [], sortedThreads: [] };
 		}
 
+		const blockCommentIds = getCommentIdsFromBlocks( blocks );
+		const blockCommentIdMap = new Map(
+			blockCommentIds.map( ( item ) => [ item.commentID, item ] )
+		);
+
 		const updatedResult = result.map( ( item ) => ( {
 			...item,
 			reply: [ ...item.reply ].reverse(),
+			clientId: blockCommentIdMap.get( item.id )?.clientID,
 		} ) );
-
-		const blockCommentIds = getCommentIdsFromBlocks( blocks );
 
 		const threadIdMap = new Map(
 			updatedResult.map( ( thread ) => [ thread.id, thread ] )
 		);
 
 		const sortedComments = blockCommentIds
-			.map( ( id ) => threadIdMap.get( id ) )
+			.map( ( item ) => threadIdMap.get( item.commentID ) )
 			.filter( ( thread ) => thread !== undefined );
 
 		return { resultComments: updatedResult, sortedThreads: sortedComments };
