@@ -10,9 +10,11 @@ import { __ } from '@wordpress/i18n';
 import { RawHTML } from '@wordpress/element';
 import { Disabled } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
+import { useSelect } from '@wordpress/data';
 import {
 	AlignmentControl,
 	BlockControls,
+	store as blockEditorStore,
 	useBlockProps,
 } from '@wordpress/block-editor';
 
@@ -25,6 +27,7 @@ import {
  * @param {string} props.attributes.textAlign The `textAlign` attribute.
  * @param {Object} props.context              Inherited context.
  * @param {string} props.context.commentId    The comment ID.
+ * @param {string} props.clientId             The block client ID.
  *
  * @return {JSX.Element} React element.
  */
@@ -32,6 +35,7 @@ export default function Edit( {
 	setAttributes,
 	attributes: { textAlign },
 	context: { commentId },
+	clientId,
 } ) {
 	const blockProps = useBlockProps( {
 		className: clsx( {
@@ -43,6 +47,13 @@ export default function Edit( {
 		'comment',
 		'content',
 		commentId
+	);
+	const isFirstCommentContentBlockinTemplate = useSelect(
+		( select ) =>
+			select( blockEditorStore ).getBlockParentsByBlockName(
+				clientId,
+				'core/comment-template'
+			).length > 0
 	);
 
 	const blockControls = (
@@ -62,9 +73,11 @@ export default function Edit( {
 				{ blockControls }
 				<div { ...blockProps }>
 					<p>
-						{ __(
-							'This is the Comment Content block. It displays the text of user comments submitted on your site, ranging from short remarks to longer, multi-paragraph responses.'
-						) }
+						{ isFirstCommentContentBlockinTemplate
+							? __(
+									'This is the Comment Content block. It displays the text of user comments submitted on your site, ranging from short remarks to longer, multi-paragraph responses.'
+							  )
+							: __( 'This is another Comment Content block.' ) }
 					</p>
 				</div>
 			</>
