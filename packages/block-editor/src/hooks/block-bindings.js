@@ -229,10 +229,15 @@ export const BlockBindingsPanel = ( { name: blockName, metadata } ) => {
 								context[ key ] = blockContext[ key ];
 							}
 						}
-						const sourceList = getFieldsList( {
-							select,
-							context,
-						} );
+						let sourceList;
+						if ( typeof getFieldsList === 'function' ) {
+							sourceList = getFieldsList( {
+								select,
+								context,
+							} );
+						} else {
+							sourceList = { ...getFieldsList };
+						}
 						// Only add source if the list is not empty.
 						if ( Object.keys( sourceList || {} ).length ) {
 							_fieldsList[ sourceName ] = { ...sourceList };
