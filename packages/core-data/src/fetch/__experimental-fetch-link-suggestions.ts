@@ -249,6 +249,23 @@ export default async function fetchLinkSuggestions(
 	return results;
 }
 
+/**
+ * Sort search results by relevance to the given query.
+ *
+ * Sorting is necessary as we're querying multiple endpoints and merging the results. For example
+ * a taxonomy title might be more relevant than a post title, but by default taxonomy results will
+ * be ordered after all the (potentially irrelevant) post results.
+ *
+ * We sort by scoring each result, where the score is a combination of the number of exact matches
+ * and sub-matches for tokens in the title that are also in the search query, divided by the total
+ * number of tokens in the title. This gives us a score between 0 and 1, where 1 is a perfect match.
+ *
+ * We then apply various "weights" to the score to influence the sorting order with exact matches
+ * being more important than sub-matches. We also give a slight bonus to post-type results.
+ *
+ * @param results
+ * @param search
+ */
 export function sortResults( results: SearchResult[], search: string ) {
 	const searchTokens = tokenize( search );
 
