@@ -78,6 +78,7 @@ export function FiltersToggle( {
 	setOpenedFilter,
 	isShowingFilter,
 	setIsShowingFilter,
+	togRef,
 }: {
 	filters: NormalizedFilter[];
 	view: View;
@@ -85,6 +86,7 @@ export function FiltersToggle( {
 	setOpenedFilter: ( filter: string | null ) => void;
 	isShowingFilter: boolean;
 	setIsShowingFilter: React.Dispatch< React.SetStateAction< boolean > >;
+	togRef: React.RefObject< HTMLDivElement >;
 } ) {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 	const onChangeViewWithFilterVisibility = useCallback(
@@ -142,6 +144,7 @@ export function FiltersToggle( {
 				<FilterVisibilityToggle
 					buttonRef={ buttonRef }
 					filtersCount={ view.filters?.length }
+					togRef={ togRef }
 				>
 					{ buttonComponent }
 				</FilterVisibilityToggle>
@@ -152,19 +155,28 @@ export function FiltersToggle( {
 
 function FilterVisibilityToggle( {
 	buttonRef,
+	togRef,
 	filtersCount,
 	children,
 }: {
 	buttonRef: React.RefObject< HTMLButtonElement >;
+	togRef: React.RefObject< HTMLDivElement >;
 	filtersCount?: number;
 	children: React.ReactNode;
 } ) {
 	// Focus the `add filter` button when unmounts.
 	useEffect(
 		() => () => {
-			buttonRef.current?.focus();
+			if (
+				togRef.current &&
+				togRef.current.contains(
+					togRef.current.ownerDocument.activeElement
+				)
+			) {
+				buttonRef.current?.focus();
+			}
 		},
-		[ buttonRef ]
+		[ buttonRef, togRef ]
 	);
 	return (
 		<>
@@ -178,7 +190,11 @@ function FilterVisibilityToggle( {
 	);
 }
 
-function Filters() {
+function Filters( {
+	togRef,
+}: {
+	togRef: React.RefObject< HTMLButtonElement >;
+} ) {
 	const { fields, view, onChangeView, openedFilter, setOpenedFilter } =
 		useContext( DataViewsContext );
 	const addFilterRef = useRef< HTMLButtonElement >( null );
@@ -228,6 +244,7 @@ function Filters() {
 			style={ { width: 'fit-content' } }
 			className="dataviews-filters__container"
 			wrap
+			ref={ togRef }
 		>
 			{ filterComponents }
 		</HStack>

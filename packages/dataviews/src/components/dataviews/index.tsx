@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
  * WordPress dependencies
  */
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { useMemo, useState } from '@wordpress/element';
+import { useRef, useMemo, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -100,6 +100,8 @@ export default function DataViews< Item >( {
 		( filters || [] ).some( ( filter ) => filter.isPrimary )
 	);
 
+	const togRef = useRef< HTMLDivElement >( null );
+
 	return (
 		<DataViewsContext.Provider
 			value={ {
@@ -139,6 +141,7 @@ export default function DataViews< Item >( {
 							setOpenedFilter={ setOpenedFilter }
 							setIsShowingFilter={ setIsShowingFilter }
 							isShowingFilter={ isShowingFilter }
+							togRef={ togRef }
 						/>
 					</HStack>
 					<HStack
@@ -152,7 +155,7 @@ export default function DataViews< Item >( {
 						{ header }
 					</HStack>
 				</HStack>
-				{ isShowingFilter && <DataViewsFilters /> }
+				{ isShowingFilter && <DataViewsFilters togRef={ togRef } /> }
 				<DataViewsLayout />
 				<DataViewsFooter />
 			</div>
