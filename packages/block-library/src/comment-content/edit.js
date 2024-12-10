@@ -48,7 +48,7 @@ export default function Edit( {
 		'content',
 		commentId
 	);
-	const isFirstCommentContentBlockInBlockTemplate = useSelect(
+	const isFirstCommentContentBlockinTemplate = useSelect(
 		( select ) =>
 			select( blockEditorStore ).getBlockParentsByBlockName(
 				clientId,
@@ -73,7 +73,7 @@ export default function Edit( {
 				{ blockControls }
 				<div { ...blockProps }>
 					<p>
-						{ isFirstCommentContentBlockInBlockTemplate
+						{ isFirstCommentContentBlockinTemplate
 							? __(
 									'This is the Comment Content block. It displays the text of user comments submitted on your site, ranging from short remarks to longer, multi-paragraph responses.'
 							  )
