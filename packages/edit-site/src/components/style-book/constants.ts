@@ -247,6 +247,16 @@ export const STYLE_BOOK_IFRAME_STYLES = `
 		width: 100%;
 	}
 
+	.edit-site-style-book__navigation-examples .edit-site-style-book__example:first-child {
+		grid-column: span 2;
+	}
+
+	.edit-site-style-book__navigation-examples .edit-site-style-book__example {
+		gap: 30px;
+		padding: 0;
+		margin-bottom: 36px;
+	}
+
 	.edit-site-style-book__example-preview .block-editor-block-list__insertion-point,
 	.edit-site-style-book__example-preview .block-list-appender {
 		display: none;

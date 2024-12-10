@@ -53,34 +53,72 @@ const NAVIGATION_STATES = [
 function NavigationExamples() {
 	const [ elementsLink ] = useGlobalStyle( 'elements.link' );
 
+	const navigationBlock = createBlock( 'core/navigation', {}, [
+		createBlock( 'core/navigation-link', {
+			label: _x( 'About', 'navigation link preview example' ),
+			url: 'https://example.com',
+		} ),
+		createBlock( 'core/navigation-link', {
+			label: _x( 'Contact', 'navigation link preview example' ),
+			url: 'https://example.com',
+		} ),
+		createBlock( 'core/navigation-link', {
+			label: _x( 'Blog', 'navigation link preview example' ),
+			url: 'https://example.com',
+		} ),
+	] );
+
 	const blocks = [
 		...NAVIGATION_STATES.map( ( { key } ) => {
 			const styles =
-				( key !== 'default' ? elementsLink[ key ] : elementsLink ) ||
-				{};
-			return createBlock( 'core/navigation-link', {
-				label: _x( 'About', 'navigation link preview example' ),
-				url: 'https://example.com',
-				style: styles,
-			} );
+				key === 'default'
+					? elementsLink || {}
+					: {
+							...elementsLink,
+							...( elementsLink[ key ] || {} ),
+					  };
+
+			return createBlock(
+				'core/navigation',
+				{
+					style: styles,
+				},
+				[
+					createBlock( 'core/navigation-link', {
+						label: _x( 'About', 'navigation link preview example' ),
+						url: 'https://example.com',
+					} ),
+				]
+			);
 		} ),
 	];
 
 	return (
-		<Grid columns={ 2 } gap={ 6 }>
-			{ blocks.map( ( block, index ) => (
-				<View
-					key={ `navigation-example-${ NAVIGATION_STATES[ index ].key }` }
-				>
-					<span className="edit-site-style-book__example-subtitle">
-						{ NAVIGATION_STATES[ index ].title }
-					</span>
-					<ExperimentalBlockEditorProvider value={ [ block ] }>
+		<View className="edit-site-style-book__navigation-examples">
+			<Grid columns={ 2 } gap={ 6 }>
+				<View className="edit-site-style-book__example">
+					<ExperimentalBlockEditorProvider
+						value={ [ navigationBlock ] }
+					>
 						<BlockList appender={ false } />
 					</ExperimentalBlockEditorProvider>
 				</View>
-			) ) }
-		</Grid>
+
+				{ blocks.map( ( block, index ) => (
+					<View
+						className="edit-site-style-book__example"
+						key={ `navigation-example-${ NAVIGATION_STATES[ index ].key }` }
+					>
+						<span className="edit-site-style-book__example-title">
+							{ NAVIGATION_STATES[ index ].title }
+						</span>
+						<ExperimentalBlockEditorProvider value={ [ block ] }>
+							<BlockList appender={ false } />
+						</ExperimentalBlockEditorProvider>
+					</View>
+				) ) }
+			</Grid>
+		</View>
 	);
 }
 
