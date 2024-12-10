@@ -6,6 +6,41 @@ const childProcess = require( 'child_process' );
 // Spawns an appium process.
 const start = ( { port = 4723, flags } ) =>
 	new Promise( ( resolve, reject ) => {
+		// Log all processes using the same port
+		childProcess.exec( `lsof -i :${ port }`, ( err, stdout, stderr ) => {
+			if ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( `>>>> Error executing lsof: ${ err }` );
+				return;
+			}
+			if ( stderr ) {
+				// eslint-disable-next-line no-console
+				console.error( `>>>> stderr: ${ stderr }` );
+				return;
+			}
+			// eslint-disable-next-line no-console
+			console.log( `>>>> Processes using port ${ port }:\n${ stdout }` );
+		} );
+
+		// Kill all processes using the same port
+		childProcess.exec(
+			`lsof -t -i :${ port } | xargs kill -9`,
+			( err, stdout, stderr ) => {
+				if ( err ) {
+					// eslint-disable-next-line no-console
+					console.error( `>>>> Error killing processes: ${ err }` );
+					return;
+				}
+				if ( stderr ) {
+					// eslint-disable-next-line no-console
+					console.error( `>>>> stderr: ${ stderr }` );
+					return;
+				}
+				// eslint-disable-next-line no-console
+				console.log( `>>>> Killed processes using port ${ port }` );
+			}
+		);
+
 		const args = [
 			'--port',
 			port.toString(),
