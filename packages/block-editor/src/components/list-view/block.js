@@ -12,11 +12,12 @@ import {
 	store as blocksStore,
 } from '@wordpress/blocks';
 import {
+	Button,
 	__experimentalTreeGridCell as TreeGridCell,
 	__experimentalTreeGridItem as TreeGridItem,
 } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
-import { moreVertical } from '@wordpress/icons';
+import { moreVertical, unseen, seen } from '@wordpress/icons';
 import {
 	useCallback,
 	useMemo,
@@ -95,6 +96,7 @@ function ListViewBlock( {
 		insertAfterBlock,
 		insertBeforeBlock,
 		setOpenedBlockSettingsMenu,
+		updateBlockAttributes,
 	} = unlock( useDispatch( blockEditorStore ) );
 
 	const {
@@ -107,21 +109,28 @@ function ListViewBlock( {
 		getBlocksByClientId,
 		canRemoveBlocks,
 		isGroupable,
+		getBlockAttributes,
 	} = useSelect( blockEditorStore );
 	const { getGroupingBlockName } = useSelect( blocksStore );
 
 	const blockInformation = useBlockDisplayInformation( clientId );
 
-	const { block, blockName, allowRightClickOverrides } = useSelect(
+	const { block, blockName, allowRightClickOverrides, isHidden } = useSelect(
 		( select ) => {
-			const { getBlock, getBlockName, getSettings } =
-				select( blockEditorStore );
+			const {
+				getBlock,
+				getBlockName,
+				getSettings,
+				getBlockAttributes: _getBlockAttributes,
+			} = select( blockEditorStore );
 
 			return {
 				block: getBlock( clientId ),
 				blockName: getBlockName( clientId ),
 				allowRightClickOverrides:
 					getSettings().allowRightClickOverrides,
+				isHidden:
+					!! _getBlockAttributes( clientId )?.metadata?.isHidden,
 			};
 		},
 		[ clientId ]
@@ -605,6 +614,27 @@ function ListViewBlock( {
 					</TreeGridCell>
 				</>
 			) }
+			<TreeGridCell>
+				{ () => (
+					<Button
+						className="block-editor-list-view-block__visibility-toggle"
+						icon={ isHidden ? seen : unseen }
+						label={
+							isHidden ? __( 'Show block' ) : __( 'Hide block' )
+						}
+						__next40pxDefaultSize
+						onClick={ () => {
+							updateBlockAttributes( clientId, {
+								metadata: {
+									...getBlockAttributes( clientId )?.metadata,
+									isHidden: ! isHidden,
+								},
+							} );
+						} }
+						size="small"
+					/>
+				) }
+			</TreeGridCell>
 
 			{ showBlockActions && BlockSettingsMenu && (
 				<TreeGridCell
