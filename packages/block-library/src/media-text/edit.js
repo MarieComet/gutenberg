@@ -187,6 +187,12 @@ function MediaTextEdit( {
 		: '';
 
 	const toggleUseFeaturedImage = () => {
+		const updateMediaSize =
+			! useFeaturedImage &&
+			featuredImageMedia?.media_details?.sizes?.[ mediaSizeSlug ]
+				? mediaSizeSlug
+				: DEFAULT_MEDIA_SIZE_SLUG;
+
 		setAttributes( {
 			imageFill: false,
 			mediaType: 'image',
@@ -199,6 +205,7 @@ function MediaTextEdit( {
 			linkClass: undefined,
 			rel: undefined,
 			href: undefined,
+			mediaSizeSlug: updateMediaSize,
 			useFeaturedImage: ! useFeaturedImage,
 		} );
 	};
