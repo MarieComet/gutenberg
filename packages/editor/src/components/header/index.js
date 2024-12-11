@@ -47,7 +47,6 @@ function Header( {
 	forceDisableBlockTools,
 	setEntitiesSavedStatesCallback,
 	title,
-	isEditorIframed,
 } ) {
 	const isWideViewport = useViewportMatch( 'large' );
 	const isLargeViewport = useViewportMatch( 'medium' );
@@ -150,7 +149,7 @@ function Header( {
 				/>
 				<PostViewLink />
 
-				{ isEditorIframed && isWideViewport && (
+				{ isWideViewport && (
 					<ZoomOutToggle disabled={ forceDisableBlockTools } />
 				) }
 
