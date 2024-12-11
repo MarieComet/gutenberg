@@ -11,6 +11,7 @@
 		{ "path": "packages/block-serialization-default-parser" },
 		{ "path": "packages/components" },
 		{ "path": "packages/compose" },
+		{ "path": "packages/code-editor" },
 		{ "path": "packages/core-data" },
 		{ "path": "packages/data" },
 		{ "path": "packages/dataviews" },

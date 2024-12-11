@@ -11,7 +11,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useMemo } from '@wordpress/element';
 import { __unstableSerializeAndClean } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useInstanceId } from '@wordpress/compose';
+import { useInstanceId, useRefEffect } from '@wordpress/compose';
 import { VisuallyHidden } from '@wordpress/components';
 
 /**
@@ -25,6 +25,14 @@ import { store as editorStore } from '../../store';
  * @return {React.ReactNode} The rendered PostTextEditor component.
  */
 export default function PostTextEditor() {
+	const editorRef = useRefEffect((node) => {
+		async function bootstrap() {
+			const moduleName = '@wordpress/code-editor';
+			const module = await import( moduleName );
+			console.log( module );
+		}
+		bootstrap();
+	});
 	const instanceId = useInstanceId( PostTextEditor );
 	const { content, blocks, type, id } = useSelect( ( select ) => {
 		const { getEditedEntityRecord } = select( coreStore );
@@ -62,6 +70,7 @@ export default function PostTextEditor() {
 			>
 				{ __( 'Type text or HTML' ) }
 			</VisuallyHidden>
+			<div ref={editorRef} />
 			<Textarea
 				autoComplete="off"
 				dir="auto"
