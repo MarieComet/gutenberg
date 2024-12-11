@@ -56,6 +56,7 @@ function CollabSidebarContent( {
 	setShowCommentBoard,
 	styles,
 	comments,
+	canvasSidebar = false,
 } ) {
 	const { createNotice } = useDispatch( noticesStore );
 	const { saveEntityRecord, deleteEntityRecord } = useDispatch( coreStore );
@@ -211,6 +212,7 @@ function CollabSidebarContent( {
 				onCommentResolve={ onCommentResolve }
 				showCommentBoard={ showCommentBoard }
 				setShowCommentBoard={ setShowCommentBoard }
+				canvasSidebar={ canvasSidebar }
 			/>
 		</div>
 	);
@@ -371,6 +373,7 @@ export default function CollabSidebar() {
 					styles={ {
 						backgroundColor,
 					} }
+					canvasSidebar
 				/>
 			</PluginSidebar>
 		</>

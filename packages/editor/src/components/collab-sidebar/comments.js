@@ -44,6 +44,7 @@ const { useBlockElementRef } = unlock( blockEditorPrivateApis );
  * @param {Function} props.onCommentResolve    - The function to mark a comment as resolved.
  * @param {boolean}  props.showCommentBoard    - Whether to show the comment board.
  * @param {Function} props.setShowCommentBoard - The function to set the comment board visibility.
+ * @param {boolean}  props.canvasSidebar       - Whether is this canvas sidebar or not.
  * @return {React.ReactNode} The rendered Comments component.
  */
 export function Comments( {
@@ -54,6 +55,7 @@ export function Comments( {
 	onCommentResolve,
 	showCommentBoard,
 	setShowCommentBoard,
+	canvasSidebar,
 } ) {
 	const { blockCommentId } = useSelect( ( select ) => {
 		const { getBlockAttributes, getSelectedBlockClientId } =
@@ -76,6 +78,8 @@ export function Comments( {
 		setShowCommentBoard( false );
 	};
 
+	const ParentWrapper = canvasSidebar ? ThreadWrapper : VStack;
+
 	return (
 		<>
 			{
@@ -97,10 +101,12 @@ export function Comments( {
 			{ Array.isArray( threads ) &&
 				threads.length > 0 &&
 				threads.map( ( thread ) => (
-					<ThreadWrapper
+					<ParentWrapper
 						key={ thread.id }
+						id={ thread.id }
 						thread={ thread }
-						classNames={ clsx(
+						spacing="3"
+						className={ clsx(
 							'editor-collab-sidebar-panel__thread',
 							{
 								'editor-collab-sidebar-panel__active-thread':
@@ -121,7 +127,7 @@ export function Comments( {
 							isFocused={ focusThread === thread.id }
 							clearThreadFocus={ clearThreadFocus }
 						/>
-					</ThreadWrapper>
+					</ParentWrapper>
 				) ) }
 		</>
 	);
@@ -364,7 +370,7 @@ const CommentBoard = ( { thread, onResolve, onEdit, onDelete, status } ) => {
 	);
 };
 
-const ThreadWrapper = ( { children, thread, classNames, onClick } ) => {
+const ThreadWrapper = ( { children, thread, className, onClick } ) => {
 	const blockRef = useRef();
 	useBlockElementRef( thread.clientId, blockRef );
 
@@ -382,12 +388,11 @@ const ThreadWrapper = ( { children, thread, classNames, onClick } ) => {
 	return (
 		<VStack
 			ref={ refs.setFloating }
-			className={ classNames }
+			className={ className }
 			spacing="3"
 			onclick={ onClick }
 			style={ {
-				position: 'absolute',
-				top: y ?? 0,
+				top: y,
 			} }
 		>
 			{ children }

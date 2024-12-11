@@ -8,6 +8,14 @@
 
 .editor-collab-sidebar {
 	height: 100%;
+	overflow: hidden;
+
+	.editor-collab-sidebar-panel {
+		&__thread {
+			position: absolute;
+			width: calc(100% - 32px);
+		}
+	}
 }
 
 .editor-collab-sidebar-panel {
@@ -21,7 +29,6 @@
 		border: 1.5px solid $gray-300;
 		background-color: $gray-100;
 		margin-bottom: $grid-unit-20;
-		width: calc(100% - 32px);
 	}
 
 	&__active-thread {
