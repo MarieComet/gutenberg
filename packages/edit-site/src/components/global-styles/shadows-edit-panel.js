@@ -35,7 +35,7 @@ import {
 	reset,
 	moreVertical,
 } from '@wordpress/icons';
-import { useState, useMemo, useEffect } from '@wordpress/element';
+import { useState, useMemo, useEffect, useRef } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -215,8 +215,10 @@ export default function ShadowsEditPanel() {
 					size="medium"
 				>
 					{ sprintf(
-						// translators: %s: name of the shadow
-						'Are you sure you want to delete "%s"?',
+						/* translators: %s: Name of the shadow preset. */
+						__(
+							'Are you sure you want to delete "%s" shadow preset?'
+						),
 						selectedShadow.name
 					) }
 				</ConfirmDialog>
@@ -298,6 +300,7 @@ function ShadowsPreview( { shadow } ) {
 }
 
 function ShadowEditor( { shadow, onChange } ) {
+	const addShadowButtonRef = useRef();
 	const shadowParts = useMemo( () => getShadowParts( shadow ), [ shadow ] );
 
 	const onChangeShadowPart = ( index, part ) => {
@@ -312,6 +315,7 @@ function ShadowEditor( { shadow, onChange } ) {
 
 	const onRemoveShadowPart = ( index ) => {
 		onChange( shadowParts.filter( ( p, i ) => i !== index ).join( ', ' ) );
+		addShadowButtonRef.current.focus();
 	};
 
 	return (
@@ -332,6 +336,7 @@ function ShadowEditor( { shadow, onChange } ) {
 							onClick={ () => {
 								onAddShadowPart();
 							} }
+							ref={ addShadowButtonRef }
 						/>
 					</FlexItem>
 				</HStack>
@@ -391,28 +396,24 @@ function ShadowItem( { shadow, onChange, canRemove, onRemove } ) {
 				};
 
 				return (
-					<HStack align="center" justify="flex-start" spacing={ 0 }>
-						<FlexItem style={ { flexGrow: 1 } }>
-							<Button
-								__next40pxDefaultSize
-								icon={ shadowIcon }
-								{ ...toggleProps }
-							>
-								{ shadowObj.inset
-									? __( 'Inner shadow' )
-									: __( 'Drop shadow' ) }
-							</Button>
-						</FlexItem>
+					<>
+						<Button
+							__next40pxDefaultSize
+							icon={ shadowIcon }
+							{ ...toggleProps }
+						>
+							{ shadowObj.inset
+								? __( 'Inner shadow' )
+								: __( 'Drop shadow' ) }
+						</Button>
 						{ canRemove && (
-							<FlexItem>
-								<Button
-									__next40pxDefaultSize
-									icon={ reset }
-									{ ...removeButtonProps }
-								/>
-							</FlexItem>
+							<Button
+								size="small"
+								icon={ reset }
+								{ ...removeButtonProps }
+							/>
 						) }
-					</HStack>
+					</>
 				);
 			} }
 			renderContent={ () => (
