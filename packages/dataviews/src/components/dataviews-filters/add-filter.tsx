@@ -39,7 +39,10 @@ export function AddFilterMenu( {
 } ) {
 	const inactiveFilters = filters.filter( ( filter ) => ! filter.isVisible );
 	return (
-		<Menu trigger={ trigger }>
+		<Menu
+			trigger={ trigger }
+			defaultOpen={ inactiveFilters.length === filters.length }
+		>
 			{ inactiveFilters.map( ( filter ) => {
 				return (
 					<Menu.Item

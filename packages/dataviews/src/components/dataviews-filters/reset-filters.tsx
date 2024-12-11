@@ -13,12 +13,14 @@ interface ResetFilterProps {
 	filters: NormalizedFilter[];
 	view: View;
 	onChangeView: ( view: View ) => void;
+	onClick: () => void;
 }
 
 export default function ResetFilter( {
 	filters,
 	view,
 	onChangeView,
+	onClick,
 }: ResetFilterProps ) {
 	const isPrimary = ( field: string ) =>
 		filters.some(
@@ -44,6 +46,7 @@ export default function ResetFilter( {
 					search: '',
 					filters: [],
 				} );
+				onClick();
 			} }
 		>
 			{ __( 'Reset' ) }
