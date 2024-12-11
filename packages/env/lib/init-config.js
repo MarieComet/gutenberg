@@ -3,7 +3,7 @@
  * External dependencies
  */
 const path = require( 'path' );
-const { writeFile, mkdir } = require( 'fs' ).promises;
+const { writeFile, mkdir, chmod } = require( 'fs' ).promises;
 const { existsSync } = require( 'fs' );
 const yaml = require( 'js-yaml' );
 
@@ -16,6 +16,45 @@ const buildDockerComposeConfig = require( './build-docker-compose-config' );
 /**
  * @typedef {import('./config').WPConfig} WPConfig
  */
+
+/**
+ * Default multisite .htaccess content
+ */
+const multisiteHtaccessContent = `# BEGIN WordPress Multisite
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+
+# add a trailing slash to /wp-admin
+RewriteRule ^wp-admin$ wp-admin/ [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^(wp-(content|admin|includes).*) $1 [L]
+RewriteRule ^(.*\.php)$ $1 [L]
+RewriteRule . index.php [L]
+# END WordPress Multisite`;
+
+/**
+ * Writes the .htaccess file for multisite
+ *
+ * @param {string} wpPath Path to WordPress installation
+ * @return {Promise<void>}
+ */
+async function writeMultisiteHtaccess( wpPath ) {
+	try {
+		const htaccessPath = path.join( wpPath, '.htaccess' );
+		await writeFile( htaccessPath, multisiteHtaccessContent );
+		// Set 644 permissions
+		await chmod( htaccessPath, '0644' );
+	} catch ( error ) {
+		throw new Error(
+			`Failed to write multisite .htaccess: ${ error.message }`
+		);
+	}
+}
 
 /**
  * Initializes the local environment so that Docker commands can be run. Reads
@@ -79,6 +118,14 @@ module.exports = async function initConfig( {
 			config.dockerComposeConfigPath,
 			yaml.dump( dockerComposeConfig )
 		);
+
+		// Add multisite .htaccess if multisite is enabled
+		if ( config.env.multisite ) {
+			await writeMultisiteHtaccess( '/var/www/html' );
+			if ( config.debug ) {
+				spinner.info( 'Wrote multisite .htaccess file' );
+			}
+		}
 
 		// Write four Dockerfiles for each service we provided.
 		// (WordPress and CLI services, then a development and test environment for each.)

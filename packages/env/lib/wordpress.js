@@ -86,7 +86,10 @@ async function configureWordPress( environment, config, spinner ) {
 		// Ignore error.
 	}
 
-	const installCommand = `wp core multisite-install --url="${ config.env[ environment ].config.WP_SITEURL }" --title="${ config.name }" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email`;
+	const installType = config.env[ environment ].config.multisite
+		? 'multisite-install'
+		: 'install';
+	const installCommand = `wp core ${ installType } --url="${ config.env[ environment ].config.WP_SITEURL }" --title="${ config.name }" --admin_user=admin --admin_password=password --admin_email=wordpress@example.com --skip-email`;
 
 	// -eo pipefail exits the command as soon as anything fails in bash.
 	const setupCommands = [ 'set -eo pipefail', installCommand ];
