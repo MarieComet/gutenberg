@@ -35,7 +35,9 @@ store(
 					const { actions } = yield import(
 						'@wordpress/interactivity-router'
 					);
+					ctx.isLoading = true;
 					yield actions.navigate( ref.href );
+					ctx.isLoading = false;
 					ctx.url = ref.href;
 
 					// Focus the first anchor of the Query block.
