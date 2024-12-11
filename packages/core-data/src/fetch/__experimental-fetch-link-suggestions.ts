@@ -299,7 +299,7 @@ export function sortResults( results: SearchResult[], search: string ) {
 
 		// Add a slight bonus for 'post-type' results
 		if ( result.kind === 'post-type' ) {
-			score += 5;
+			score *= 1.1;
 		}
 
 		scores[ result.id ] = score;
