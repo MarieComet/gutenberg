@@ -41,6 +41,7 @@ import {
 	isSectionBlock,
 	getParentSectionBlock,
 	isZoomOut,
+	getSectionRootClientId,
 } from './private-selectors';
 
 /**
