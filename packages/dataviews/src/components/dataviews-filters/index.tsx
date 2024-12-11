@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState, useRef, useMemo } from '@wordpress/element';
+import { useState, useRef, useMemo, useEffect } from '@wordpress/element';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { funnel } from '@wordpress/icons';
 import { _x } from '@wordpress/i18n';
@@ -61,6 +61,55 @@ export function useFilters( fields: NormalizedField< any >[], view: View ) {
 		} );
 		return filters;
 	}, [ fields, view ] );
+}
+
+function Add( {
+	filters,
+	view,
+	onChangeView,
+	buttonRef,
+	isShowingFilter,
+	setIsShowingFilter,
+	addFilterRef,
+	setOpenedFilter,
+}: {
+	filters: NormalizedFilter[];
+	view: View;
+	onChangeView: ( view: View ) => void;
+	buttonRef: React.RefObject< HTMLButtonElement >;
+	isShowingFilter: boolean;
+	setIsShowingFilter: ( isShowingFilter: boolean ) => void;
+	addFilterRef: React.RefObject< HTMLButtonElement >;
+	setOpenedFilter: ( filter: string | null ) => void;
+} ) {
+	const [ addFilterOpen, setAddFilterOpen ] = useState< boolean >(
+		! view.filters?.length
+	);
+
+	useEffect( () => {
+		if ( isShowingFilter && ! view.filters?.length && ! addFilterOpen ) {
+			setIsShowingFilter( false );
+			buttonRef.current?.focus();
+		}
+	}, [
+		view.filters,
+		addFilterOpen,
+		isShowingFilter,
+		buttonRef,
+		setIsShowingFilter,
+	] );
+
+	return (
+		<AddFilter
+			filters={ filters }
+			view={ view }
+			onChangeView={ onChangeView }
+			ref={ addFilterRef }
+			setOpenedFilter={ setOpenedFilter }
+			addFilterOpen={ addFilterOpen }
+			setAddFilterOpen={ setAddFilterOpen }
+		/>
+	);
 }
 
 export default function useDataViewsFilters( {
@@ -132,21 +181,20 @@ export default function useDataViewsFilters( {
 						/>
 					);
 				} ) }
-			<AddFilter
+			<Add
 				filters={ filters }
 				view={ view }
 				onChangeView={ onChangeView }
-				ref={ addFilterRef }
+				addFilterRef={ addFilterRef }
 				setOpenedFilter={ setOpenedFilter }
+				buttonRef={ buttonRef }
+				isShowingFilter={ isShowingFilter }
+				setIsShowingFilter={ setIsShowingFilter }
 			/>
 			<ResetFilters
 				filters={ filters }
 				view={ view }
 				onChangeView={ onChangeView }
-				onClick={ () => {
-					setIsShowingFilter( false );
-					buttonRef.current?.focus();
-				} }
 			/>
 		</HStack>
 	);

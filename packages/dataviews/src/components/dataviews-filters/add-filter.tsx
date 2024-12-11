@@ -26,6 +26,8 @@ interface AddFilterProps {
 	view: View;
 	onChangeView: ( view: View ) => void;
 	setOpenedFilter: ( filter: string | null ) => void;
+	addFilterOpen: boolean;
+	setAddFilterOpen: ( open: boolean ) => void;
 }
 
 export function AddFilterMenu( {
@@ -34,6 +36,8 @@ export function AddFilterMenu( {
 	onChangeView,
 	setOpenedFilter,
 	trigger,
+	addFilterOpen,
+	setAddFilterOpen,
 }: AddFilterProps & {
 	trigger: React.ReactNode;
 } ) {
@@ -42,6 +46,8 @@ export function AddFilterMenu( {
 		<Menu
 			trigger={ trigger }
 			defaultOpen={ inactiveFilters.length === filters.length }
+			open={ addFilterOpen }
+			onOpenChange={ setAddFilterOpen }
 		>
 			{ inactiveFilters.map( ( filter ) => {
 				return (
@@ -72,7 +78,7 @@ export function AddFilterMenu( {
 }
 
 function AddFilter(
-	{ filters, view, onChangeView, setOpenedFilter }: AddFilterProps,
+	{ filters, ...rest }: AddFilterProps,
 	ref: Ref< HTMLButtonElement >
 ) {
 	if ( ! filters.length || filters.every( ( { isPrimary } ) => isPrimary ) ) {
@@ -93,7 +99,7 @@ function AddFilter(
 					{ __( 'Add filter' ) }
 				</Button>
 			}
-			{ ...{ filters, view, onChangeView, setOpenedFilter } }
+			{ ...{ filters, ...rest } }
 		/>
 	);
 }
