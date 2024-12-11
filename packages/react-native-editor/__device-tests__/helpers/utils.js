@@ -174,7 +174,7 @@ const setupDriver = async () => {
 	try {
 		driver = await remote( {
 			...serverConfig,
-			logLevel: 'error',
+			logLevel: 'debug',
 			// Mitigate driver setup instability by doubling the default timeout
 			connectionRetryTimeout: 240000,
 			capabilities: {
