@@ -19,7 +19,7 @@ import { getPluginsMap, activatePlugin, deactivatePlugin } from './plugins';
 import {
 	deleteAllTemplates,
 	createTemplate,
-	updateTemplate,
+	updateOrCreateTemplate,
 } from './templates';
 import {
 	activateTheme,
@@ -179,8 +179,9 @@ class RequestUtils {
 		deleteAllTemplates.bind( this );
 	/** @borrows createTemplate as this.createTemplate */
 	createTemplate: typeof createTemplate = createTemplate.bind( this );
-	/** @borrows updateTemplate as this.updateTemplate */
-	updateTemplate: typeof updateTemplate = updateTemplate.bind( this );
+	/** @borrows updateOrCreateTemplate as this.updateOrCreateTemplate */
+	updateOrCreateTemplate: typeof updateOrCreateTemplate =
+		updateOrCreateTemplate.bind( this );
 	/** @borrows resetPreferences as this.resetPreferences */
 	resetPreferences: typeof resetPreferences = resetPreferences.bind( this );
 	/** @borrows listMedia as this.listMedia */

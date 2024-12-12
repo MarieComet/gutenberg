@@ -556,7 +556,7 @@ test.describe( 'Instant Search', () => {
 
 		test.beforeAll( async ( { requestUtils } ) => {
 			// Edit the Home template instead of creating a new page
-			await requestUtils.updateTemplate( 'wp_template', {
+			await requestUtils.updateOrCreateTemplate( 'wp_template', {
 				slug: 'home',
 				content: `
 <!-- wp:query {"enhancedPagination":true,"queryId":1111,"query":{"inherit":true,"perPage":2,"order":"desc","orderBy":"date"}} -->
@@ -727,7 +727,7 @@ test.describe( 'Instant Search', () => {
 			page,
 			requestUtils,
 		} ) => {
-			await requestUtils.updateTemplate( 'wp_template', {
+			await requestUtils.updateOrCreateTemplate( 'wp_template', {
 				slug: 'home',
 				content: `
 	<!-- wp:query {"enhancedPagination":true,"queryId":1111,"query":{"inherit":true,"perPage":2,"order":"desc","orderBy":"date"}} -->
@@ -807,7 +807,7 @@ test.describe( 'Instant Search', () => {
 			requestUtils,
 		} ) => {
 			// Set up: Add one inherited and one custom query to the home template
-			await requestUtils.updateTemplate( 'wp_template', {
+			await requestUtils.updateOrCreateTemplate( 'wp_template', {
 				slug: 'home',
 				content: `
 	<!-- wp:query {"enhancedPagination":true,"queryId":1111,"query":{"inherit":true,"perPage":2,"order":"desc","orderBy":"date"}} -->

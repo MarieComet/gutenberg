@@ -89,7 +89,7 @@ async function createTemplate(
  * @param type    Template type.
  * @param payload Template attributes.
  */
-async function updateTemplate(
+async function updateOrCreateTemplate(
 	this: RequestUtils,
 	type: TemplateType,
 	payload: CreateTemplatePayload
@@ -104,8 +104,9 @@ async function updateTemplate(
 
 	const template = templates.find( ( t ) => t.slug === payload.slug );
 
+	// If the template is not found, create it.
 	if ( ! template ) {
-		throw new Error( `Template with slug "${ payload.slug }" not found.` );
+		return createTemplate.bind( this )( type, payload );
 	}
 
 	const updatedTemplate = await this.rest< Template >( {
@@ -117,4 +118,4 @@ async function updateTemplate(
 	return updatedTemplate;
 }
 
-export { deleteAllTemplates, createTemplate, updateTemplate };
+export { deleteAllTemplates, createTemplate, updateOrCreateTemplate };
