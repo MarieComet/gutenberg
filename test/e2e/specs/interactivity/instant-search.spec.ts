@@ -91,6 +91,9 @@ test.describe( 'Instant Search', () => {
 	test.afterAll( async ( { requestUtils } ) => {
 		await requestUtils.deleteAllPosts();
 		await requestUtils.activateTheme( 'twentytwentyone' );
+
+		// disable the gutenberg-search-query-block experiment
+		await requestUtils.setGutenbergExperiments( [] );
 	} );
 
 	test.describe( 'Custom Query', () => {
@@ -542,6 +545,106 @@ test.describe( 'Instant Search', () => {
 			await expect( page ).toHaveURL(
 				new RegExp( `query-${ secondQueryId }-page=1` )
 			);
+		} );
+	} );
+
+	test.describe( 'Editor', () => {
+		test.beforeEach( async ( { admin } ) => {
+			await admin.createNewPost( {
+				postType: 'post',
+				title: 'Instant Search Test',
+			} );
+		} );
+
+		test.afterAll( async ( { requestUtils } ) => {
+			await requestUtils.deleteAllPosts();
+		} );
+
+		test( 'should rename Search block to "Instant Search" in the List View and Inspector Controls', async ( {
+			editor,
+			page,
+		} ) => {
+			// Insert Query block with enhanced pagination enabled
+			await editor.insertBlock( {
+				name: 'core/query',
+				attributes: {
+					enhancedPagination: true,
+					query: {
+						inherit: false,
+						perPage: 2,
+						order: 'desc',
+						orderBy: 'date',
+						offset: 0,
+					},
+				},
+				innerBlocks: [
+					{ name: 'core/search' },
+					{
+						name: 'core/post-template',
+						innerBlocks: [
+							{ name: 'core/post-title' },
+							{ name: 'core/post-excerpt' },
+						],
+					},
+				],
+			} );
+
+			// Select the Search block
+			const searchBlock = editor.canvas.getByRole( 'document', {
+				name: 'Block: Search',
+			} );
+			await editor.selectBlocks( searchBlock );
+
+			// Make sure the List View is open
+			await editor.openListView();
+			const listView = page.getByRole( 'region', {
+				name: 'Document Overview',
+			} );
+			await expect( listView ).toBeVisible();
+
+			// Check that the Search block which is a child of the Query Loop block
+			// is renamed to "Instant Search" in the List View
+			await expect(
+				listView.getByText( 'Instant Search' )
+			).toBeVisible();
+
+			const editorSettings = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
+
+			// Check that the Search block is renamed to "Instant Search" in the Inspector Controls title
+			await editor.canvas
+				.getByRole( 'document', { name: 'Block: Search' } )
+				.click();
+			await expect( editorSettings ).toContainText(
+				'Instant Search (Search)'
+			);
+
+			// Select the Query Loop block and open the Advanced View and disable enhanced pagination
+			await editor.selectBlocks(
+				editor.canvas.getByRole( 'document', {
+					name: 'Block: Query Loop',
+				} )
+			);
+			await editor.openDocumentSettingsSidebar();
+			await editorSettings
+				.getByRole( 'button', { name: 'Advanced' } )
+				.click();
+			await editorSettings
+				.getByRole( 'checkbox', { name: 'Reload full page' } )
+				.click();
+
+			// Check that the block is renamed back to "Search" in the Inspector Controls title
+			await editor.canvas
+				.getByRole( 'document', { name: 'Block: Search' } )
+				.click();
+			await expect( editorSettings ).toContainText( 'Search' );
+			await expect( editorSettings ).not.toContainText(
+				'Instant Search (Search)'
+			);
+
+			// Check that the Search block is renamed back to "Search" in the List View
+			await expect( listView.getByText( 'Search' ) ).toBeVisible();
 		} );
 	} );
 } );
