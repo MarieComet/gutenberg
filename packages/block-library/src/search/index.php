@@ -217,17 +217,17 @@ function render_block_core_search( $attributes, $content, $block ) {
 		$form_directives .= ' data-wp-on--submit="actions.handleSearchSubmit"';
 
 		// Get the canonical URL without pagination
-		$canonical_url_no_pagination = get_pagenum_link(1);
+		$canonical_url_no_pagination = get_pagenum_link( 1 );
 
 		// If we're on a singular post/page, use its permalink instead
-		if (is_singular()) {
+		if ( is_singular() ) {
 			$canonical_url_no_pagination = get_permalink();
 		}
 
 		wp_interactivity_config( 'core/search', array( 'canonicalURL' => $canonical_url_no_pagination ) );
 
 		$query_id = $block->context['queryId'];
-		$search       = '';
+		$search   = '';
 
 		// If the query is defined in the block context, use it
 		if ( isset( $block->context['query']['search'] ) && '' !== $block->context['query']['search'] ) {
