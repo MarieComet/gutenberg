@@ -152,13 +152,9 @@ function ParagraphBlock( {
 				/>
 			) }
 			<RichText
-				identifier="content"
 				tagName="p"
+				attributeKey="content"
 				{ ...blockProps }
-				value={ content }
-				onChange={ ( newContent ) =>
-					setAttributes( { content: newContent } )
-				}
 				onMerge={ mergeBlocks }
 				onReplace={ onReplace }
 				onRemove={ onRemove }

@@ -26,15 +26,7 @@ import { store as coreStore } from '@wordpress/core-data';
 
 export default function PostNavigationLinkEdit( {
 	context: { postType },
-	attributes: {
-		type,
-		label,
-		showTitle,
-		textAlign,
-		linkLabel,
-		arrow,
-		taxonomy,
-	},
+	attributes: { type, showTitle, textAlign, linkLabel, arrow, taxonomy },
 	setAttributes,
 } ) {
 	const isNext = type === 'next';
@@ -194,14 +186,10 @@ export default function PostNavigationLinkEdit( {
 				) }
 				<RichText
 					tagName="a"
-					identifier="label"
+					attributeKey="label"
 					aria-label={ ariaLabel }
 					placeholder={ placeholder }
-					value={ label }
 					allowedFormats={ [ 'core/bold', 'core/italic' ] }
-					onChange={ ( newLabel ) =>
-						setAttributes( { label: newLabel } )
-					}
 				/>
 				{ showTitle && (
 					<a

@@ -6,8 +6,6 @@ import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
 
 export default function CodeEdit( {
-	attributes,
-	setAttributes,
 	onRemove,
 	insertBlocksAfter,
 	mergeBlocks,
@@ -17,9 +15,7 @@ export default function CodeEdit( {
 		<pre { ...blockProps }>
 			<RichText
 				tagName="code"
-				identifier="content"
-				value={ attributes.content }
-				onChange={ ( content ) => setAttributes( { content } ) }
+				attributeKey="content"
 				onRemove={ onRemove }
 				onMerge={ mergeBlocks }
 				placeholder={ __( 'Write code…' ) }

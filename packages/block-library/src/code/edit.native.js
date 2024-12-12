@@ -21,14 +21,7 @@ import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
 import styles from './theme.scss';
 
 export function CodeEdit( props ) {
-	const {
-		attributes,
-		setAttributes,
-		onRemove,
-		style,
-		insertBlocksAfter,
-		mergeBlocks,
-	} = props;
+	const { onRemove, style, insertBlocksAfter, mergeBlocks } = props;
 	const codeStyle = {
 		...usePreferredColorSchemeStyle(
 			styles.blockCode,
@@ -47,11 +40,9 @@ export function CodeEdit( props ) {
 		<View style={ codeStyle }>
 			<RichText
 				tagName="pre"
-				value={ attributes.content }
-				identifier="content"
+				attributeKey="content"
 				style={ textStyle }
 				underlineColorAndroid="transparent"
-				onChange={ ( content ) => setAttributes( { content } ) }
 				onMerge={ mergeBlocks }
 				onRemove={ onRemove }
 				placeholder={ __( 'Write code…' ) }

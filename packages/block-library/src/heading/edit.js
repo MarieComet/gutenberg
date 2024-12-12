@@ -110,9 +110,8 @@ function HeadingEdit( {
 				</BlockControls>
 			) }
 			<RichText
-				identifier="content"
 				tagName={ tagName }
-				value={ content }
+				attributeKey="content"
 				onChange={ onContentChange }
 				onMerge={ mergeBlocks }
 				onReplace={ onReplace }

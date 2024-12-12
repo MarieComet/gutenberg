@@ -29,7 +29,7 @@ function ParagraphBlock( {
 		return !! select( blockEditorStore ).getSettings().isRTL;
 	}, [] );
 
-	const { align, content, placeholder } = attributes;
+	const { align, placeholder } = attributes;
 
 	const styles = {
 		...( style?.baseColors && {
@@ -62,16 +62,10 @@ function ParagraphBlock( {
 				/>
 			</BlockControls>
 			<RichText
-				identifier="content"
 				tagName="p"
-				value={ content }
+				attributeKey="content"
 				deleteEnter
 				style={ styles }
-				onChange={ ( nextContent ) => {
-					setAttributes( {
-						content: nextContent,
-					} );
-				} }
 				onSplit={ ( value, isOriginal ) => {
 					let newAttributes;
 

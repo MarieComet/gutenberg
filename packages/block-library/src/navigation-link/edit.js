@@ -505,14 +505,8 @@ export default function NavigationLinkEdit( {
 									<>
 										<RichText
 											ref={ ref }
-											identifier="label"
+											attributeKey="label"
 											className="wp-block-navigation-item__label"
-											value={ label }
-											onChange={ ( labelValue ) =>
-												setAttributes( {
-													label: labelValue,
-												} )
-											}
 											onMerge={ mergeBlocks }
 											onReplace={ onReplace }
 											__unstableOnSplitAtEnd={ () =>

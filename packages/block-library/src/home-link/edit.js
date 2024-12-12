@@ -13,7 +13,7 @@ import { store as coreStore } from '@wordpress/core-data';
 
 const preventDefault = ( event ) => event.preventDefault();
 
-export default function HomeEdit( { attributes, setAttributes, context } ) {
+export default function HomeEdit( { attributes, context } ) {
 	const homeUrl = useSelect( ( select ) => {
 		// Site index.
 		return select( coreStore ).getEntityRecord( 'root', '__unstableBase' )
@@ -42,12 +42,9 @@ export default function HomeEdit( { attributes, setAttributes, context } ) {
 				onClick={ preventDefault }
 			>
 				<RichText
-					identifier="label"
+					attributeKey="label"
 					className="wp-block-home-link__label"
 					value={ attributes.label ?? __( 'Home' ) }
-					onChange={ ( labelValue ) => {
-						setAttributes( { label: labelValue } );
-					} }
 					aria-label={ __( 'Home link text' ) }
 					placeholder={ __( 'Add home link' ) }
 					withoutInteractiveFormatting

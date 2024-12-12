@@ -81,6 +81,7 @@ export function RichTextWrapper(
 	{
 		children,
 		tagName = 'div',
+		attributeKey,
 		value: adjustedValue = '',
 		onChange: adjustedOnChange,
 		isSelected: originalIsSelected,
@@ -117,6 +118,7 @@ export function RichTextWrapper(
 			alternative: 'block.json support key: "splitting"',
 		} );
 	}
+	identifier = identifier || attributeKey;
 
 	const instanceId = useInstanceId( RichTextWrapper );
 	const anchorRef = useRef();

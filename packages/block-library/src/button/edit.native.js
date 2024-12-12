@@ -241,11 +241,6 @@ function ButtonEdit( props ) {
 		);
 	}
 
-	function onChangeText( value ) {
-		const { setAttributes } = props;
-		setAttributes( { text: value } );
-	}
-
 	function onChangeBorderRadius( newRadius ) {
 		const { setAttributes, attributes } = props;
 		const { style } = attributes;
@@ -495,15 +490,13 @@ function ButtonEdit( props ) {
 				) }
 				<RichText
 					ref={ onSetRef }
+					attributeKey="text"
 					placeholder={ placeholderText }
-					value={ text }
-					onChange={ onChangeText }
 					style={ textStyles }
 					textAlign={ align }
 					placeholderTextColor={
 						style?.color || styles.placeholderTextColor.color
 					}
-					identifier="text"
 					tagName="p"
 					minWidth={ minWidth } // The minimum Button size.
 					maxWidth={ isFixedWidth ? minWidth : maxWidth } // The width of the screen.

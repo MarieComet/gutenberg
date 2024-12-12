@@ -68,12 +68,7 @@ export function IndentUI( { clientId } ) {
 	);
 }
 
-export default function ListItemEdit( {
-	attributes,
-	setAttributes,
-	clientId,
-	mergeBlocks,
-} ) {
+export default function ListItemEdit( { attributes, clientId, mergeBlocks } ) {
 	const { placeholder, content } = attributes;
 	const blockProps = useBlockProps();
 	const innerBlocksProps = useInnerBlocksProps( blockProps, {
@@ -88,12 +83,8 @@ export default function ListItemEdit( {
 			<li { ...innerBlocksProps }>
 				<RichText
 					ref={ useMergeRefs( [ useEnterRef, useSpaceRef ] ) }
-					identifier="content"
 					tagName="div"
-					onChange={ ( nextContent ) =>
-						setAttributes( { content: nextContent } )
-					}
-					value={ content }
+					attributeKey="content"
 					aria-label={ __( 'List text' ) }
 					placeholder={ placeholder || __( 'List' ) }
 					onMerge={ onMerge }

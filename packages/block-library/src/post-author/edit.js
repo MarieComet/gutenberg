@@ -206,14 +206,10 @@ function PostAuthorEdit( {
 				<div className="wp-block-post-author__content">
 					{ ( ! RichText.isEmpty( byline ) || isSelected ) && (
 						<RichText
-							identifier="byline"
+							attributeKey="byline"
 							className="wp-block-post-author__byline"
 							aria-label={ __( 'Post author byline text' ) }
 							placeholder={ __( 'Write byline…' ) }
-							value={ byline }
-							onChange={ ( value ) =>
-								setAttributes( { byline: value } )
-							}
 						/>
 					) }
 					<p className="wp-block-post-author__name">

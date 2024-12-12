@@ -64,7 +64,6 @@ function ClipboardToolbarButton( { text, disabled } ) {
 function FileEdit( { attributes, isSelected, setAttributes, clientId } ) {
 	const {
 		id,
-		fileName,
 		href,
 		textLinkHref,
 		textLinkTarget,
@@ -289,9 +288,8 @@ function FileEdit( { attributes, isSelected, setAttributes, clientId } ) {
 				) }
 				<div className="wp-block-file__content-wrapper">
 					<RichText
-						identifier="fileName"
 						tagName="a"
-						value={ fileName }
+						attributeKey="fileName"
 						placeholder={ __( 'Write file name…' ) }
 						withoutInteractiveFormatting
 						onChange={ ( text ) =>
@@ -305,8 +303,8 @@ function FileEdit( { attributes, isSelected, setAttributes, clientId } ) {
 						<div className="wp-block-file__button-richtext-wrapper">
 							{ /* Using RichText here instead of PlainText so that it can be styled like a button. */ }
 							<RichText
-								identifier="downloadButtonText"
 								tagName="div" // Must be block-level or else cursor disappears.
+								attributeKey="downloadButtonText"
 								aria-label={ __( 'Download button text' ) }
 								className={ clsx(
 									'wp-block-file__button',
@@ -314,7 +312,6 @@ function FileEdit( { attributes, isSelected, setAttributes, clientId } ) {
 										'button'
 									)
 								) }
-								value={ downloadButtonText }
 								withoutInteractiveFormatting
 								placeholder={ __( 'Add text…' ) }
 								onChange={ ( text ) =>

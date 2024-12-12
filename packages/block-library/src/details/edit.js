@@ -26,7 +26,7 @@ const TEMPLATE = [
 ];
 
 function DetailsEdit( { attributes, setAttributes, clientId } ) {
-	const { showContent, summary } = attributes;
+	const { showContent } = attributes;
 	const blockProps = useBlockProps();
 	const innerBlocksProps = useInnerBlocksProps( blockProps, {
 		template: TEMPLATE,
@@ -87,15 +87,11 @@ function DetailsEdit( { attributes, setAttributes, clientId } ) {
 			>
 				<summary onClick={ ( event ) => event.preventDefault() }>
 					<RichText
-						identifier="summary"
+						attributeKey="summary"
 						aria-label={ __( 'Write summary' ) }
 						placeholder={ __( 'Write summary…' ) }
 						allowedFormats={ [] }
 						withoutInteractiveFormatting
-						value={ summary }
-						onChange={ ( newSummary ) =>
-							setAttributes( { summary: newSummary } )
-						}
 					/>
 				</summary>
 				{ innerBlocksProps.children }

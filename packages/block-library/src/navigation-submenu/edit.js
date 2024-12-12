@@ -503,12 +503,8 @@ export default function NavigationSubmenuEdit( {
 					{ /* eslint-enable */ }
 					<RichText
 						ref={ ref }
-						identifier="label"
+						attributeKey="label"
 						className="wp-block-navigation-item__label"
-						value={ label }
-						onChange={ ( labelValue ) =>
-							setAttributes( { label: labelValue } )
-						}
 						onMerge={ mergeBlocks }
 						onReplace={ onReplace }
 						aria-label={ __( 'Navigation link text' ) }

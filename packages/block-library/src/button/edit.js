@@ -274,9 +274,9 @@ function ButtonEdit( props ) {
 			>
 				<RichText
 					ref={ mergedRef }
+					attributeKey="text"
 					aria-label={ __( 'Button text' ) }
 					placeholder={ placeholder || __( 'Add text…' ) }
-					value={ text }
 					onChange={ ( value ) =>
 						setAttributes( {
 							text: removeAnchorTag( value ),
@@ -304,7 +304,6 @@ function ButtonEdit( props ) {
 					} }
 					onReplace={ onReplace }
 					onMerge={ mergeBlocks }
-					identifier="text"
 				/>
 			</div>
 			<BlockControls group="block">

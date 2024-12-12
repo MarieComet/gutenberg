@@ -33,7 +33,7 @@ import { useCanEditEntity } from '../utils/hooks';
 const ELLIPSIS = '…';
 
 export default function PostExcerptEditor( {
-	attributes: { textAlign, moreText, showMoreOnNewLine, excerptLength },
+	attributes: { textAlign, showMoreOnNewLine, excerptLength },
 	setAttributes,
 	isSelected,
 	context: { postId, postType, queryId },
@@ -134,15 +134,11 @@ export default function PostExcerptEditor( {
 	}
 	const readMoreLink = (
 		<RichText
-			identifier="moreText"
-			className="wp-block-post-excerpt__more-link"
 			tagName="a"
+			attributeKey="moreText"
+			className="wp-block-post-excerpt__more-link"
 			aria-label={ __( '“Read more” link text' ) }
 			placeholder={ __( 'Add "read more" link text' ) }
-			value={ moreText }
-			onChange={ ( newMoreText ) =>
-				setAttributes( { moreText: newMoreText } )
-			}
 			withoutInteractiveFormatting
 		/>
 	);

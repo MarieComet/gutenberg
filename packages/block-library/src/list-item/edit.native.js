@@ -30,7 +30,6 @@ const OPACITY = '9e';
 
 export default function ListItemEdit( {
 	attributes,
-	setAttributes,
 	clientId,
 	style,
 	mergeBlocks,
@@ -148,12 +147,8 @@ export default function ListItemEdit( {
 				>
 					<RichText
 						__unstableUseSplitSelection
-						identifier="content"
 						tagName="p"
-						onChange={ ( nextContent ) =>
-							setAttributes( { content: nextContent } )
-						}
-						value={ content }
+						attributeKey="content"
 						placeholder={ placeholder || __( 'List' ) }
 						placeholderTextColor={
 							defaultPlaceholderTextColorWithOpacity
