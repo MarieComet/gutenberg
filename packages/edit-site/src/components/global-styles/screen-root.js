@@ -194,6 +194,7 @@ function ScreenRoot() {
 						<NavigationButtonAsItem
 							path="/revisions"
 							onClick={ loadRevisionsView }
+							data-testid="revisions-button"
 						>
 							<HStack justify="space-between">
 								<FlexItem>
