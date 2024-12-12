@@ -48,7 +48,7 @@ test.describe( 'Style Revisions', () => {
 		await userGlobalStylesRevisions.openStylesPanel();
 
 		// Now there should be enough revisions to show the revisions UI.
-		await page.getByRole( 'button', { name: 'Styles revisions' } ).click();
+		await page.getByRole( 'button', { name: 'Revisions' } ).click();
 
 		const revisionButtons = page.getByRole( 'option', {
 			name: /^Changes saved by /,
@@ -85,7 +85,7 @@ test.describe( 'Style Revisions', () => {
 
 		await page.click( 'role=button[name="Back"]' );
 
-		await page.getByRole( 'button', { name: 'Styles revisions' } ).click();
+		await page.getByRole( 'button', { name: 'Revisions' } ).click();
 
 		const unSavedButton = page.getByRole( 'option', {
 			name: /^Unsaved changes/,
@@ -121,7 +121,7 @@ test.describe( 'Style Revisions', () => {
 	} ) => {
 		await editor.canvas.locator( 'body' ).click();
 		await userGlobalStylesRevisions.openStylesPanel();
-		await page.getByRole( 'button', { name: 'Styles revisions' } ).click();
+		await page.getByRole( 'button', { name: 'Revisions' } ).click();
 		const lastRevisionItem = page
 			.getByLabel( 'Global styles revisions list' )
 			.getByRole( 'option' )
@@ -161,7 +161,7 @@ test.describe( 'Style Revisions', () => {
 		await userGlobalStylesRevisions.openStylesPanel();
 		// Search for exact names to avoid selecting the command bar button in the header.
 		const revisionsButton = page.getByRole( 'button', {
-			name: 'Styles revisions',
+			name: 'Revisions',
 			exact: true,
 		} );
 		const styleBookButton = page.getByRole( 'button', {
@@ -207,7 +207,7 @@ test.describe( 'Style Revisions', () => {
 		await editor.canvas.locator( 'body' ).click();
 		await userGlobalStylesRevisions.openStylesPanel();
 		const revisionsButton = page.getByRole( 'button', {
-			name: 'Styles revisions',
+			name: 'Revisions',
 		} );
 		const styleBookButton = page.getByRole( 'button', {
 			name: 'Style Book',
@@ -240,7 +240,7 @@ test.describe( 'Style Revisions', () => {
 		await userGlobalStylesRevisions.openStylesPanel();
 		await page
 			.getByRole( 'button', {
-				name: 'Styles revisions',
+				name: 'Revisions',
 				exact: true,
 			} )
 			.click();
@@ -270,7 +270,7 @@ test.describe( 'Style Revisions', () => {
 			} );
 		}
 		await userGlobalStylesRevisions.openStylesPanel();
-		await page.getByRole( 'button', { name: 'Styles revisions' } ).click();
+		await page.getByRole( 'button', { name: 'Revisions' } ).click();
 		const pagination = page.getByLabel( 'Global Styles pagination' );
 		await expect( pagination ).toContainText( '1 of 2' );
 		await pagination.getByRole( 'button', { name: 'Next page' } ).click();

@@ -196,9 +196,7 @@ function ScreenRoot() {
 							onClick={ loadRevisionsView }
 						>
 							<HStack justify="space-between">
-								<FlexItem>
-									{ __( 'Styles revisions' ) }
-								</FlexItem>
+								<FlexItem>{ __( 'Revisions' ) }</FlexItem>
 								<IconWithCurrentColor
 									icon={
 										isRTL() ? chevronLeft : chevronRight
