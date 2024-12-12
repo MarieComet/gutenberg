@@ -23,15 +23,15 @@ import { useViewportMatch } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { unlock } from '../lock-unlock';
-import InspectorControls from '../components/inspector-controls';
-import BlockContext from '../components/block-context';
-import { useBlockEditContext } from '../components/block-edit';
 import {
 	canBindAttribute,
 	getBindableAttributes,
 	useBlockBindingsUtils,
 } from '../utils/block-bindings';
+import { unlock } from '../lock-unlock';
+import InspectorControls from '../components/inspector-controls';
+import BlockContext from '../components/block-context';
+import { useBlockEditContext } from '../components/block-edit';
 import { store as blockEditorStore } from '../store';
 
 const { Menu } = unlock( componentsPrivateApis );
