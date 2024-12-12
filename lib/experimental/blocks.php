@@ -119,7 +119,7 @@ function gutenberg_register_block_style( $block_name, $style_properties ) {
 }
 
 /**
- * Adds the search query to Query Loop blocks if the instant search experiment is enabled.
+ * Passes the search query param to Query Loop blocks, if the instant search experiment is enabled.
  *
  * @param array     $query The query variables.
  * @param WP_Block  $block Block instance.
