@@ -11,7 +11,7 @@ import {
 	CardDivider,
 	CardMedia,
 } from '@wordpress/components';
-import { isRTL, __ } from '@wordpress/i18n';
+import { isRTL, __, _n, sprintf } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -31,6 +31,7 @@ import RootMenu from './root-menu';
 import PreviewStyles from './preview-styles';
 import { store as editSiteStore } from '../../store';
 import { unlock } from '../../lock-unlock';
+import useGlobalStylesRevisions from './screen-revisions/use-global-styles-revisions';
 
 const { interfaceStore } = unlock( editorPrivateApis );
 const { useLocation } = unlock( routerPrivateApis );
@@ -43,10 +44,8 @@ function ScreenRoot() {
 		canEditCSS,
 		shouldClearCanvasContainerView,
 		isStyleBookOpened,
-		hasRevisions,
 		isRevisionsOpened,
 		isRevisionsStyleBookOpened,
-		isEditCanvasMode,
 	} = useSelect(
 		( select ) => {
 			const {
@@ -80,19 +79,20 @@ function ScreenRoot() {
 						getActiveComplementaryArea( 'core' ) ||
 					! _isVisualEditorMode ||
 					! _isEditCanvasMode,
-				hasRevisions:
-					!! globalStyles?._links?.[ 'version-history' ]?.[ 0 ]
-						?.count,
 				isRevisionsStyleBookOpened:
 					'global-styles-revisions:style-book' ===
 					canvasContainerView,
 				isRevisionsOpened:
 					'global-styles-revisions' === canvasContainerView,
-				isEditCanvasMode: _isEditCanvasMode,
 			};
 		},
 		[ canvas ]
 	);
+
+	const { isLoading: isLoadingRevisions, revisionsCount } =
+		useGlobalStylesRevisions();
+
+	const shouldShowRevisionsItem = revisionsCount > 0 && ! isLoadingRevisions;
 
 	const { setEditorCanvasContainerView } = unlock(
 		useDispatch( editSiteStore )
@@ -190,13 +190,23 @@ function ScreenRoot() {
 							</HStack>
 						</NavigationButtonAsItem>
 					) }
-					{ hasRevisions && isEditCanvasMode && (
+					{ shouldShowRevisionsItem && (
 						<NavigationButtonAsItem
 							path="/revisions"
 							onClick={ loadRevisionsView }
 						>
 							<HStack justify="space-between">
-								<FlexItem>{ __( 'Revisions' ) }</FlexItem>
+								<FlexItem>
+									{ sprintf(
+										/* translators: %d: Number of Styles revisions. */
+										_n(
+											'%d Revision',
+											'%d Revisions',
+											revisionsCount
+										),
+										revisionsCount
+									) }
+								</FlexItem>
 								<IconWithCurrentColor
 									icon={
 										isRTL() ? chevronLeft : chevronRight
