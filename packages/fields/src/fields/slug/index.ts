@@ -17,7 +17,7 @@ const slugField: Field< BasePost > = {
 	label: __( 'Slug' ),
 	Edit: SlugEdit,
 	render: SlugView,
-	supportsBulkEditing: false,
+	unique: true,
 };
 
 /**

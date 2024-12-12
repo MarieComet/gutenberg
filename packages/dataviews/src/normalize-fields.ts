@@ -76,7 +76,7 @@ export function normalizeFields< Item >(
 			sort,
 			isValid,
 			Edit,
-			supportsBulkEditing: field.supportsBulkEditing ?? true,
+			unique: field.unique ?? false,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting: field.enableSorting ?? true,
 		};

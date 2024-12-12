@@ -113,7 +113,7 @@ export type Field< Item > = {
 	 */
 	Edit?:
 		| ComponentType< DataFormControlProps< Item > >
-		| ComponentType< DataFormControlPropsWithoutBulkEditing< Item > >
+		| ComponentType< DataFormUniqueControlProps< Item > >
 		| string;
 
 	/**
@@ -163,9 +163,9 @@ export type Field< Item > = {
 	getValue?: ( args: { item: Item } ) => any;
 
 	/**
-	 * Whether the field supports bulk editing.
+	 * Whether the field supports editing multiple items.
 	 */
-	supportsBulkEditing?: boolean;
+	unique?: boolean;
 };
 
 export type NormalizedField< Item > = Field< Item > & {
@@ -175,12 +175,12 @@ export type NormalizedField< Item > = Field< Item > & {
 	render: ComponentType< DataViewRenderFieldProps< Item > >;
 	Edit:
 		| ComponentType< DataFormControlProps< Item > >
-		| ComponentType< DataFormControlPropsWithoutBulkEditing< Item > >;
+		| ComponentType< DataFormUniqueControlProps< Item > >;
 	sort: ( a: Item, b: Item, direction: SortDirection ) => number;
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
-	supportsBulkEditing: boolean;
+	unique: boolean;
 };
 
 /**
@@ -198,10 +198,10 @@ export type DataFormControlProps< Item, ValueType = any > = {
 	value?: ValueType | symbol;
 };
 
-export type DataFormControlPropsWithoutBulkEditing<
-	Item,
-	ValueType = any,
-> = Omit< DataFormControlProps< Item, ValueType >, 'data' | 'value' > & {
+export type DataFormUniqueControlProps< Item, ValueType = any > = Omit<
+	DataFormControlProps< Item, ValueType >,
+	'data' | 'value'
+> & {
 	data: Item;
 	value?: ValueType;
 };
@@ -570,5 +570,4 @@ export interface FieldLayoutProps< Item > {
 	field: FormField;
 	onChange: ( value: any ) => void;
 	hideLabelFromVision?: boolean;
-	isBulkEditing?: boolean;
 }

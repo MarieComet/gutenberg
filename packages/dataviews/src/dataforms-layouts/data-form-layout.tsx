@@ -26,9 +26,9 @@ function doesCombinedFieldSupportBulkEdits< Item >(
 	return combinedField.children.some( ( child ) => {
 		const fieldId = typeof child === 'string' ? child : child.id;
 
-		return fieldDefinitions.find(
+		return ! fieldDefinitions.find(
 			( fieldDefinition ) => fieldDefinition.id === fieldId
-		)?.supportsBulkEditing;
+		)?.unique;
 	} );
 }
 
@@ -95,8 +95,7 @@ export function DataFormLayout< Item >( {
 							formField,
 							fieldDefinitions
 						) ) ||
-						( fieldDefinition &&
-							! fieldDefinition.supportsBulkEditing ) )
+						( fieldDefinition && fieldDefinition.unique ) )
 				) {
 					return null;
 				}
