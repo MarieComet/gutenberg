@@ -23,14 +23,14 @@ const { Menu, kebabCase } = unlock( componentsPrivateApis );
 function useEditedEntityRecordsWithPermissions( postType, postIds ) {
 	const { items, permissions } = useSelect(
 		( select ) => {
-			const { getEditedEntityRecord, getEntityRecordPermissions } =
+			const { getEditedEntityRecords, getEntityRecordsPermissions } =
 				unlock( select( coreStore ) );
 			return {
-				items: postIds.map( ( postId ) =>
-					getEditedEntityRecord( 'postType', postType, postId )
-				),
-				permissions: postIds.map( ( postId ) =>
-					getEntityRecordPermissions( 'postType', postType, postId )
+				items: getEditedEntityRecords( 'postType', postType, postIds ),
+				permissions: getEntityRecordsPermissions(
+					'postType',
+					postType,
+					postIds
 				),
 			};
 		},
