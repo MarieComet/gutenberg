@@ -248,7 +248,7 @@ export const BlockBindingsPanel = ( {
 							select,
 							context,
 						} );
-						if ( sourceList.length ) {
+						if ( Object.keys( sourceList ).length ) {
 							_fieldsList[ sourceName ] = sourceList;
 						}
 					}
