@@ -200,7 +200,7 @@ function render_block_core_search( $attributes, $content, $block ) {
 			'ariaLabelExpanded'             => $aria_label_expanded,
 			'ariaLabelCollapsed'            => $aria_label_collapsed,
 		);
-		$form_directives      .= '
+		$form_directives     .= '
 		 data-wp-class--wp-block-search__searchfield-hidden="!context.isSearchInputVisible"
 		 data-wp-on-async--keydown="actions.handleSearchKeydown"
 		 data-wp-on-async--focusout="actions.handleSearchFocusout"
