@@ -53,7 +53,7 @@ function {{namespaceSnakeCase}}_{{slugSnakeCase}}_block_init() {
 		);
 	}
 	// Register the blocks.
-	$blocks = glob( __DIR__  . '/*', GLOB_ONLYDIR );
+	$blocks = glob( __DIR__  . '/build/*', GLOB_ONLYDIR );
 	foreach ( $blocks as $block ) {
 		register_block_type( $block );
 	}
