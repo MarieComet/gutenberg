@@ -27,6 +27,7 @@ import DataFormContext from '../../components/dataform-context';
 import { DataFormLayout } from '../data-form-layout';
 import { isCombinedField } from '../is-combined-field';
 import { MIXED_VALUE } from '../../constants';
+import useFieldValue from '../use-field-value';
 
 function DropdownHeader( {
 	title,
@@ -99,21 +100,7 @@ function PanelDropdown< Item >( {
 		};
 	}, [ field ] );
 
-	const fieldValue = useMemo( () => {
-		if ( Array.isArray( data ) ) {
-			const [ firstRecord, ...remainingRecords ] = data;
-			const firstValue = fieldDefinition.getValue( {
-				item: firstRecord,
-			} );
-			const intersects = remainingRecords.every( ( item ) => {
-				return fieldDefinition.getValue( { item } ) === firstValue;
-			} );
-			return intersects ? firstValue : MIXED_VALUE;
-		}
-		return fieldDefinition.getValue( {
-			item: data,
-		} );
-	}, [ data, fieldDefinition ] );
+	const fieldValue = useFieldValue( data, field.id );
 
 	// Memoize popoverProps to avoid returning a new object every time.
 	const popoverProps = useMemo(
