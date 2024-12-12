@@ -279,21 +279,6 @@ _Returns_
 
 -   `ET.Updatable< EntityRecord > | false`: The entity record, merged with its edits.
 
-### getEditedEntityRecords
-
-Returns a list of entity records, merged with their edits.
-
-_Parameters_
-
--   _state_ `State`: State tree.
--   _kind_ `string`: Entity kind.
--   _name_ `string`: Entity name.
--   _recordIds_ `EntityRecordKey[]`: Record IDs.
-
-_Returns_
-
--   `Array< ET.Updatable< EntityRecord > | false >`: The list of entity records, merged with their edits.
-
 ### getEmbedPreview
 
 Returns the embed preview for the given URL.
