@@ -58,6 +58,22 @@ const predefinedPluginTemplates = {
 			},
 			viewScript: 'file:./view.js',
 			example: {},
+			transformer: ( view ) => {
+				const {
+					variantVars: { isMultiVariant },
+					slug,
+					folderName,
+					plugin,
+				} = view;
+
+				return {
+					...view,
+					folderName:
+						isMultiVariant && plugin
+							? `${ folderName }/${ slug }`
+							: view.folderName,
+				};
+			},
 		},
 		variants: {
 			static: {},
@@ -65,6 +81,12 @@ const predefinedPluginTemplates = {
 				slug: 'example-dynamic',
 				title: 'Example Dynamic',
 				render: 'file:./render.php',
+			},
+			multi: {
+				customScripts: {
+					'build-blocks-manifest': 'wp-scripts build-blocks-manifest',
+					postbuild: 'npm run build-blocks-manifest',
+				},
 			},
 		},
 	},
