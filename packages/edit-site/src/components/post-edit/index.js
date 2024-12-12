@@ -64,9 +64,12 @@ function PostEditForm( { postType, postId } ) {
 			return {
 				record:
 					ids.length === 1 ? getEditedEntityRecord( ...args ) : null,
-				hasFinishedResolution: hasFinished(
-					'getEditedEntityRecord',
-					args
+				hasFinishedResolution: ids.every( ( id ) =>
+					hasFinished( 'getEditedEntityRecord', [
+						'postType',
+						postType,
+						id,
+					] )
 				),
 				records:
 					ids.length > 1
