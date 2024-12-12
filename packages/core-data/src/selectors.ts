@@ -892,6 +892,57 @@ export const getEditedEntityRecord = createSelector(
 );
 
 /**
+ * Returns a list of entity records, merged with their edits.
+ *
+ * @param state     State tree.
+ * @param kind      Entity kind.
+ * @param name      Entity name.
+ * @param recordIds Record IDs.
+ *
+ * @return The list of entity records, merged with their edits.
+ */
+export const getEditedEntityRecords = createSelector(
+	< EntityRecord extends ET.EntityRecord< any > >(
+		state: State,
+		kind: string,
+		name: string,
+		recordIds: EntityRecordKey[]
+	): Array< ET.Updatable< EntityRecord > | false > => {
+		return recordIds.map( ( recordId ) =>
+			getEditedEntityRecord( state, kind, name, recordId )
+		);
+	},
+	(
+		state: State,
+		kind: string,
+		name: string,
+		recordIds: EntityRecordKey[],
+		query?: GetRecordsHttpQuery
+	) => {
+		const context = query?.context ?? 'default';
+		return [
+			state.entities.config,
+			...recordIds.map(
+				( recordId ) =>
+					state.entities.records?.[ kind ]?.[ name ]?.queriedData
+						.items[ context ]?.[ recordId ]
+			),
+			...recordIds.map(
+				( recordId ) =>
+					state.entities.records?.[ kind ]?.[ name ]?.queriedData
+						.itemIsComplete[ context ]?.[ recordId ]
+			),
+			...recordIds.map(
+				( recordId ) =>
+					state.entities.records?.[ kind ]?.[ name ]?.edits?.[
+						recordId
+					]
+			),
+		];
+	}
+);
+
+/**
  * Returns true if the specified entity record is autosaving, and false otherwise.
  *
  * @param state    State tree.
