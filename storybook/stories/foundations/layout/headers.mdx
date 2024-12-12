@@ -1,9 +1,13 @@
+{/* TODO: find a less hacky way to import global and component styles */}
+import '../../../../packages/components/build-style/style.css';
+import './style.css';
+
 import { Meta } from '@storybook/addon-docs/blocks';
 
-import { Button } from '@wordpress/components';
+import { HeaderExample } from './headers-code';
 
 <Meta title="Foundations/Layout/Headers" name="page" />
 
 # Headers
 
-{console.log(Button)}
+<HeaderExample />
