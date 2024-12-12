@@ -102,7 +102,12 @@ function render_block_core_search( $attributes, $content, $block ) {
 			$input->set_attribute( 'tabindex', '-1' );
 		}
 
-		// Instant search is only available when using the enhanced pagination.
+		// Instant search is only enabled when both are true:
+		// 1. The block is a child of a Query Loop block.
+		// 2. The Query Loop block has the enhanced pagination feature enabled.
+		//
+		// Instant search functionality does not make sense without enhanced pagination
+		// because we might have to paginate the results of the search too!
 		if ( $enhanced_pagination ) {
 			wp_enqueue_script_module( '@wordpress/block-library/search/view' );
 
