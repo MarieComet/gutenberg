@@ -119,7 +119,7 @@ export function PageAttributesParent( {
 	const [ fieldValue, setFieldValue ] = useState< null | string >( null );
 
 	const pageId = typeof value === 'symbol' ? undefined : value;
-	const postId = Array.isArray( data ) ? data[ 0 ].id : data.id;
+	const postId = Array.isArray( data ) ? undefined : data.id;
 	const postTypeSlug = Array.isArray( data ) ? data[ 0 ].type : data.type;
 
 	const { parentPostTitle, pageItems, isHierarchical } = useSelect(
