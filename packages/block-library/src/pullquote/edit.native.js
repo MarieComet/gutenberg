@@ -60,7 +60,7 @@ const getBorderColor = ( props ) => {
 
 function PullQuoteEdit( props ) {
 	const { attributes, setAttributes, isSelected, insertBlocksAfter } = props;
-	const { textAlign, citation, value } = attributes;
+	const { textAlign, citation } = attributes;
 
 	const blockProps = useBlockProps( {
 		backgroundColor: getBackgroundColor( props ),
@@ -82,13 +82,7 @@ function PullQuoteEdit( props ) {
 			<Figure { ...blockProps }>
 				<BlockQuote textColor={ getTextColor( props ) }>
 					<RichText
-						identifier="value"
-						value={ value }
-						onChange={ ( nextValue ) =>
-							setAttributes( {
-								value: nextValue,
-							} )
-						}
+						attributeKey="value"
 						aria-label={ __( 'Pullquote text' ) }
 						placeholder={
 							// translators: placeholder text used for the quote
@@ -98,17 +92,11 @@ function PullQuoteEdit( props ) {
 					/>
 					{ shouldShowCitation && (
 						<RichText
-							identifier="citation"
-							value={ citation }
+							attributeKey="citation"
 							aria-label={ __( 'Pullquote citation text' ) }
 							placeholder={
 								// translators: placeholder text used for the citation
 								__( 'Add citation' )
-							}
-							onChange={ ( nextCitation ) =>
-								setAttributes( {
-									citation: nextCitation,
-								} )
 							}
 							__unstableMobileNoFocusOnMount
 							textAlign={ textAlign ?? 'center' }

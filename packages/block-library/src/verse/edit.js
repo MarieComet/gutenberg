@@ -23,7 +23,7 @@ export default function VerseEdit( {
 	insertBlocksAfter,
 	style,
 } ) {
-	const { textAlign, content } = attributes;
+	const { textAlign } = attributes;
 	const blockProps = useBlockProps( {
 		className: clsx( {
 			[ `has-text-align-${ textAlign }` ]: textAlign,
@@ -43,14 +43,8 @@ export default function VerseEdit( {
 			</BlockControls>
 			<RichText
 				tagName="pre"
-				identifier="content"
+				attributeKey="content"
 				preserveWhiteSpace
-				value={ content }
-				onChange={ ( nextContent ) => {
-					setAttributes( {
-						content: nextContent,
-					} );
-				} }
 				aria-label={ __( 'Verse text' ) }
 				placeholder={ __( 'Write verse…' ) }
 				onRemove={ onRemove }

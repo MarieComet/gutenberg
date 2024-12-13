@@ -94,7 +94,7 @@ export function Caption( {
 			{ showCaption &&
 				( ! RichText.isEmpty( caption ) || isSelected ) && (
 					<RichText
-						identifier={ attributeKey }
+						attributeKey={ attributeKey }
 						tagName={ tagName }
 						className={ clsx(
 							className,
@@ -105,10 +105,6 @@ export function Caption( {
 						ref={ ref }
 						aria-label={ label }
 						placeholder={ placeholder }
-						value={ caption }
-						onChange={ ( value ) =>
-							setAttributes( { [ attributeKey ]: value } )
-						}
 						inlineToolbar
 						__unstableOnSplitAtEnd={ () =>
 							insertBlocksAfter(

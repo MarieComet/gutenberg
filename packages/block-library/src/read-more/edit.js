@@ -11,7 +11,7 @@ import { createBlock, getDefaultBlockName } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
 export default function ReadMore( {
-	attributes: { content, linkTarget },
+	attributes: { linkTarget },
 	setAttributes,
 	insertBlocksAfter,
 } ) {
@@ -33,14 +33,10 @@ export default function ReadMore( {
 				</PanelBody>
 			</InspectorControls>
 			<RichText
-				identifier="content"
 				tagName="a"
+				attributeKey="content"
 				aria-label={ __( '“Read more” link text' ) }
 				placeholder={ __( 'Read more' ) }
-				value={ content }
-				onChange={ ( newValue ) =>
-					setAttributes( { content: newValue } )
-				}
 				__unstableOnSplitAtEnd={ () =>
 					insertBlocksAfter( createBlock( getDefaultBlockName() ) )
 				}

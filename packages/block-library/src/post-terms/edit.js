@@ -98,15 +98,11 @@ export default function PostTermsEdit( {
 				{ isLoading && hasPost && <Spinner /> }
 				{ ! isLoading && ( isSelected || prefix ) && (
 					<RichText
-						identifier="prefix"
+						attributeKey="prefix"
 						allowedFormats={ ALLOWED_FORMATS }
 						className="wp-block-post-terms__prefix"
 						aria-label={ __( 'Prefix' ) }
 						placeholder={ __( 'Prefix' ) + ' ' }
-						value={ prefix }
-						onChange={ ( value ) =>
-							setAttributes( { prefix: value } )
-						}
 						tagName="span"
 					/>
 				) }
@@ -142,15 +138,11 @@ export default function PostTermsEdit( {
 						__( 'Term items not found.' ) ) }
 				{ ! isLoading && ( isSelected || suffix ) && (
 					<RichText
-						identifier="suffix"
+						attributeKey="suffix"
 						allowedFormats={ ALLOWED_FORMATS }
 						className="wp-block-post-terms__suffix"
 						aria-label={ __( 'Suffix' ) }
 						placeholder={ ' ' + __( 'Suffix' ) }
-						value={ suffix }
-						onChange={ ( value ) =>
-							setAttributes( { suffix: value } )
-						}
 						tagName="span"
 						__unstableOnSplitAtEnd={ () =>
 							insertBlocksAfter(

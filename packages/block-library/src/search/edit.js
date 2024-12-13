@@ -69,7 +69,6 @@ export default function SearchEdit( {
 	clientId,
 } ) {
 	const {
-		label,
 		showLabel,
 		placeholder,
 		width,
@@ -354,16 +353,12 @@ export default function SearchEdit( {
 
 				{ ! buttonUseIcon && (
 					<RichText
-						identifier="buttonText"
+						attributeKey="buttonText"
 						className={ buttonClasses }
 						style={ buttonStyles }
 						aria-label={ __( 'Button text' ) }
 						placeholder={ __( 'Add button text…' ) }
 						withoutInteractiveFormatting
-						value={ buttonText }
-						onChange={ ( html ) =>
-							setAttributes( { buttonText: html } )
-						}
 						onClick={ handleButtonClick }
 					/>
 				) }
@@ -555,13 +550,11 @@ export default function SearchEdit( {
 
 			{ showLabel && (
 				<RichText
-					identifier="label"
+					attributeKey="label"
 					className={ labelClassnames }
 					aria-label={ __( 'Label text' ) }
 					placeholder={ __( 'Add label…' ) }
 					withoutInteractiveFormatting
-					value={ label }
-					onChange={ ( html ) => setAttributes( { label: html } ) }
 					style={ typographyProps.style }
 				/>
 			) }

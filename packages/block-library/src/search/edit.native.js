@@ -395,15 +395,11 @@ export default function SearchEdit( {
 					>
 						<RichText
 							className="wp-block-search__button"
-							identifier="buttonText"
+							attributeKey="buttonText"
 							tagName="p"
 							style={ richTextButtonStyle }
 							placeholder={ buttonPlaceholderText }
-							value={ buttonText }
 							withoutInteractiveFormatting
-							onChange={ ( html ) =>
-								setAttributes( { buttonText: html } )
-							}
 							minWidth={ MIN_BUTTON_WIDTH }
 							maxWidth={ blockWidth - MARGINS }
 							textAlign="center"
@@ -449,15 +445,11 @@ export default function SearchEdit( {
 				>
 					<RichText
 						className="wp-block-search__label"
-						identifier="label"
+						attributeKey="label"
 						tagName="p"
 						style={ styles.richTextLabel }
 						placeholder={ __( 'Add label…' ) }
 						withoutInteractiveFormatting
-						value={ label }
-						onChange={ ( html ) =>
-							setAttributes( { label: html } )
-						}
 						isSelected={ isLabelSelected }
 						__unstableMobileNoFocusOnMount={ ! isSelected }
 						unstableOnFocus={ () => {

@@ -30,7 +30,7 @@ function PullQuoteEdit( {
 	isSelected,
 	insertBlocksAfter,
 } ) {
-	const { textAlign, citation, value } = attributes;
+	const { textAlign, citation } = attributes;
 	const blockProps = useBlockProps( {
 		className: clsx( {
 			[ `has-text-align-${ textAlign }` ]: textAlign,
@@ -51,14 +51,8 @@ function PullQuoteEdit( {
 			<Figure { ...blockProps }>
 				<BlockQuote>
 					<RichText
-						identifier="value"
+						attributeKey="value"
 						tagName="p"
-						value={ value }
-						onChange={ ( nextValue ) =>
-							setAttributes( {
-								value: nextValue,
-							} )
-						}
 						aria-label={ __( 'Pullquote text' ) }
 						placeholder={
 							// translators: placeholder text used for the quote
@@ -68,19 +62,13 @@ function PullQuoteEdit( {
 					/>
 					{ shouldShowCitation && (
 						<RichText
-							identifier="citation"
 							tagName={ isWebPlatform ? 'cite' : undefined }
+							attributeKey="citation"
 							style={ { display: 'block' } }
-							value={ citation }
 							aria-label={ __( 'Pullquote citation text' ) }
 							placeholder={
 								// translators: placeholder text used for the citation
 								__( 'Add citation' )
-							}
-							onChange={ ( nextCitation ) =>
-								setAttributes( {
-									citation: nextCitation,
-								} )
 							}
 							className="wp-block-pullquote__citation"
 							__unstableMobileNoFocusOnMount
