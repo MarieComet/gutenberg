@@ -4,10 +4,33 @@ import './style.css';
 
 import { Meta } from '@storybook/addon-docs/blocks';
 
-import { HeaderExample } from './headers-code';
+import { HeaderExampleLowDensity } from './headers-code';
+import { HeaderExampleHighDensity } from './headers-code';
 
 <Meta title="Foundations/Layout/Headers" name="page" />
 
 # Headers
+Headers provide a high-level overview, and access to actions relating to a specific UI section. A standardised design gives users a predictable way to complete common tasks.
 
-<HeaderExample />
+While the general composition is consistent, there are two different header patterns to use, based on density. 
+
+## Low density
+
+<HeaderExampleLowDensity />
+
+* Use the low density header pattern in the primary section of an admin page. 
+* Always include a visible title, typically using the `h2` element.
+* Include no more than one visible action.
+* Secondary actions are accessible via 'More actions' menu.
+* Include a summary/description where appropriate, but keep it short.
+* Use a 'Back' icon-button to provide access to the parent secton
+
+## High density
+
+<HeaderExampleHighDensity />
+
+* Use the high density header pattern in narrower, secondary sections and editor panels.
+* Contain all actions in a Menu.
+* Always include a visible title, typically using the `h3` element, and use a smaller font size, typically `$font-size-medium`.
+* Optionally include a decorative element like an icon or an image. This element should be `24px` x `24px` and relate directly to the title.
+* Use a 'Back' icon-button to provide access to the parent secton
