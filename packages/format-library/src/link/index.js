@@ -227,6 +227,7 @@ export const link = {
 		_id: 'id',
 		target: 'target',
 		rel: 'rel',
+		class: 'class',
 	},
 	__unstablePasteRule( value, { html, plainText } ) {
 		const pastedText = ( html || plainText )
