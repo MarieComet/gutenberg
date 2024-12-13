@@ -390,7 +390,7 @@ const ThreadWrapper = ( { children, thread, className, onClick } ) => {
 			ref={ refs.setFloating }
 			className={ className }
 			spacing="3"
-			onclick={ onClick }
+			onClick={ onClick }
 			style={ {
 				top: y,
 			} }
