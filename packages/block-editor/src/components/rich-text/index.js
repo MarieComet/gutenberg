@@ -82,8 +82,8 @@ export function RichTextWrapper(
 		children,
 		tagName = 'div',
 		attributeKey,
-		value: adjustedValue = '',
-		onChange: adjustedOnChange,
+		value: originalValue,
+		onChange: originalOnChange,
 		isSelected: originalIsSelected,
 		multiline,
 		inlineToolbar,
@@ -127,6 +127,32 @@ export function RichTextWrapper(
 	const blockBindings = context[ blockBindingsKey ];
 	const blockContext = useContext( BlockContext );
 	const registry = useRegistry();
+
+	const adjustedValue = useSelect(
+		( select ) => {
+			if ( originalValue !== undefined || ! attributeKey ) {
+				return originalValue || '';
+			}
+
+			const blockAttributes =
+				select( blockEditorStore ).getBlockAttributes( clientId );
+			return blockAttributes[ attributeKey ] || '';
+		},
+		[ attributeKey, clientId, originalValue ]
+	);
+	const adjustedOnChange = useCallback( () => {
+		if ( originalOnChange || ! attributeKey ) {
+			return originalOnChange;
+		}
+		return ( nextValue ) => {
+			registry
+				.dispatch( blockEditorStore )
+				.updateBlockAttributes( clientId, {
+					[ attributeKey ]: nextValue,
+				} );
+		};
+	}, [ attributeKey, clientId, originalOnChange, registry ] );
+
 	const selector = ( select ) => {
 		// Avoid subscribing to the block editor store if the block is not
 		// selected.
@@ -169,13 +195,13 @@ export function RichTextWrapper(
 	const { disableBoundBlock, bindingsPlaceholder, bindingsLabel } = useSelect(
 		( select ) => {
 			if (
-				! blockBindings?.[ identifier ] ||
+				! blockBindings?.[ attributeKey ] ||
 				! canBindBlock( blockName )
 			) {
 				return {};
 			}
 
-			const relatedBinding = blockBindings[ identifier ];
+			const relatedBinding = blockBindings[ attributeKey ];
 			const blockBindingsSource = getBlockBindingsSource(
 				relatedBinding.source
 			);
@@ -236,10 +262,10 @@ export function RichTextWrapper(
 			};
 		},
 		[
-			blockBindings,
-			identifier,
-			blockName,
 			adjustedValue,
+			attributeKey,
+			blockBindings,
+			blockName,
 			clientId,
 			blockContext,
 		]
