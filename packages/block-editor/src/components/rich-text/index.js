@@ -82,7 +82,7 @@ export function RichTextWrapper(
 		children,
 		tagName = 'div',
 		attributeKey,
-		value: originalValue,
+		value: adjustedValue,
 		onChange: originalOnChange,
 		isSelected: originalIsSelected,
 		multiline,
@@ -128,30 +128,24 @@ export function RichTextWrapper(
 	const blockContext = useContext( BlockContext );
 	const registry = useRegistry();
 
-	const adjustedValue = useSelect(
-		( select ) => {
-			if ( originalValue !== undefined || ! attributeKey ) {
-				return originalValue || '';
+	const adjustedOnChange = useCallback(
+		( nextValue ) => {
+			if ( ! attributeKey ) {
+				if ( ! originalOnChange ) {
+					// Todo: Add a warning here.
+					return;
+				}
+				originalOnChange( nextValue );
+				return;
 			}
-
-			const blockAttributes =
-				select( blockEditorStore ).getBlockAttributes( clientId );
-			return blockAttributes[ attributeKey ] || '';
-		},
-		[ attributeKey, clientId, originalValue ]
-	);
-	const adjustedOnChange = useCallback( () => {
-		if ( originalOnChange || ! attributeKey ) {
-			return originalOnChange;
-		}
-		return ( nextValue ) => {
 			registry
 				.dispatch( blockEditorStore )
 				.updateBlockAttributes( clientId, {
 					[ attributeKey ]: nextValue,
 				} );
-		};
-	}, [ attributeKey, clientId, originalOnChange, registry ] );
+		},
+		[ attributeKey, clientId, originalOnChange, registry ]
+	);
 
 	const selector = ( select ) => {
 		// Avoid subscribing to the block editor store if the block is not
@@ -546,11 +540,26 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 	const context = useBlockEditContext();
 	const isPreviewMode = context[ isPreviewModeKey ];
 
+	const adjustedValue = useSelect(
+		( select ) => {
+			if ( props.value !== undefined || ! props.attributeKey ) {
+				return props.value || '';
+			}
+
+			const blockAttributes = select(
+				blockEditorStore
+			).getBlockAttributes( context.clientId );
+			return blockAttributes[ props.attributeKey ] || '';
+		},
+		[ props.attributeKey, context.clientId, props.value ]
+	);
+
 	if ( isPreviewMode ) {
 		// Remove all non-content props.
 		const {
 			children,
 			tagName: Tag = 'div',
+			attributeKey,
 			value,
 			onChange,
 			isSelected,
@@ -581,13 +590,20 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 			<Tag
 				{ ...contentProps }
 				dangerouslySetInnerHTML={ {
-					__html: valueToHTMLString( value, multiline ),
+					__html: valueToHTMLString( adjustedValue, multiline ),
 				} }
 			/>
 		);
 	}
 
-	return <PrivateRichText ref={ ref } { ...props } readOnly={ false } />;
+	return (
+		<PrivateRichText
+			ref={ ref }
+			{ ...props }
+			value={ adjustedValue }
+			readOnly={ false }
+		/>
+	);
 } );
 
 PublicForwardedRichTextContainer.Content = Content;
