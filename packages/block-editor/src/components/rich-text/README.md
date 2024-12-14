@@ -16,6 +16,10 @@ _Required._ Called when the value changes.
 
 _Optional._ If the editable field is bound to a block attribute (through the `value` and `onChange` props) then this prop should specify the attribute name. The field will use this value to set the block editor selection correctly, specifying in which attribute and at what offset does the selection start or end.
 
+### `attributeKey: String`
+
+_Optional._ If the editable field is bound to a block attribute, then this prop should specify the key of the attribute. The editable field will use the key name to supply the default handling for the `value`, `onChange` and `identifier` props, when any of these are not explicitly set.
+
 ### `tagName: String`
 
 _Default: `div`._ The [tag name](https://www.w3.org/TR/html51/syntax.html#tag-name) of the editable element.
@@ -27,7 +31,7 @@ _Optional._ Placeholder text to show when the field is empty, similar to the
 
 ### `disableLineBreaks: Boolean`
 
-_Optional._  Disables inserting line breaks on `Enter` when it is set to `true`
+_Optional._ Disables inserting line breaks on `Enter` when it is set to `true`
 
 ### `onReplace( blocks: Array ): Function`
 
@@ -113,13 +117,11 @@ registerBlockType( /* ... */, {
 } );
 ```
 
-
 ## RichTextToolbarButton
 
 Slot to extend the format toolbar. Use it in the edit function of a `registerFormatType` call to surface the format to the UI.
 
 ### Example
-
 
 ```js
 import { registerFormatType } from '@wordpress/rich-text';
