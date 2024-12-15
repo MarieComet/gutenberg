@@ -39,6 +39,7 @@
 	"supports": {
 		"anchor": true,
 		"align": [ "wide", "full" ],
+		"__experimentalLayout": true,
 		"html": false,
 		"__experimentalBorder": {
 			"color": true,
