@@ -249,10 +249,7 @@ export default async function fetchLinkSuggestions(
 	if ( ! type || type === 'post-type-archive' ) {
 		queries.push(
 			apiFetch< PostTypesAPIResult[] >( {
-				path: addQueryArgs( '/wp/v2/types', {
-					page,
-					per_page: perPage,
-				} ),
+				path: addQueryArgs( '/wp/v2/types' ),
 			} )
 				.then( ( results ) => {
 					const resultValues = Object.values( results );
