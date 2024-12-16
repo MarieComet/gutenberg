@@ -267,6 +267,7 @@ export default function ViewGrid< Item >( {
 		{ regularFields: [], badgeFields: [] }
 	);
 	const hasData = !! data?.length;
+	const hasBulkActions = useSomeItemHasAPossibleBulkAction( actions, data );
 	const updatedPreviewSize = useUpdatedPreviewSizeOnViewportChange();
 	const hasBulkActions = useSomeItemHasAPossibleBulkAction( actions, data );
 	const usedPreviewSize = updatedPreviewSize || view.layout?.previewSize;
