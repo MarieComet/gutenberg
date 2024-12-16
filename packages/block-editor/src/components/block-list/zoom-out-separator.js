@@ -25,6 +25,7 @@ export function ZoomOutSeparator( {
 	clientId,
 	rootClientId = '',
 	position = 'top',
+	isEmptyBlockList,
 } ) {
 	const [ isDraggedOver, setIsDraggedOver ] = useState( false );
 	const {
@@ -59,7 +60,7 @@ export function ZoomOutSeparator( {
 
 	const isReducedMotion = useReducedMotion();
 
-	if ( ! clientId ) {
+	if ( ! clientId && ! isEmptyBlockList ) {
 		return;
 	}
 
@@ -70,7 +71,7 @@ export function ZoomOutSeparator( {
 		sectionClientIds &&
 		sectionClientIds.includes( clientId );
 
-	if ( ! isSectionBlock ) {
+	if ( ! isSectionBlock && ! isEmptyBlockList ) {
 		return null;
 	}
 
