@@ -587,9 +587,8 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 				return props.value || '';
 			}
 
-			const blockBindingsSourceName =
-				blockBindings?.[ props.attributeKey ]?.source;
-			if ( ! blockBindingsSourceName ) {
+			const blockBinding = blockBindings?.[ props.attributeKey ];
+			if ( ! blockBinding?.source ) {
 				const blockAttributes = select(
 					blockEditorStore
 				).getBlockAttributes( context.clientId );
@@ -598,7 +597,7 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 
 			const blockBindingsSource = unlock(
 				select( blocksStore )
-			).getBlockBindingsSource( blockBindingsSourceName );
+			).getBlockBindingsSource( blockBinding.source );
 
 			const bindingsContext = {};
 			for ( const [ key, value ] of Object.entries( blockContext ) ) {
@@ -609,7 +608,9 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 
 			return (
 				blockBindingsSource?.getValues( {
-					bindings: blockBindings,
+					bindings: {
+						[ props.attributeKey ]: { args: blockBinding.args },
+					},
 					context: bindingsContext,
 					clientId: context.clientId,
 					select,
