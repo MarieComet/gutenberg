@@ -394,11 +394,11 @@ export function blockBindingsSources( state = {}, action ) {
 	switch ( action.type ) {
 		case 'ADD_BLOCK_BINDINGS_SOURCE':
 			// Only open this API in Gutenberg and for `core/post-meta` for the moment.
-			let getFieldsList;
+			let fields;
 			if ( globalThis.IS_GUTENBERG_PLUGIN ) {
-				getFieldsList = action.getFieldsList;
+				fields = action.fields;
 			} else if ( action.name === 'core/post-meta' ) {
-				getFieldsList = action.getFieldsList;
+				fields = action.fields;
 			}
 			return {
 				...state,
@@ -413,7 +413,7 @@ export function blockBindingsSources( state = {}, action ) {
 					// Only set `canUserEditValue` if `setValues` is also defined.
 					canUserEditValue:
 						action.setValues && action.canUserEditValue,
-					getFieldsList,
+					fields,
 				},
 			};
 		case 'REMOVE_BLOCK_BINDINGS_SOURCE':

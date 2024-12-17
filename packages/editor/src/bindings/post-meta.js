@@ -138,7 +138,7 @@ export default {
 
 		return true;
 	},
-	getFieldsList( { select, context } ) {
+	fields( { select, context } ) {
 		return getPostMetaFields( select, context );
 	},
 };

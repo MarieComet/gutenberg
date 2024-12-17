@@ -1697,15 +1697,15 @@ describe( 'blocks', () => {
 			expect( getBlockBindingsSource( 'core/testing' ) ).toBeUndefined();
 		} );
 
-		// Check the `getFieldsList` callback is correct.
-		it( 'should reject invalid getFieldsList callback', () => {
+		// Check the `fields` callback is correct.
+		it( 'should reject invalid fields callback', () => {
 			registerBlockBindingsSource( {
 				name: 'core/testing',
 				label: 'testing',
-				getFieldsList: 'should be a function',
+				fields: 'should be a function',
 			} );
 			expect( console ).toHaveWarnedWith(
-				'Block bindings source getFieldsList must be a function.'
+				'Block bindings source fields must be a function.'
 			);
 			expect( getBlockBindingsSource( 'core/testing' ) ).toBeUndefined();
 		} );
@@ -1718,7 +1718,7 @@ describe( 'blocks', () => {
 				getValues: () => 'value',
 				setValues: () => 'new values',
 				canUserEditValue: () => true,
-				getFieldsList: () => {
+				fields: () => {
 					return { field: 'value' };
 				},
 			};
@@ -1742,7 +1742,7 @@ describe( 'blocks', () => {
 			expect( source.getValues ).toBeUndefined();
 			expect( source.setValues ).toBeUndefined();
 			expect( source.canUserEditValue ).toBeUndefined();
-			expect( source.getFieldsList ).toBeUndefined();
+			expect( source.fields ).toBeUndefined();
 			unregisterBlockBindingsSource( 'core/valid-source' );
 		} );
 

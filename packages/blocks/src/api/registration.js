@@ -800,7 +800,7 @@ export const registerBlockBindingsSource = ( source ) => {
 		getValues,
 		setValues,
 		canUserEditValue,
-		getFieldsList,
+		fields,
 	} = source;
 
 	const existingSource = unlock(
@@ -811,7 +811,7 @@ export const registerBlockBindingsSource = ( source ) => {
 	 * Check if the source has been already registered on the client.
 	 * If any property expected to be "client-only" is defined, return a warning.
 	 */
-	// TODO: Check if server prop getFieldsList has to be included in serverProps.
+	// TODO: Check if server prop fields has to be included in serverProps.
 	const serverProps = [ 'label', 'usesContext' ];
 	for ( const prop in existingSource ) {
 		if ( ! serverProps.includes( prop ) && existingSource[ prop ] ) {
@@ -893,14 +893,14 @@ export const registerBlockBindingsSource = ( source ) => {
 		warning( 'Block bindings source canUserEditValue must be a function.' );
 		return;
 	}
-	// Check the `getFieldsList` property is correct.
+	// Check the `fields` property is correct.
 	if (
-		getFieldsList &&
-		typeof getFieldsList !== 'function' &&
-		typeof getFieldsList !== 'object'
+		fields &&
+		typeof fields !== 'function' &&
+		typeof fields !== 'object'
 	) {
 		warning(
-			'Block bindings source getFieldsList must be a function or an object.'
+			'Block bindings source fields must be a function or an object.'
 		);
 	}
 
