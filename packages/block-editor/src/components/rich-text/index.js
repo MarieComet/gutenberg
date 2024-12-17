@@ -20,7 +20,10 @@ import {
 	removeFormat,
 } from '@wordpress/rich-text';
 import { Popover } from '@wordpress/components';
-import { getBlockBindingsSource } from '@wordpress/blocks';
+import {
+	getBlockBindingsSource,
+	store as blocksStore,
+} from '@wordpress/blocks';
 import deprecated from '@wordpress/deprecated';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -41,6 +44,7 @@ import { Content, valueToHTMLString } from './content';
 import { withDeprecations } from './with-deprecations';
 import { canBindBlock } from '../../utils/block-bindings';
 import BlockContext from '../block-context';
+import { unlock } from '../../lock-unlock';
 
 export const keyboardShortcutContext = createContext();
 export const inputEventContext = createContext();
@@ -129,22 +133,57 @@ export function RichTextWrapper(
 	const registry = useRegistry();
 
 	const adjustedOnChange = useCallback(
-		( nextValue ) => {
-			if ( ! attributeKey ) {
-				if ( ! originalOnChange ) {
-					// Todo: Add a warning here.
-					return;
-				}
-				originalOnChange( nextValue );
+		( newValue ) => {
+			if ( originalOnChange ) {
+				originalOnChange( newValue );
 				return;
 			}
-			registry
-				.dispatch( blockEditorStore )
-				.updateBlockAttributes( clientId, {
-					[ attributeKey ]: nextValue,
-				} );
+			if ( ! attributeKey ) {
+				// Todo: Add warning here.
+				return;
+			}
+			const blockBinding = blockBindings?.[ attributeKey ];
+			if ( ! blockBinding?.source ) {
+				registry
+					.dispatch( blockEditorStore )
+					.updateBlockAttributes( clientId, {
+						[ attributeKey ]: newValue,
+					} );
+				return;
+			}
+
+			const blockBindingsSource = unlock(
+				registry.select( blocksStore )
+			).getBlockBindingsSource( blockBinding.source );
+
+			const bindingsContext = {};
+			for ( const [ key, value ] of Object.entries( blockContext ) ) {
+				if ( blockBindingsSource?.usesContext?.includes( key ) ) {
+					bindingsContext[ key ] = value;
+				}
+			}
+
+			blockBindingsSource?.setValues( {
+				bindings: {
+					[ attributeKey ]: {
+						args: blockBinding?.args,
+						newValue,
+					},
+				},
+				clientId,
+				context: bindingsContext,
+				dispatch: registry.dispatch,
+				select: registry.select,
+			} );
 		},
-		[ attributeKey, clientId, originalOnChange, registry ]
+		[
+			attributeKey,
+			blockBindings,
+			blockContext,
+			clientId,
+			originalOnChange,
+			registry,
+		]
 	);
 
 	const selector = ( select ) => {
@@ -538,7 +577,9 @@ PrivateRichText.isEmpty = ( value ) => {
  */
 const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 	const context = useBlockEditContext();
+	const blockBindings = context[ blockBindingsKey ];
 	const isPreviewMode = context[ isPreviewModeKey ];
+	const blockContext = useContext( BlockContext );
 
 	const adjustedValue = useSelect(
 		( select ) => {
@@ -546,12 +587,42 @@ const PublicForwardedRichTextContainer = forwardRef( ( props, ref ) => {
 				return props.value || '';
 			}
 
-			const blockAttributes = select(
-				blockEditorStore
-			).getBlockAttributes( context.clientId );
-			return blockAttributes[ props.attributeKey ] || '';
+			const blockBindingsSourceName =
+				blockBindings?.[ props.attributeKey ]?.source;
+			if ( ! blockBindingsSourceName ) {
+				const blockAttributes = select(
+					blockEditorStore
+				).getBlockAttributes( context.clientId );
+				return blockAttributes[ props.attributeKey ] || '';
+			}
+
+			const blockBindingsSource = unlock(
+				select( blocksStore )
+			).getBlockBindingsSource( blockBindingsSourceName );
+
+			const bindingsContext = {};
+			for ( const [ key, value ] of Object.entries( blockContext ) ) {
+				if ( blockBindingsSource.usesContext?.includes( key ) ) {
+					bindingsContext[ key ] = value;
+				}
+			}
+
+			return (
+				blockBindingsSource?.getValues( {
+					bindings: blockBindings,
+					context: bindingsContext,
+					clientId: context.clientId,
+					select,
+				} )?.[ props.attributeKey ] || ''
+			);
 		},
-		[ props.attributeKey, context.clientId, props.value ]
+		[
+			blockContext,
+			blockBindings,
+			context.clientId,
+			props.attributeKey,
+			props.value,
+		]
 	);
 
 	if ( isPreviewMode ) {
