@@ -52,10 +52,9 @@ export const TemplateEdit = ( {
 				select( coreStore )
 			);
 
-			const isPostsPage = getPostsPageId() === postId.toString();
+			const isPostsPage = getPostsPageId() === postId;
 			const isFrontPage =
-				postType === 'page' &&
-				getHomePage()?.postId === postId.toString();
+				postType === 'page' && getHomePage()?.postId === postId;
 
 			return {
 				templates: allTemplates,

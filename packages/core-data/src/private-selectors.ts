@@ -119,7 +119,7 @@ export function getRegisteredPostMeta( state: State, postType: string ) {
 	return state.registeredPostMeta?.[ postType ] ?? {};
 }
 
-function normalizePageId( value: number | string | undefined ): string | null {
+function normalizePageId( value: number | string | undefined ): number | null {
 	if ( ! value || ! [ 'number', 'string' ].includes( typeof value ) ) {
 		return null;
 	}
@@ -129,7 +129,11 @@ function normalizePageId( value: number | string | undefined ): string | null {
 		return null;
 	}
 
-	return value.toString();
+	if ( typeof value === 'string' ) {
+		return parseInt( value, 10 );
+	}
+
+	return value;
 }
 
 interface SiteData {
