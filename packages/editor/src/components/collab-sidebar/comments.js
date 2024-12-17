@@ -2,7 +2,11 @@
  * External dependencies
  */
 import clsx from 'clsx';
-import { useFloating, autoUpdate } from '@floating-ui/react-dom';
+import {
+	useFloating,
+	autoUpdate,
+	offset as offsetMiddleware,
+} from '@floating-ui/react-dom';
 
 /**
  * WordPress dependencies
@@ -73,6 +77,13 @@ export function Comments( {
 		showCommentBoard && blockCommentId ? blockCommentId : null
 	);
 
+	// Object to store offsets for each board.
+	const offsetsRef = useRef( {} );
+
+	const updateOffsets = ( id, offset ) => {
+		offsetsRef.current[ id ] = offset;
+	};
+
 	const clearThreadFocus = () => {
 		setFocusThread( null );
 		setShowCommentBoard( false );
@@ -100,7 +111,7 @@ export function Comments( {
 			}
 			{ Array.isArray( threads ) &&
 				threads.length > 0 &&
-				threads.map( ( thread ) => (
+				threads.map( ( thread, index ) => (
 					<ParentWrapper
 						key={ thread.id }
 						id={ thread.id }
@@ -117,6 +128,9 @@ export function Comments( {
 							}
 						) }
 						onClick={ () => setFocusThread( thread.id ) }
+						offsetsRef={ offsetsRef }
+						updateOffsets={ updateOffsets }
+						previousThread={ threads[ index - 1 ] }
 					>
 						<Thread
 							thread={ thread }
@@ -370,12 +384,40 @@ const CommentBoard = ( { thread, onResolve, onEdit, onDelete, status } ) => {
 	);
 };
 
-const ThreadWrapper = ( { children, thread, className, onClick } ) => {
+const ThreadWrapper = ( {
+	children,
+	thread,
+	className,
+	onClick,
+	offsetsRef,
+	updateOffsets,
+	previousThread,
+} ) => {
 	const blockRef = useRef();
 	useBlockElementRef( thread.clientId, blockRef );
 
+	const selectedBlockElementRect = blockRef.current?.getBoundingClientRect();
+
+	const initialOffsetTop = selectedBlockElementRect?.top;
+
+	const previousElementY = previousThread
+		? offsetsRef.current[ previousThread.id ]
+		: 0;
+
+	const calculateOffset = () => {
+		if ( initialOffsetTop < previousElementY + 100 ) {
+			return previousElementY - initialOffsetTop + 100 + 20;
+		}
+		return 0;
+	};
+
 	const { y, refs } = useFloating( {
 		placement: 'right-start',
+		middleware: [
+			offsetMiddleware( {
+				crossAxis: calculateOffset(),
+			} ),
+		],
 		whileElementsMounted: autoUpdate,
 	} );
 
@@ -384,6 +426,12 @@ const ThreadWrapper = ( { children, thread, className, onClick } ) => {
 			refs.setReference( blockRef.current ); // Bind reference element
 		}
 	}, [ blockRef, refs ] );
+
+	useEffect( () => {
+		if ( y !== null && y !== 0 ) {
+			updateOffsets( thread.id, y ); // Pass the offset to the parent
+		}
+	}, [ y ] );
 
 	return (
 		<VStack
