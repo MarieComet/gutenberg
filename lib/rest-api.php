@@ -44,7 +44,7 @@ function gutenberg_register_archive_link_field() {
 		'archive_link',
 		array(
 			'get_callback'    => static function ( $post_object ) {
-				return (string) get_post_type_archive_link( $post_object['slug'] )
+				return (string) get_post_type_archive_link( $post_object['slug'] );
 			},
 			'update_callback' => null,
 			'schema'          => array(
