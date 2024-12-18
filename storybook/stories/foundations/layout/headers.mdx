@@ -2,10 +2,9 @@
 import '../../../../packages/components/build-style/style.css';
 import './style.css';
 
-import { Meta } from '@storybook/addon-docs/blocks';
+import { Meta, Story } from '@storybook/addon-docs/blocks';
 
-import { HeaderExampleLowDensity } from './headers-code';
-import { HeaderExampleHighDensity } from './headers-code';
+import * as HeaderStories from './headers.story';
 
 <Meta title="Foundations/Layout/Headers" name="page" />
 
@@ -16,7 +15,7 @@ While the general composition is consistent, there are two different header patt
 
 ## Low density
 
-<HeaderExampleLowDensity />
+<Story of={ HeaderStories.HeaderExampleLowDensity } />
 
 * Use the low density header pattern in the primary section of an admin page. 
 * Always include a visible title, typically using the `h2` element.
@@ -27,7 +26,7 @@ While the general composition is consistent, there are two different header patt
 
 ## High density
 
-<HeaderExampleHighDensity />
+<Story of={ HeaderStories.HeaderExampleHighDensity } />
 
 * Use the high density header pattern in narrower, secondary sections and editor panels.
 * Contain all actions in a Menu.
