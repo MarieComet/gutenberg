@@ -6,69 +6,15 @@ import {
 	useInnerBlocksProps,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useMemo, useState, useRef } from '@wordpress/element';
-import { Icon, plus } from '@wordpress/icons';
-import { Button } from '@wordpress/components';
-import { createBlock } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
+
 /**
  * Internal dependencies
  */
 import PlaceholderPreview from './placeholder/placeholder-preview';
 import { PRIORITIZED_INSERTER_BLOCKS } from '../constants';
-import { LinkUI } from '../../navigation-link/link-ui';
-import { updateAttributes } from '../../navigation-link/update-attributes';
-
-function NavigationLinkAppender( { rootClientId } ) {
-	const { insertBlock } = useDispatch( blockEditorStore );
-	const [ isLinkOpen, setIsLinkOpen ] = useState( false );
-	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
-	const linkUIref = useRef();
-
-	const createNewLink = ( attributes ) => {
-		const block = createBlock( 'core/navigation-link', attributes );
-
-		insertBlock( block, undefined, rootClientId );
-	};
-
-	return (
-		<>
-			<Button
-				__next40pxDefaultSize
-				ref={ setPopoverAnchor }
-				className="block-editor-button-block-appender"
-				onClick={ () => setIsLinkOpen( ( state ) => ! state ) }
-				aria-haspopup
-				aria-expanded={ isLinkOpen }
-				label="Add block"
-				showTooltip
-			>
-				<Icon icon={ plus } />
-			</Button>
-			{ isLinkOpen && (
-				<LinkUI
-					ref={ linkUIref }
-					clientId={ rootClientId }
-					link={ {
-						url: undefined,
-						label: undefined,
-						id: undefined,
-						kind: undefined,
-						type: undefined,
-						opensInNewTab: false,
-					} }
-					onClose={ () => {
-						setIsLinkOpen( false );
-					} }
-					onChange={ ( updatedValue ) => {
-						updateAttributes( updatedValue, createNewLink );
-					} }
-					anchor={ popoverAnchor }
-				/>
-			) }
-		</>
-	);
-}
+import NavigationLinkAppender from '../../navigation-link/appender';
 
 export default function NavigationInnerBlocks( {
 	clientId,

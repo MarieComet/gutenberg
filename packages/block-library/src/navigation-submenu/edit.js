@@ -19,7 +19,6 @@ import { displayShortcut, isKeyboardEvent } from '@wordpress/keycodes';
 import { __ } from '@wordpress/i18n';
 import {
 	BlockControls,
-	InnerBlocks,
 	useInnerBlocksProps,
 	InspectorControls,
 	RichText,
@@ -39,6 +38,7 @@ import { useMergeRefs, usePrevious } from '@wordpress/compose';
  */
 import { ItemSubmenuIcon } from './icons';
 import { LinkUI } from '../navigation-link/link-ui';
+import NavigationLinkAppender from '../navigation-link/appender';
 import { updateAttributes } from '../navigation-link/update-attributes';
 import {
 	getColors,
@@ -330,7 +330,7 @@ export default function NavigationSubmenuEdit( {
 				! selectedBlockHasChildren ) ||
 			// Show the appender while dragging to allow inserting element between item and the appender.
 			hasChildren
-				? InnerBlocks.ButtonBlockAppender
+				? NavigationLinkAppender
 				: false,
 	} );
 
