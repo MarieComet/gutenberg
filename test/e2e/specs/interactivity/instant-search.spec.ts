@@ -612,13 +612,15 @@ test.describe( 'Instant Search', () => {
 				name: 'Editor settings',
 			} );
 
+			const blockCard = editorSettings.locator(
+				'.block-editor-block-card'
+			);
+
 			// Check that the Search block is renamed to "Instant Search" in the Inspector Controls title
 			await editor.canvas
 				.getByRole( 'document', { name: 'Block: Search' } )
 				.click();
-			await expect( editorSettings ).toContainText(
-				'Instant Search (Search)'
-			);
+			await expect( blockCard ).toContainText( 'Instant Search' );
 
 			// Select the Query Loop block and open the Advanced View and disable enhanced pagination
 			await editor.selectBlocks(
@@ -638,10 +640,8 @@ test.describe( 'Instant Search', () => {
 			await editor.canvas
 				.getByRole( 'document', { name: 'Block: Search' } )
 				.click();
-			await expect( editorSettings ).toContainText( 'Search' );
-			await expect( editorSettings ).not.toContainText(
-				'Instant Search (Search)'
-			);
+			await expect( blockCard ).toContainText( 'Search' );
+			await expect( blockCard ).not.toContainText( 'Instant Search' );
 
 			// Check that the Search block is renamed back to "Search" in the List View
 			await expect( listView.getByText( 'Search' ) ).toBeVisible();
