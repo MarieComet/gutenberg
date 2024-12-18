@@ -4,17 +4,59 @@
 import { useEntityBlockEditor } from '@wordpress/core-data';
 import {
 	useInnerBlocksProps,
-	InnerBlocks,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
-
+import { useMemo, useState, useRef } from '@wordpress/element';
+import { Icon, plus } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
 /**
  * Internal dependencies
  */
 import PlaceholderPreview from './placeholder/placeholder-preview';
-import { DEFAULT_BLOCK, PRIORITIZED_INSERTER_BLOCKS } from '../constants';
+import { PRIORITIZED_INSERTER_BLOCKS } from '../constants';
+import { LinkUI } from '../../navigation-link/link-ui';
+
+function AddLinkAppender( { rootClientId } ) {
+	const [ isLinkOpen, setIsLinkOpen ] = useState( false );
+	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
+	const linkUIref = useRef();
+
+	return (
+		<>
+			<Button
+				__next40pxDefaultSize
+				ref={ setPopoverAnchor }
+				className="block-editor-button-block-appender"
+				onClick={ () => setIsLinkOpen( ( state ) => ! state ) }
+				aria-haspopup
+				aria-expanded={ isLinkOpen }
+				label="Add block"
+				showTooltip
+			>
+				<Icon icon={ plus } />
+			</Button>
+			{ isLinkOpen && (
+				<LinkUI
+					ref={ linkUIref }
+					clientId={ rootClientId }
+					link={ {
+						url: undefined,
+						label: undefined,
+						id: undefined,
+						kind: undefined,
+						type: undefined,
+						opensInNewTab: false,
+					} }
+					onClose={ () => {
+						setIsLinkOpen( false );
+					} }
+					anchor={ popoverAnchor }
+				/>
+			) }
+		</>
+	);
+}
 
 export default function NavigationInnerBlocks( {
 	clientId,
@@ -82,7 +124,6 @@ export default function NavigationInnerBlocks( {
 			onInput,
 			onChange,
 			prioritizedInserterBlocks: PRIORITIZED_INSERTER_BLOCKS,
-			defaultBlock: DEFAULT_BLOCK,
 			directInsert: true,
 			orientation,
 			templateLock,
@@ -98,7 +139,7 @@ export default function NavigationInnerBlocks( {
 					! selectedBlockHasChildren ) ||
 				// Show the appender while dragging to allow inserting element between item and the appender.
 				parentOrChildHasSelection
-					? InnerBlocks.ButtonBlockAppender
+					? AddLinkAppender
 					: false,
 			placeholder: showPlaceholder ? placeholder : undefined,
 			__experimentalCaptureToolbars: true,
@@ -106,5 +147,9 @@ export default function NavigationInnerBlocks( {
 		}
 	);
 
-	return <div { ...innerBlocksProps } />;
+	return (
+		<>
+			<div { ...innerBlocksProps } />
+		</>
+	);
 }
