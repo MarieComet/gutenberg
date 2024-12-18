@@ -42,8 +42,6 @@ import { LinkUI } from './link-ui';
 import { updateAttributes } from './update-attributes';
 import { getColors } from '../navigation/edit/utils';
 
-const DEFAULT_BLOCK = { name: 'core/navigation-link' };
-
 /**
  * A React hook to determine if it's dragging within the target element.
  *
@@ -248,12 +246,10 @@ export default function NavigationLinkEdit( {
 		replaceBlock,
 		__unstableMarkNextChangeAsNotPersistent,
 		selectBlock,
-		selectPreviousBlock,
 	} = useDispatch( blockEditorStore );
 	// Have the link editing ui open on mount when lacking a url and selected.
 	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected && ! url );
 	// Store what element opened the popover, so we know where to return focus to (toolbar button vs navigation link text)
-	const [ openedBy, setOpenedBy ] = useState( null );
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
 	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
@@ -398,7 +394,6 @@ export default function NavigationLinkEdit( {
 			// If this link is a child of a parent submenu item, the parent submenu item event will also open, closing this popover
 			event.stopPropagation();
 			setIsLinkOpen( true );
-			setOpenedBy( ref.current );
 		}
 	}
 
@@ -428,7 +423,6 @@ export default function NavigationLinkEdit( {
 			className: 'remove-outline', // Remove the outline from the inner blocks container.
 		},
 		{
-			defaultBlock: DEFAULT_BLOCK,
 			directInsert: true,
 			renderAppender: false,
 		}
@@ -437,7 +431,6 @@ export default function NavigationLinkEdit( {
 	if ( ! url || isInvalid || isDraft ) {
 		blockProps.onClick = () => {
 			setIsLinkOpen( true );
-			setOpenedBy( ref.current );
 		};
 	}
 
@@ -464,9 +457,8 @@ export default function NavigationLinkEdit( {
 						icon={ linkIcon }
 						title={ __( 'Link' ) }
 						shortcut={ displayShortcut.primary( 'k' ) }
-						onClick={ ( event ) => {
+						onClick={ () => {
 							setIsLinkOpen( true );
-							setOpenedBy( event.currentTarget );
 						} }
 					/>
 					{ ! isAtMaxNesting && (
@@ -569,39 +561,7 @@ export default function NavigationLinkEdit( {
 							clientId={ clientId }
 							link={ attributes }
 							onClose={ () => {
-								// If there is no link then remove the auto-inserted block.
-								// This avoids empty blocks which can provided a poor UX.
-								if ( ! url ) {
-									// Fixes https://github.com/WordPress/gutenberg/issues/61361
-									// There's a chance we're closing due to the user selecting the browse all button.
-									// Only move focus if the focus is still within the popover ui. If it's not within
-									// the popover, it's because something has taken the focus from the popover, and
-									// we don't want to steal it back.
-									if (
-										linkUIref.current.contains(
-											window.document.activeElement
-										)
-									) {
-										// Select the previous block to keep focus nearby
-										selectPreviousBlock( clientId, true );
-									}
-
-									// Remove the link.
-									onReplace( [] );
-									return;
-								}
-
 								setIsLinkOpen( false );
-								if ( openedBy ) {
-									openedBy.focus();
-									setOpenedBy( null );
-								} else if ( ref.current ) {
-									// select the ref when adding a new link
-									ref.current.focus();
-								} else {
-									// Fallback
-									selectPreviousBlock( clientId, true );
-								}
 							} }
 							anchor={ popoverAnchor }
 							onRemove={ removeLink }

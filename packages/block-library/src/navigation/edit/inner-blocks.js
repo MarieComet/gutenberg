@@ -6,21 +6,30 @@ import {
 	useInnerBlocksProps,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useState, useRef } from '@wordpress/element';
 import { Icon, plus } from '@wordpress/icons';
 import { Button } from '@wordpress/components';
+import { createBlock } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
 import PlaceholderPreview from './placeholder/placeholder-preview';
 import { PRIORITIZED_INSERTER_BLOCKS } from '../constants';
 import { LinkUI } from '../../navigation-link/link-ui';
+import { updateAttributes } from '../../navigation-link/update-attributes';
 
-function AddLinkAppender( { rootClientId } ) {
+function NavigationLinkAppender( { rootClientId } ) {
+	const { insertBlock } = useDispatch( blockEditorStore );
 	const [ isLinkOpen, setIsLinkOpen ] = useState( false );
 	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
 	const linkUIref = useRef();
+
+	const createNewLink = ( attributes ) => {
+		const block = createBlock( 'core/navigation-link', attributes );
+
+		insertBlock( block, undefined, rootClientId );
+	};
 
 	return (
 		<>
@@ -50,6 +59,9 @@ function AddLinkAppender( { rootClientId } ) {
 					} }
 					onClose={ () => {
 						setIsLinkOpen( false );
+					} }
+					onChange={ ( updatedValue ) => {
+						updateAttributes( updatedValue, createNewLink );
 					} }
 					anchor={ popoverAnchor }
 				/>
@@ -139,7 +151,7 @@ export default function NavigationInnerBlocks( {
 					! selectedBlockHasChildren ) ||
 				// Show the appender while dragging to allow inserting element between item and the appender.
 				parentOrChildHasSelection
-					? AddLinkAppender
+					? NavigationLinkAppender
 					: false,
 			placeholder: showPlaceholder ? placeholder : undefined,
 			__experimentalCaptureToolbars: true,
