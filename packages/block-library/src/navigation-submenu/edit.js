@@ -138,14 +138,9 @@ export default function NavigationSubmenuEdit( {
 
 	const { showSubmenuIcon, maxNestingLevel, openSubmenusOnClick } = context;
 
-	const {
-		__unstableMarkNextChangeAsNotPersistent,
-		replaceBlock,
-		selectBlock,
-	} = useDispatch( blockEditorStore );
+	const { __unstableMarkNextChangeAsNotPersistent, replaceBlock } =
+		useDispatch( blockEditorStore );
 	const [ isLinkOpen, setIsLinkOpen ] = useState( false );
-	// Store what element opened the popover, so we know where to return focus to (toolbar button vs navigation link text)
-	const [ openedBy, setOpenedBy ] = useState( null );
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
 	const [ popoverAnchor, setPopoverAnchor ] = useState( null );
@@ -277,7 +272,6 @@ export default function NavigationSubmenuEdit( {
 			// If we don't stop propogation, this event bubbles up to the parent submenu item
 			event.stopPropagation();
 			setIsLinkOpen( true );
-			setOpenedBy( ref.current );
 		}
 	}
 
@@ -364,9 +358,8 @@ export default function NavigationSubmenuEdit( {
 							icon={ linkIcon }
 							title={ __( 'Link' ) }
 							shortcut={ displayShortcut.primary( 'k' ) }
-							onClick={ ( event ) => {
+							onClick={ () => {
 								setIsLinkOpen( true );
-								setOpenedBy( event.currentTarget );
 							} }
 						/>
 					) }
@@ -517,7 +510,6 @@ export default function NavigationSubmenuEdit( {
 						onClick={ () => {
 							if ( ! openSubmenusOnClick && ! url ) {
 								setIsLinkOpen( true );
-								setOpenedBy( ref.current );
 							}
 						} }
 					/>
@@ -532,12 +524,6 @@ export default function NavigationSubmenuEdit( {
 							link={ attributes }
 							onClose={ () => {
 								setIsLinkOpen( false );
-								if ( openedBy ) {
-									openedBy.focus();
-									setOpenedBy( null );
-								} else {
-									selectBlock( clientId );
-								}
 							} }
 							anchor={ popoverAnchor }
 							onRemove={ () => {
