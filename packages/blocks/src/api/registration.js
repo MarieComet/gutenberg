@@ -800,7 +800,7 @@ export const registerBlockBindingsSource = ( source ) => {
 		getValues,
 		setValues,
 		canUserEditValue,
-		fields,
+		args,
 	} = source;
 
 	const existingSource = unlock(
@@ -894,14 +894,8 @@ export const registerBlockBindingsSource = ( source ) => {
 		return;
 	}
 	// Check the `fields` property is correct.
-	if (
-		fields &&
-		typeof fields !== 'function' &&
-		typeof fields !== 'object'
-	) {
-		warning(
-			'Block bindings source fields must be a function or an object.'
-		);
+	if ( args && typeof args !== 'object' ) {
+		warning( 'Block bindings source args must be an object.' );
 	}
 
 	return unlock( dispatch( blocksStore ) ).addBlockBindingsSource( source );
