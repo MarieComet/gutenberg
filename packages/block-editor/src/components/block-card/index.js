@@ -12,7 +12,7 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	privateApis as componentsPrivateApis,
-} from '@wordpress/	components';
+} from '@wordpress/components';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { __, _x, isRTL } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -63,6 +63,7 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 	);
 
 	const { selectBlock } = useDispatch( blockEditorStore );
+	const hasCustomName = !! name?.length;
 
 	return (
 		<div className={ clsx( 'block-editor-block-card', className ) }>
@@ -80,16 +81,16 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 				/>
 			) }
 			<BlockIcon icon={ icon } showColors />
-			<VStack spacing={ 1 }>
+			<VStack spacing={ hasCustomName || isUsingBindings ? 2 : 1 }>
 				<h2 className="block-editor-block-card__title">
 					<span className="block-editor-block-card__name">
-						{ !! name?.length ? name : title }
+						{ hasCustomName ? name : title }
 					</span>
-					{ !! name?.length && <Badge>{ title }</Badge> }
+					{ hasCustomName && <Badge>{ title }</Badge> }
 					{ isUsingBindings && (
 						<Badge>
 							{ _x(
-								'Connected.',
+								'Connected',
 								'block connected to a bound source'
 							) }
 						</Badge>

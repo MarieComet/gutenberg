@@ -51,15 +51,15 @@ export default function MultiSelectionInspector() {
 						_n( '%d Block', '%d Blocks', selectedBlockCount ),
 						selectedBlockCount
 					) }
+					{ isUsingBindings && (
+						<Badge>
+							{ _x(
+								'Connected',
+								'multiple blocks connected to a bound source'
+							) }
+						</Badge>
+					) }
 				</h2>
-				{ isUsingBindings && (
-					<Badge>
-						{ _x(
-							'Connected.',
-							'multiple blocks connected to a bound source'
-						) }
-					</Badge>
-				) }
 			</VStack>
 		</HStack>
 	);
