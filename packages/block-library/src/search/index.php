@@ -33,9 +33,20 @@ function render_block_core_search( $attributes, $content, $block ) {
 	$classnames      = classnames_for_block_core_search( $attributes );
 	$show_label      = ! empty( $attributes['showLabel'] );
 	$use_icon_button = ! empty( $attributes['buttonUseIcon'] );
+	
+	// Check if the block is using the enhanced pagination.
+	$enhanced_pagination = isset( $block->context['enhancedPagination'] ) && $block->context['enhancedPagination'];
+
+	// Check if the block is using the instant search experiment.
+	$gutenberg_experiments  = get_option( 'gutenberg-experiments' );
+	$instant_search_enabled = $gutenberg_experiments && array_key_exists( 'gutenberg-search-query-block', $gutenberg_experiments );
+
 	$show_button     = true;
-	if ( isset( $block->context['enhancedPagination'] ) && $block->context['enhancedPagination'] ) {
+
+	// If the block is using the instant search experiment and the enhanced pagination, hide the button.
+	if ( $instant_search_enabled && $enhanced_pagination ) {
 		$show_button = false;
+		// If the button position is no-button, ALSO hide the button.
 	} elseif ( ! empty( $attributes['buttonPosition'] ) && 'no-button' === $attributes['buttonPosition'] ) {
 		$show_button = false;
 	}
@@ -53,12 +64,6 @@ function render_block_core_search( $attributes, $content, $block ) {
 	// This variable is a constant and its value is always false at this moment.
 	// It is defined this way because some values depend on it, in case it changes in the future.
 	$open_by_default = false;
-	// Check if the block is using the enhanced pagination.
-	$enhanced_pagination = isset( $block->context['enhancedPagination'] ) && $block->context['enhancedPagination'];
-
-	// Check if the block is using the instant search experiment.
-	$gutenberg_experiments  = get_option( 'gutenberg-experiments' );
-	$instant_search_enabled = $gutenberg_experiments && array_key_exists( 'gutenberg-search-query-block', $gutenberg_experiments );
 
 	$label_inner_html = empty( $attributes['label'] ) ? __( 'Search' ) : wp_kses_post( $attributes['label'] );
 	$label            = new WP_HTML_Tag_Processor( sprintf( '<label %1$s>%2$s</label>', $inline_styles['label'], $label_inner_html ) );
