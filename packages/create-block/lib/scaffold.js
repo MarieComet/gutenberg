@@ -2,6 +2,7 @@
  * External dependencies
  */
 const { pascalCase, snakeCase } = require( 'change-case' );
+const { join } = require( 'path' );
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ module.exports = async (
 		description,
 		dashicon,
 		category,
+		textdomain,
 		attributes,
 		supports,
 		author,
@@ -40,6 +42,7 @@ module.exports = async (
 		npmDevDependencies,
 		customScripts,
 		folderName,
+		targetDir,
 		editorScript,
 		editorStyle,
 		style,
@@ -56,7 +59,7 @@ module.exports = async (
 ) => {
 	slug = slug.toLowerCase();
 	namespace = namespace.toLowerCase();
-
+	const rootDirectory = join( process.cwd(), targetDir || slug );
 	const transformedValues = transformer( {
 		$schema,
 		apiVersion,
@@ -93,7 +96,8 @@ module.exports = async (
 		customPackageJSON,
 		customBlockJSON,
 		example,
-		textdomain: slug,
+		textdomain: textdomain || slug,
+		rootDirectory,
 	} );
 
 	const view = {
@@ -117,11 +121,10 @@ module.exports = async (
 		return;
 	}
 
+	const projectType = plugin ? 'plugin' : 'block';
 	info( '' );
 	info(
-		plugin
-			? `Creating a new WordPress plugin in the ${ view.slug } directory.`
-			: `Creating a new block in the ${ view.slug } directory.`
+		`Creating a new WordPress ${ projectType } in the ${ rootDirectory } directory.`
 	);
 
 	if ( plugin ) {
@@ -164,9 +167,7 @@ module.exports = async (
 	info( '' );
 
 	success(
-		plugin
-			? `Done: WordPress plugin ${ title } bootstrapped in the ${ slug } directory.`
-			: `Done: Block "${ title }" bootstrapped in the ${ slug } directory.`
+		`Done: WordPress ${ projectType } ${ title } bootstrapped in the ${ rootDirectory } directory.`
 	);
 
 	if ( plugin && wpScripts ) {

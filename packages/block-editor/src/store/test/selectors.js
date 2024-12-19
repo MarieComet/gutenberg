@@ -15,7 +15,6 @@ import { select, dispatch } from '@wordpress/data';
  */
 import * as selectors from '../selectors';
 import { store } from '../';
-import { sectionRootClientIdKey } from '../private-keys';
 import { lock } from '../../lock-unlock';
 
 const {
@@ -3325,7 +3324,7 @@ describe( 'selectors', () => {
 				settings: {},
 				blockEditingModes: new Map(),
 			};
-			expect( canInsertBlocks( state, [ '2', '3' ], '1' ) ).toBe( true );
+			expect( canInsertBlocks( state, [ '2' ], '1' ) ).toBe( true );
 		} );
 
 		it( 'should deny blocks', () => {
@@ -4468,22 +4467,17 @@ describe( 'getBlockEditingMode', () => {
 		blockEditingModes: new Map( [] ),
 	};
 
-	const navigationModeStateWithRootSection = {
-		...baseState,
-		editorMode: 'navigation',
-		settings: {
-			[ sectionRootClientIdKey ]: 'ef45d5fd-5234-4fd5-ac4f-c3736c7f9337', // The group is the "main" container
-		},
-	};
-
 	const hasContentRoleAttribute = jest.fn( () => false );
+	const get = jest.fn( () => 'edit' );
 
-	const fauxPrivateAPIs = {};
+	const mockedSelectors = { get };
 
-	lock( fauxPrivateAPIs, { hasContentRoleAttribute } );
+	lock( mockedSelectors, {
+		hasContentRoleAttribute,
+	} );
 
 	getBlockEditingMode.registry = {
-		select: jest.fn( () => fauxPrivateAPIs ),
+		select: jest.fn( () => mockedSelectors ),
 	};
 
 	it( 'should return default by default', () => {
@@ -4607,65 +4601,5 @@ describe( 'getBlockEditingMode', () => {
 		expect(
 			getBlockEditingMode( state, 'b3247f75-fd94-4fef-97f9-5bfd162cc416' )
 		).toBe( 'contentOnly' );
-	} );
-
-	it( 'in navigation mode, the root section container is default', () => {
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'ef45d5fd-5234-4fd5-ac4f-c3736c7f9337'
-			)
-		).toBe( 'default' );
-	} );
-
-	it( 'in navigation mode, anything outside the section container is disabled', () => {
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'6cf70164-9097-4460-bcbf-200560546988'
-			)
-		).toBe( 'disabled' );
-	} );
-
-	it( 'in navigation mode, sections are contentOnly', () => {
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'b26fc763-417d-4f01-b81c-2ec61e14a972'
-			)
-		).toBe( 'contentOnly' );
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'9b9c5c3f-2e46-4f02-9e14-9fe9515b958f'
-			)
-		).toBe( 'contentOnly' );
-	} );
-
-	it( 'in navigation mode, blocks with content attributes within sections are contentOnly', () => {
-		hasContentRoleAttribute.mockReturnValueOnce( true );
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'b3247f75-fd94-4fef-97f9-5bfd162cc416'
-			)
-		).toBe( 'contentOnly' );
-
-		hasContentRoleAttribute.mockReturnValueOnce( true );
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'e178812d-ce5e-48c7-a945-8ae4ffcbbb7c'
-			)
-		).toBe( 'contentOnly' );
-	} );
-
-	it( 'in navigation mode, blocks without content attributes within sections are disabled', () => {
-		expect(
-			getBlockEditingMode(
-				navigationModeStateWithRootSection,
-				'9b9c5c3f-2e46-4f02-9e14-9fed515b958s'
-			)
-		).toBe( 'disabled' );
 	} );
 } );

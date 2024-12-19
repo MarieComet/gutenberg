@@ -12,11 +12,7 @@ import {
 	useDispatch,
 	useRegistry,
 } from '@wordpress/data';
-import {
-	useViewportMatch,
-	useMergeRefs,
-	useDebounce,
-} from '@wordpress/compose';
+import { useMergeRefs, useDebounce } from '@wordpress/compose';
 import {
 	createContext,
 	useMemo,
@@ -46,7 +42,6 @@ export const IntersectionObserver = createContext();
 const pendingBlockVisibilityUpdatesPerRegistry = new WeakMap();
 
 function Root( { className, ...settings } ) {
-	const isLargeViewport = useViewportMatch( 'medium' );
 	const { isOutlineMode, isFocusMode, temporarilyEditingAsBlocks } =
 		useSelect( ( select ) => {
 			const { getSettings, getTemporarilyEditingAsBlocks, isTyping } =
@@ -105,7 +100,7 @@ function Root( { className, ...settings } ) {
 			] ),
 			className: clsx( 'is-root-container', className, {
 				'is-outline-mode': isOutlineMode,
-				'is-focus-mode': isFocusMode && isLargeViewport,
+				'is-focus-mode': isFocusMode,
 			} ),
 		},
 		settings
@@ -181,13 +176,13 @@ function Items( {
 				__unstableGetVisibleBlocks,
 				getTemplateLock,
 				getBlockEditingMode,
-				__unstableGetEditorMode,
 				isSectionBlock,
+				isZoomOut: _isZoomOut,
 			} = unlock( select( blockEditorStore ) );
 
 			const _order = getBlockOrder( rootClientId );
 
-			if ( getSettings().__unstableIsPreviewMode ) {
+			if ( getSettings().isPreviewMode ) {
 				return {
 					order: _order,
 					selectedBlocks: EMPTY_ARRAY,
@@ -200,13 +195,13 @@ function Items( {
 				order: _order,
 				selectedBlocks: getSelectedBlockClientIds(),
 				visibleBlocks: __unstableGetVisibleBlocks(),
-				isZoomOut: __unstableGetEditorMode() === 'zoom-out',
+				isZoomOut: _isZoomOut(),
 				shouldRenderAppender:
 					! isSectionBlock( rootClientId ) &&
 					getBlockEditingMode( rootClientId ) !== 'disabled' &&
 					! getTemplateLock( rootClientId ) &&
 					hasAppender &&
-					__unstableGetEditorMode() !== 'zoom-out' &&
+					! _isZoomOut() &&
 					( hasCustomAppender ||
 						rootClientId === selectedBlockClientId ||
 						( ! rootClientId &&

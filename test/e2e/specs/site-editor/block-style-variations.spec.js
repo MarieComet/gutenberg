@@ -245,7 +245,7 @@ test.describe( 'Block Style Variations', () => {
 
 		// Click on previous revision.
 		await page
-			.getByRole( 'button', {
+			.getByRole( 'option', {
 				name: /^Changes saved by /,
 			} )
 			.nth( 1 )
@@ -318,7 +318,7 @@ async function draftNewPage( page ) {
 // Create a Group block with 2 nested Group blocks.
 async function addPageContent( editor, page ) {
 	const inserterButton = page.locator(
-		'role=button[name="Toggle block inserter"i]'
+		'role=button[name="Block Inserter"i]'
 	);
 	await inserterButton.click();
 	await page.type( 'role=searchbox[name="Search"i]', 'Group' );

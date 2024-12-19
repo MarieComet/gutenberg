@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 1.14.0 (2024-12-11)
+
+## 1.13.0 (2024-11-27)
+
+## 1.12.0 (2024-11-16)
+
+## 1.11.0 (2024-10-30)
+
+## 1.10.0 (2024-10-16)
+
 ### Enhancements
 
 -   Rewrite the package in typescript ([#65854](https://github.com/WordPress/gutenberg/pull/65854)).

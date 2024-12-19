@@ -4,6 +4,24 @@
 
 ### Breaking Changes
 
+-   `ActionItem.Slot`: Render as `MenuGroup` by default ([#67985](https://github.com/WordPress/gutenberg/pull/67985)).
+
+## 8.3.0 (2024-12-11)
+
+## 8.2.0 (2024-11-27)
+
+## 8.1.0 (2024-11-16)
+
+## 8.0.0 (2024-10-30)
+
+### Breaking Changes
+
+-   Removed `smallScreenTitle` prop from the `ComplementaryArea` component ([#64474](https://github.com/WordPress/gutenberg/pull/64474)).
+
+## 7.0.0 (2024-10-16)
+
+### Breaking Changes
+
 -   `InterfaceSkeleton` no longer supports region navigation and its props `enableRegionNavigation` and `shortcuts` are removed. ([#63611](https://github.com/WordPress/gutenberg/pull/63611)). It’s recommended to add region navigation with the higher-order component `navigateRegions` or the hook `__unstableUseNavigateRegions` from `@wordpress/components`.
 
 ## 6.9.0 (2024-10-03)
