@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, forwardRef, useMemo } from '@wordpress/element';
+import { useState, forwardRef, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEvent } from '@wordpress/compose';
 
@@ -21,17 +21,12 @@ import {
 } from './fields';
 
 const LAYOUT_GRID = 'grid';
-// export const INSERTER_PATTERN_TYPES = {
-// 	user: 'user',
-// 	theme: 'theme',
-// 	directory: 'directory',
-// };
-
 const EMPTY_ARRAY = [];
 const defaultLayouts = {
 	[ LAYOUT_GRID ]: {
 		layout: {
 			previewSize: 1,
+			badgeFields: [ 'sync-status' ],
 		},
 	},
 };
@@ -78,11 +73,14 @@ function BlockPatternsList(
 		orientation,
 		label = __( 'Block patterns' ),
 		category,
-		showTitlesAsTooltip,
+		showTitle,
 	},
 	ref
 ) {
-	const [ view, setView ] = useState( DEFAULT_VIEW );
+	const [ view, setView ] = useState( {
+		...DEFAULT_VIEW,
+		showTitle,
+	} );
 
 	const fields = useMemo( () => {
 		const _fields = [ titleField, previewField, syncStatusField ];
@@ -136,17 +134,9 @@ function BlockPatternsList(
 			isDraggable,
 			onHover,
 			onClick: handleClickPattern,
-			showTitlesAsTooltip,
 			selectedCategory: category,
 		} ) );
-	}, [
-		data,
-		isDraggable,
-		onHover,
-		handleClickPattern,
-		showTitlesAsTooltip,
-		category,
-	] );
+	}, [ data, isDraggable, onHover, handleClickPattern, category ] );
 	return (
 		<DataViews
 			key={ category }
@@ -163,6 +153,7 @@ function BlockPatternsList(
 			view={ view }
 			onChangeView={ setView }
 			defaultLayouts={ defaultLayouts }
+			className="block-editor-block-patterns-list-v2"
 		/>
 	);
 }

@@ -167,7 +167,7 @@ export function PatternCategoryPreviews( {
 						orientation="vertical"
 						category={ category.name }
 						isDraggable
-						showTitlesAsTooltip={ showTitlesAsTooltip }
+						showTitle={ ! showTitlesAsTooltip }
 					/>
 				</>
 			) }

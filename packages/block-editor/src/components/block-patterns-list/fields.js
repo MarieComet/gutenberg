@@ -239,31 +239,6 @@ function PreviewField( { item } ) {
 	);
 }
 
-function TitleField( { item } ) {
-	const isUserPattern = item.type === INSERTER_PATTERN_TYPES.user;
-	if ( item.showTitlesAsTooltip && ! isUserPattern ) {
-		return null;
-	}
-	return (
-		<HStack
-			className="block-editor-patterns__pattern-details"
-			spacing={ 2 }
-		>
-			{ isUserPattern && ! item.syncStatus && (
-				<div className="block-editor-patterns__pattern-icon-wrapper">
-					<Icon
-						className="block-editor-patterns__pattern-icon"
-						icon={ symbol }
-					/>
-				</div>
-			) }
-			<div className="block-editor-block-patterns-list__item-title">
-				{ getItemTitle( item ) }
-			</div>
-		</HStack>
-	);
-}
-
 export const previewField = {
 	label: __( 'Preview' ),
 	id: 'preview',
@@ -283,10 +258,11 @@ export const titleField = {
 	getValue: ( { item } ) => getItemTitle( item ),
 	render: ( { item } ) => (
 		<FieldWrapper item={ item }>
-			<TitleField item={ item } />
+			<div className="block-editor-block-patterns-list__item-title">
+				{ getItemTitle( item ) }
+			</div>
 		</FieldWrapper>
 	),
-	enableHiding: false,
 	enableGlobalSearch: true,
 	enableSorting: false,
 };
