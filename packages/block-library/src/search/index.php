@@ -31,8 +31,8 @@ function render_block_core_search( $attributes, $content, $block ) {
 
 	$input_id        = wp_unique_id( 'wp-block-search__input-' );
 	$classnames      = classnames_for_block_core_search( $attributes );
-	$show_label      = ( ! empty( $attributes['showLabel'] ) ) ? true : false;
-	$use_icon_button = ( ! empty( $attributes['buttonUseIcon'] ) ) ? true : false;
+	$show_label      = ! empty( $attributes['showLabel'] );
+	$use_icon_button = ! empty( $attributes['buttonUseIcon'] );
 	$show_button     = true;
 	if ( isset( $block->context['enhancedPagination'] ) && $block->context['enhancedPagination'] ) {
 		$show_button = false;
@@ -108,9 +108,9 @@ function render_block_core_search( $attributes, $content, $block ) {
 		//
 		// Instant search functionality does not make sense without enhanced pagination
 		// because we might have to paginate the results of the search too!
-		if ( $enhanced_pagination && $instant_search_enabled) {
+		if ( $enhanced_pagination && $instant_search_enabled ) {
 			wp_enqueue_script_module( '@wordpress/block-library/search/view' );
-			
+
 			$input->set_attribute( 'data-wp-bind--value', 'context.search' );
 			$input->set_attribute( 'data-wp-on-async--input', 'actions.updateSearch' );
 		}
