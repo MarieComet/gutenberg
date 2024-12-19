@@ -12,6 +12,7 @@ import { __, sprintf, isRTL } from '@wordpress/i18n';
 import {
 	LinkControl,
 	privateApis as blockEditorPrivateApis,
+	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import {
 	createInterpolateElement,
@@ -26,7 +27,7 @@ import {
 	useResourcePermissions,
 } from '@wordpress/core-data';
 import { decodeEntities } from '@wordpress/html-entities';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { chevronLeftSmall, chevronRightSmall, plus } from '@wordpress/icons';
 import { useInstanceId, useFocusOnMount } from '@wordpress/compose';
 
@@ -78,6 +79,25 @@ export function getSuggestionsQuery( type, kind ) {
 }
 
 function LinkUIBlockInserter( { clientId, onBack, onSelectBlock } ) {
+	const { navigationBlockId } = useSelect(
+		( select ) => {
+			const { getBlockRootClientId, getBlockName } =
+				select( blockEditorStore );
+
+			const rootClientId = getBlockRootClientId( clientId );
+
+			// We need the core/navigation block to be the ID that gets passed to the as the rootClientId
+			// so the right block results show up in the quick inserter.
+			return {
+				navigationBlockId:
+					getBlockName( rootClientId ) === 'core/navigation'
+						? rootClientId
+						: clientId,
+			};
+		},
+		[ clientId ]
+	);
+
 	const focusOnMountRef = useFocusOnMount( 'firstElement' );
 
 	const dialogTitleId = useInstanceId(
@@ -122,7 +142,8 @@ function LinkUIBlockInserter( { clientId, onBack, onSelectBlock } ) {
 			</Button>
 
 			<QuickInserter
-				rootClientId={ clientId }
+				rootClientId={ navigationBlockId }
+				clientId={ clientId }
 				isAppender={ false }
 				prioritizePatterns={ false }
 				selectBlockOnInsert
