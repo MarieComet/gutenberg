@@ -6,7 +6,7 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
 /** @type {( () => void ) | null} */
 let supersedePreviousSearch = null;
 
-const { state, actions } = store(
+const { actions } = store(
 	'core/search',
 	{
 		state: {
@@ -32,25 +32,14 @@ const { state, actions } = store(
 				const { isSearchInputVisible } = getContext();
 				return isSearchInputVisible ? '0' : '-1';
 			},
-			get isSearchInputVisible() {
-				const ctx = getContext();
-
-				// `ctx.isSearchInputVisible` is a client-side-only context value, so
-				// if it's not set, it means that it's an initial page load, so we need
-				// to return the value of `ctx.isSearchInputInitiallyVisible`.
-				if ( typeof ctx.isSearchInputVisible === 'undefined' ) {
-					return ctx.isSearchInputInitiallyVisible;
-				}
-				return ctx.isSearchInputVisible;
-			},
 		},
 		actions: {
 			openSearchInput( event ) {
-				if ( ! state.isSearchInputVisible ) {
+				const ctx = getContext();
+				const { ref } = getElement();
+				if ( ! ctx.isSearchInputVisible ) {
 					event.preventDefault();
-					const ctx = getContext();
 					ctx.isSearchInputVisible = true;
-					const { ref } = getElement();
 					ref.parentElement.querySelector( 'input' ).focus();
 				}
 			},
