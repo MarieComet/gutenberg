@@ -108,13 +108,11 @@ function render_block_core_search( $attributes, $content, $block ) {
 		//
 		// Instant search functionality does not make sense without enhanced pagination
 		// because we might have to paginate the results of the search too!
-		if ( $enhanced_pagination ) {
+		if ( $enhanced_pagination && $instant_search_enabled) {
 			wp_enqueue_script_module( '@wordpress/block-library/search/view' );
-
-			if ( $instant_search_enabled ) {
-				$input->set_attribute( 'data-wp-bind--value', 'context.search' );
-				$input->set_attribute( 'data-wp-on-async--input', 'actions.updateSearch' );
-			}
+			
+			$input->set_attribute( 'data-wp-bind--value', 'context.search' );
+			$input->set_attribute( 'data-wp-on-async--input', 'actions.updateSearch' );
 		}
 	}
 
