@@ -246,6 +246,7 @@ export default function NavigationLinkEdit( {
 		replaceBlock,
 		__unstableMarkNextChangeAsNotPersistent,
 		selectBlock,
+		selectPreviousBlock,
 	} = useDispatch( blockEditorStore );
 	// Have the link editing ui open on mount when lacking a url and selected.
 	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected && ! url );
@@ -561,6 +562,32 @@ export default function NavigationLinkEdit( {
 							clientId={ clientId }
 							link={ attributes }
 							onClose={ () => {
+								// If there is no link then remove the block.
+								// This avoids empty blocks which can provided a poor UX.
+								// This should not happen often. The main route is through adding a custom link block.
+								// An alternative to this would be to open the custom link block
+								// directly to the edit link popover with text and url fields, rather than the LinkUI
+								// where you can select a block as well.
+								if ( ! url ) {
+									// Fixes https://github.com/WordPress/gutenberg/issues/61361
+									// There's a chance we're closing due to the user selecting the browse all button.
+									// Only move focus if the focus is still within the popover ui. If it's not within
+									// the popover, it's because something has taken the focus from the popover, and
+									// we don't want to steal it back.
+									if (
+										linkUIref.current.contains(
+											window.document.activeElement
+										)
+									) {
+										// Select the previous block to keep focus nearby
+										selectPreviousBlock( clientId, true );
+									}
+
+									// Remove the link.
+									onReplace( [] );
+									return;
+								}
+
 								setIsLinkOpen( false );
 							} }
 							anchor={ popoverAnchor }
