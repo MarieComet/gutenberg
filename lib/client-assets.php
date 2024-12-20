@@ -70,9 +70,28 @@ function gutenberg_override_script( $scripts, $handle, $src, $deps = array(), $v
 
 		// See: `_WP_Dependency::__construct` .
 		$script->src  = $src;
-		$script->deps = $deps;
 		$script->ver  = $ver;
 		$script->args = $in_footer ? 1 : null;
+
+		$module_deps = array();
+		$script_deps = array();
+		if ( array() !== $deps ) {
+			foreach ( $deps as $dep ) {
+				if ( is_string( $dep ) ) {
+					$script_deps[] = $dep;
+				} elseif (
+					isset( $dep['type'], $dep['id'] ) &&
+					'module' === $dep['type'] &&
+					is_string( $dep['id'] )
+				) {
+					$module_deps[] = $dep['id'];
+				}
+			}
+		}
+		$script->deps = $script_deps;
+		if ( array() !== $module_deps ) {
+			$scripts->add_data( $handle, 'module_deps', $module_deps );
+		}
 	} else {
 		$scripts->add( $handle, $src, $deps, $ver, ( $in_footer ? 1 : null ) );
 	}
