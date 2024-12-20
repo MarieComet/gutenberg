@@ -95,6 +95,12 @@ const MyControlledTabs = () => (
 	);
 ```
 
+#### Using `Tabs` with links
+
+The semantics implemented by the `Tabs` component don't align well with the semantics needed by a list of links. Furthermore, end users usually expect every link to be tabbable, while `Tabs.Tablist` is a [composite](https://w3c.github.io/aria/#composite) widget acting as a single tab stop.
+
+For these reasons, even if the `Tabs` component is fully extensible, we don't recommend using `Tabs` with links, and we don't currently provide any related Storybook example.
+
 ### Components and Sub-components
 
 Tabs is comprised of four individual components:
