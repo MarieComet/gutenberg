@@ -24,6 +24,14 @@ module.exports = {
 		image: './packages/block-library/src/image/view.js',
 		file: './packages/block-library/src/file/view.js',
 		search: './packages/block-library/src/search/view.js',
+
+		// Codemirror stuff.
+		codemirror: 'codemirror',
+		'@codemirror/commands': '@codemirror/commands',
+		'@codemirror/lang-css': '@codemirror/lang-css',
+		'@codemirror/lang-html': '@codemirror/lang-html',
+		'@codemirror/state': '@codemirror/state',
+		'@codemirror/view': '@codemirror/view',
 	},
 	experiments: {
 		outputModule: true,

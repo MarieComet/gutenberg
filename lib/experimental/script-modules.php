@@ -197,3 +197,27 @@ function gutenberg_dequeue_module( $module_identifier ) {
 	_deprecated_function( __FUNCTION__, 'Gutenberg 17.6.0', 'wp_dequeue_script_module' );
 	wp_script_modules()->dequeue( $module_identifier );
 }
+
+function init_codemirror_stuff() {
+	foreach (
+		array(
+			'@codemirror/commands',
+			'@codemirror/lang-css',
+			'@codemirror/lang-html',
+			'@codemirror/state',
+			'@codemirror/view',
+			'codemirror',
+		) as $module_id
+	) {
+		$assets = include gutenberg_dir_path() . "build/interactivity/$module_id.min.asset.php";
+		$src = gutenberg_url( "/build/interactivity/$module_id.min.js" );
+
+		wp_register_script_module(
+			$module_id,
+			$src,
+			$assets['dependencies'],
+			$assets['version']
+		);
+	}
+}
+add_action( 'init', 'init_codemirror_stuff' );

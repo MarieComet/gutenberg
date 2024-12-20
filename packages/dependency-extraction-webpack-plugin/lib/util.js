@@ -44,6 +44,10 @@ function defaultRequestToExternal( request ) {
 			return 'ReactDOM';
 	}
 
+	if ( request === 'codemirror' || request.startsWith( '@codemirror/' ) ) {
+		return `import ${ request }`;
+	}
+
 	if ( request.includes( 'react-refresh/runtime' ) ) {
 		return 'ReactRefreshRuntime';
 	}
@@ -90,13 +94,15 @@ function defaultRequestToExternalModule( request ) {
 		return `import ${ request }`;
 	}
 
-	const isWordPressScript = Boolean( defaultRequestToExternal( request ) );
+	// Disable this so codemirror can be built as a module.
 
-	if ( isWordPressScript ) {
-		throw new Error(
-			`Attempted to use WordPress script in a module: ${ request }, which is not supported yet.`
-		);
-	}
+	//const isWordPressScript = Boolean( defaultRequestToExternal( request ) );
+	//
+	//if ( isWordPressScript ) {
+	//	throw new Error(
+	//		`Attempted to use WordPress script in a module: ${ request }, which is not supported yet.`
+	//	);
+	//}
 }
 
 /**

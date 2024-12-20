@@ -111,8 +111,8 @@ require __DIR__ . '/compat/wordpress-6.5/kses.php';
 require __DIR__ . '/compat/wordpress-6.5/interactivity-api/class-wp-interactivity-api.php';
 require __DIR__ . '/compat/wordpress-6.5/interactivity-api/class-wp-interactivity-api-directives-processor.php';
 require __DIR__ . '/compat/wordpress-6.5/interactivity-api/interactivity-api.php';
-require __DIR__ . '/compat/wordpress-6.5/class-wp-script-modules.php';
-require __DIR__ . '/compat/wordpress-6.5/scripts-modules.php';
+/*require __DIR__ . '/compat/wordpress-6.5/class-wp-script-modules.php';*/
+/*require __DIR__ . '/compat/wordpress-6.5/scripts-modules.php';*/
 require __DIR__ . '/compat/wordpress-6.5/navigation-block-variations.php';
 if ( ! class_exists( 'WP_Block_Bindings_Source' ) ) {
 	require __DIR__ . '/compat/wordpress-6.5/block-bindings/class-wp-block-bindings-source.php';
