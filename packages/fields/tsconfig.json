@@ -9,6 +9,7 @@
 	"references": [
 		{ "path": "../api-fetch" },
 		{ "path": "../blob" },
+		{ "path": "../blocks" },
 		{ "path": "../components" },
 		{ "path": "../compose" },
 		{ "path": "../core-data" },
