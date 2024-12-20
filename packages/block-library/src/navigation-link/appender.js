@@ -56,6 +56,7 @@ export default function NavigationLinkAppender( { rootClientId } ) {
 						setIsLinkOpen( false );
 					} }
 					onChange={ ( updatedValue ) => {
+						setIsLinkOpen( false );
 						updateAttributes( updatedValue, createNewLink );
 					} }
 					anchor={ popoverAnchor }
