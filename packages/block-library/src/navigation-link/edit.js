@@ -250,6 +250,9 @@ export default function NavigationLinkEdit( {
 	} = useDispatch( blockEditorStore );
 	// Have the link editing ui open on mount if the block was just added.
 	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected );
+	// If the link ui was opened because it was just added, we need to return focus to the block instead of
+	// the appender when it is closed.
+	const focusBlockOnLinkCloseRef = useRef( isLinkOpen );
 	// Store what element opened the popover, so we know where to return focus to (toolbar button vs navigation link text)
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
@@ -589,7 +592,19 @@ export default function NavigationLinkEdit( {
 									return;
 								}
 
+								// If the link ui was opened due to the block being added,
+								// we need to return focus to the block instead of the appender.
+								if (
+									focusBlockOnLinkCloseRef.current &&
+									linkUIref.current.contains(
+										window.document.activeElement
+									)
+								) {
+									ref.current.focus();
+								}
+
 								setIsLinkOpen( false );
+								focusBlockOnLinkCloseRef.current = false;
 							} }
 							anchor={ popoverAnchor }
 							onRemove={ removeLink }
