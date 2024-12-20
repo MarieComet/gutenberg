@@ -78,7 +78,9 @@ _::-webkit-full-page-media, _:future, :root [data-has-multi-selection="true"] .b
 	// vs. styling the block directly. Ultimately we likely need a pseudo element
 	// (unless styles like focus and selection overlay can be rendered as separate elements),
 	// since things like border-radius need to be able to be set on the block itself.
+	.block-editor-block-list__block:hover,
 	.block-editor-block-list__block.is-highlighted,
+	.block-editor-block-list__block.has-child-selected,
 	.block-editor-block-list__block.is-highlighted ~ .is-multi-selected,
 	.block-editor-block-list__block:not([contenteditable="true"]):focus {
 		outline: none;
@@ -89,6 +91,11 @@ _::-webkit-full-page-media, _:future, :root [data-has-multi-selection="true"] .b
 			@include selected-block-focus();
 			z-index: 1;
 		}
+	}
+
+	.block-editor-block-list__block > .block-editor-block-list__block > .block-editor-block-list__block:hover::after,
+	.block-editor-block-list__block.has-child-selected > &.has-child-selected::after {
+		outline: none;
 	}
 
 	// Re-enable it on components inside.
@@ -247,26 +254,26 @@ _::-webkit-full-page-media, _:future, :root [data-has-multi-selection="true"] .b
 	}
 }
 
-.is-root-container:not([inert]) .block-editor-block-list__block.is-selected .block-editor-block-list__block.has-editable-outline::after {
-	animation-name: block-editor-is-editable__animation;
-	animation-duration: 0.8s;
-	animation-timing-function: ease-out;
-	animation-delay: 0.1s;
-	animation-fill-mode: backwards;
-	bottom: 0;
-	content: "";
-	left: 0;
-	pointer-events: none;
-	position: absolute;
-	right: 0;
-	top: 0;
+// .is-root-container:not([inert]) .block-editor-block-list__block.is-selected .block-editor-block-list__block.has-editable-outline::after {
+// 	animation-name: block-editor-is-editable__animation;
+// 	animation-duration: 0.8s;
+// 	animation-timing-function: ease-out;
+// 	animation-delay: 0.1s;
+// 	animation-fill-mode: backwards;
+// 	bottom: 0;
+// 	content: "";
+// 	left: 0;
+// 	pointer-events: none;
+// 	position: absolute;
+// 	right: 0;
+// 	top: 0;
 
-	// Unique reduced-motion affordance to ensure the effect is still visible when reduce motion is enabled.
-	@media (prefers-reduced-motion: reduce) {
-		animation-name: block-editor-is-editable__animation_reduce-motion;
-		animation-delay: 0s;
-	}
-}
+// 	// Unique reduced-motion affordance to ensure the effect is still visible when reduce motion is enabled.
+// 	@media (prefers-reduced-motion: reduce) {
+// 		animation-name: block-editor-is-editable__animation_reduce-motion;
+// 		animation-delay: 0s;
+// 	}
+// }
 
 // Spotlight mode. Fade out blocks unless they contain a selected block.
 .is-focus-mode .block-editor-block-list__block:not(.has-child-selected) {
@@ -432,4 +439,14 @@ _::-webkit-full-page-media, _:future, :root [data-has-multi-selection="true"] .b
 // during drag.
 .is-dragging {
 	cursor: grabbing;
+}
+
+.block-editor-block-list__block {
+	&.has-child-selected {
+		// Remove outline from nested has-child-selected blocks
+		.block-editor-block-list__block.has-child-selected {
+			outline: none;
+			// Or whatever properties you need to reset
+		}
+	}
 }
