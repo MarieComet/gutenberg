@@ -177,11 +177,9 @@ function getBlockSettingsFromMetadata( { textdomain, ...metadata } ) {
 	];
 
 	const settings = Object.fromEntries(
-		Reflect.ownKeys( metadata )
-			.map( ( key ) => [ key, metadata[ key ] ] )
-			.filter( ( [ key ] ) =>
-				allowedFields.some( ( field ) => field === key )
-			)
+		Object.entries( metadata ).filter( ( [ key ] ) =>
+			allowedFields.includes( key )
+		)
 	);
 
 	if ( textdomain ) {

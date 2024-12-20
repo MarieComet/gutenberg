@@ -77,7 +77,10 @@ export default function addDisplayKeyToBlockMetadata(
 	}
 	return {
 		...blockSettings,
-		[ blockMetadataDisplayKey ]: { role: 'content' },
+		supports: {
+			...blockSettings.supports,
+			[ blockMetadataDisplayKey ]: { role: 'content' },
+		},
 	};
 }
 

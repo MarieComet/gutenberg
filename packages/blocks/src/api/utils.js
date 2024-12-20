@@ -374,7 +374,7 @@ export const __experimentalGetBlockAttributesNamesByRole = ( ...args ) => {
 export function isContentBlock( name ) {
 	const blockType = getBlockType( name );
 
-	if ( blockType?.[ blockMetadataDisplayKey ]?.role === 'content' ) {
+	if ( blockType.supports?.[ blockMetadataDisplayKey ]?.role === 'content' ) {
 		return true;
 	}
 
