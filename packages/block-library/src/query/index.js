@@ -77,7 +77,6 @@ export default function addDisplayKeyToBlockMetadata(
 	}
 	return {
 		...blockSettings,
-		donkey: true,
 		[ blockMetadataDisplayKey ]: { role: 'content' },
 	};
 }
