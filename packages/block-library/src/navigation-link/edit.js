@@ -248,8 +248,8 @@ export default function NavigationLinkEdit( {
 		selectBlock,
 		selectPreviousBlock,
 	} = useDispatch( blockEditorStore );
-	// Have the link editing ui open on mount when lacking a url and selected.
-	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected && ! url );
+	// Have the link editing ui open on mount if the block was just added.
+	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected );
 	// Store what element opened the popover, so we know where to return focus to (toolbar button vs navigation link text)
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the popover's anchor updates.
@@ -298,6 +298,7 @@ export default function NavigationLinkEdit( {
 		},
 		[ clientId, maxNestingLevel ]
 	);
+
 	const { getBlocks } = useSelect( blockEditorStore );
 
 	/**
