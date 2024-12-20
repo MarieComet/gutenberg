@@ -33,7 +33,7 @@ import { __unstableStripHTML as stripHTML } from '@wordpress/dom';
 import { decodeEntities } from '@wordpress/html-entities';
 import { link as linkIcon, addSubmenu } from '@wordpress/icons';
 import { store as coreStore } from '@wordpress/core-data';
-import { useMergeRefs, usePrevious } from '@wordpress/compose';
+import { useMergeRefs } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -248,8 +248,16 @@ export default function NavigationLinkEdit( {
 		selectBlock,
 		selectPreviousBlock,
 	} = useDispatch( blockEditorStore );
-	// Have the link editing ui open on mount if the block was just added.
-	const [ isLinkOpen, setIsLinkOpen ] = useState( isSelected );
+
+	// If the link isSelected when mounted, it was just added via an appender
+	const isNewLink = isSelected;
+	const isLabelURLLike =
+		url && isURL( prependHTTP( label ) ) && /^.+\.[a-z]+/.test( label );
+
+	const [ isLinkOpen, setIsLinkOpen ] = useState(
+		isNewLink && ! isLabelURLLike
+	);
+
 	// If the link ui was opened because it was just added, we need to return focus to the block instead of
 	// the appender when it is closed.
 	const focusBlockOnLinkCloseRef = useRef( isLinkOpen );
@@ -262,7 +270,14 @@ export default function NavigationLinkEdit( {
 	const itemLabelPlaceholder = __( 'Add label…' );
 	const ref = useRef();
 	const linkUIref = useRef();
-	const prevUrl = usePrevious( url );
+
+	useEffect( () => {
+		// If the link was just added and label is url-like, focus and select the label text.
+		if ( isNewLink && isLabelURLLike ) {
+			// Focus and select the label text.
+			selectLabelText();
+		}
+	}, [] );
 
 	// Change the label using inspector causes rich text to change focus on firefox.
 	// This is a workaround to keep the focus on the label field when label filed is focused we don't render the rich text.
@@ -330,21 +345,6 @@ export default function NavigationLinkEdit( {
 			transformToSubmenu();
 		}
 	}, [ hasChildren ] );
-
-	// If the LinkControl popover is open and the URL has changed, close the LinkControl and focus the label text.
-	useEffect( () => {
-		// We only want to do this when the URL has gone from nothing to a new URL AND the label looks like a URL
-		if (
-			! prevUrl &&
-			url &&
-			isLinkOpen &&
-			isURL( prependHTTP( label ) ) &&
-			/^.+\.[a-z]+/.test( label )
-		) {
-			// Focus and select the label text.
-			selectLabelText();
-		}
-	}, [ prevUrl, url, isLinkOpen, label ] );
 
 	/**
 	 * Focus the Link label text and select it.
@@ -600,7 +600,7 @@ export default function NavigationLinkEdit( {
 										window.document.activeElement
 									)
 								) {
-									ref.current.focus();
+									ref.current?.focus();
 								}
 
 								setIsLinkOpen( false );
