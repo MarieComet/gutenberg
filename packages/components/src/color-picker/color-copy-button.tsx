@@ -54,7 +54,7 @@ export const ColorCopyButton = ( props: ColorCopyButtonProps ) => {
 	}, [] );
 
 	return (
-		<Button variant="secondary" ref={ copyRef } __next40pxDefaultSize>
+		<Button variant="secondary" ref={ copyRef } size="compact">
 			{ copiedColor === color.toHex() ? __( 'Copied!' ) : __( 'Copy' ) }
 		</Button>
 	);

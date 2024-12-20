@@ -99,7 +99,7 @@ const UnconnectedColorPicker = (
 					/>
 				</AuxiliaryColorArtefactHStackHeader>
 				<ColorInputWrapper
-					direction={ colorType === 'hex' ? 'row' : 'column' }
+					direction="column"
 					align="flex-start"
 					gap={ 2 }
 				>
