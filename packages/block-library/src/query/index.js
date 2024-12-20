@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 import { loop as icon } from '@wordpress/icons';
+import { privateApis } from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -12,6 +14,7 @@ import edit from './edit';
 import save from './save';
 import variations from './variations';
 import deprecated from './deprecated';
+import { unlock } from '../lock-unlock';
 
 const { name } = metadata;
 export { metadata, name };
@@ -64,4 +67,30 @@ export const settings = {
 	deprecated,
 };
 
-export const init = () => initBlock( { name, metadata, settings } );
+const { blockMetadataDisplayKey } = unlock( privateApis );
+export default function addDisplayKeyToBlockMetadata(
+	blockSettings,
+	blockName
+) {
+	if ( blockName !== 'core/query' ) {
+		return blockSettings;
+	}
+	return {
+		...blockSettings,
+		donkey: true,
+		[ blockMetadataDisplayKey ]: { role: 'content' },
+	};
+}
+
+export const init = () => {
+	addFilter(
+		'blocks.registerBlockType',
+		'core/query',
+		addDisplayKeyToBlockMetadata
+	);
+	return initBlock( {
+		name,
+		metadata,
+		settings,
+	} );
+};

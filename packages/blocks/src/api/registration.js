@@ -11,6 +11,7 @@ import warning from '@wordpress/warning';
 import i18nBlockSchema from './i18n-block.json';
 import { store as blocksStore } from '../store';
 import { unlock } from '../lock-unlock';
+import { blockMetadataDisplayKey } from './private-keys';
 
 /**
  * An icon type definition. One of a Dashicon slug, an element,
@@ -172,12 +173,15 @@ function getBlockSettingsFromMetadata( { textdomain, ...metadata } ) {
 		'variations',
 		'blockHooks',
 		'allowedBlocks',
+		blockMetadataDisplayKey,
 	];
 
 	const settings = Object.fromEntries(
-		Object.entries( metadata ).filter( ( [ key ] ) =>
-			allowedFields.includes( key )
-		)
+		Reflect.ownKeys( metadata )
+			.map( ( key ) => [ key, metadata[ key ] ] )
+			.filter( ( [ key ] ) =>
+				allowedFields.some( ( field ) => field === key )
+			)
 	);
 
 	if ( textdomain ) {

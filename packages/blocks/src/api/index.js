@@ -3,6 +3,7 @@
  */
 import { lock } from '../lock-unlock';
 import { isContentBlock } from './utils';
+import { blockMetadataDisplayKey } from './private-keys';
 
 // The blocktype is the most important concept within the block API. It defines
 // all aspects of the block configuration and its interfaces, including `edit`
@@ -176,5 +177,6 @@ export {
 	__EXPERIMENTAL_PATHS_WITH_OVERRIDE,
 } from './constants';
 
+// Private APIs.
 export const privateApis = {};
-lock( privateApis, { isContentBlock } );
+lock( privateApis, { isContentBlock, blockMetadataDisplayKey } );

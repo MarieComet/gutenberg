@@ -19,6 +19,7 @@ import deprecated from '@wordpress/deprecated';
  */
 import { BLOCK_ICON_DEFAULT } from './constants';
 import { getBlockType, getDefaultBlockName } from './registration';
+import { blockMetadataDisplayKey } from './private-keys';
 
 extend( [ namesPlugin, a11yPlugin ] );
 
@@ -371,7 +372,13 @@ export const __experimentalGetBlockAttributesNamesByRole = ( ...args ) => {
 };
 
 export function isContentBlock( name ) {
-	const attributes = getBlockType( name )?.attributes;
+	const blockType = getBlockType( name );
+
+	if ( blockType?.[ blockMetadataDisplayKey ]?.role === 'content' ) {
+		return true;
+	}
+
+	const attributes = blockType?.attributes;
 
 	return !! Object.keys( attributes )?.some( ( attributeKey ) => {
 		const attribute = attributes[ attributeKey ];

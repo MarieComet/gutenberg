@@ -95,14 +95,17 @@ function bootstrappedBlockTypes( state = {}, action ) {
 				}
 			} else {
 				newDefinition = Object.fromEntries(
-					Object.entries( blockType )
+					Reflect.ownKeys( blockType )
 						.filter(
-							( [ , value ] ) =>
-								value !== null && value !== undefined
+							( key ) =>
+								blockType[ key ] !== null &&
+								blockType[ key ] !== undefined
 						)
-						.map( ( [ key, value ] ) => [
-							camelCase( key ),
-							value,
+						.map( ( key ) => [
+							typeof key === 'symbol'
+								? key
+								: camelCase( key.toString() ),
+							blockType[ key ],
 						] )
 				);
 				newDefinition.name = name;
