@@ -83,6 +83,10 @@ test.describe( 'Widgets screen', () => {
 			{ name: /^Empty block/ }
 		);
 
+		// When the block is focused, the global inserter is closed,
+		// which in turn focuses the global inserter toggle.
+		// So we need to explicitly focus the paragraph block again.
+		await addedParagraphBlockInFirstWidgetArea.focus();
 		await addedParagraphBlockInFirstWidgetArea.focus();
 		await page.keyboard.type( 'First Paragraph' );
 
@@ -91,6 +95,10 @@ test.describe( 'Widgets screen', () => {
 		// TODO: We can add a test for the insertion indicator here.
 		await addParagraphBlock.click();
 
+		// When the block is focused, the global inserter is closed,
+		// which in turn focuses the global inserter toggle.
+		// So we need to explicitly focus the paragraph block again.
+		await addedParagraphBlockInFirstWidgetArea.focus();
 		await addedParagraphBlockInFirstWidgetArea.focus();
 		await page.keyboard.type( 'Second Paragraph' );
 
@@ -116,6 +124,11 @@ test.describe( 'Widgets screen', () => {
 			secondWidgetArea.getByRole( 'document', {
 				name: /^Empty block/,
 			} );
+
+		// When the block is focused, the global inserter is closed,
+		// which in turn focuses the global inserter toggle.
+		// So we need to explicitly focus the paragraph block again.
+		await addedParagraphBlockInSecondWidgetArea.focus();
 		await addedParagraphBlockInSecondWidgetArea.focus();
 		await page.keyboard.type( 'Third Paragraph' );
 
