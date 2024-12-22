@@ -48,10 +48,12 @@ export function useUpdatedPreviewSizeOnViewportChange() {
 	const viewport = useViewPortBreakpoint();
 	return useMemo( () => {
 		const previewSize = view.layout?.previewSize;
-		let newPreviewSize;
 		if ( ! previewSize ) {
-			return;
+			// For mobile, we want the `min` value as the default.
+			const breakValueProp = viewport === 'mobile' ? 'min' : 'default';
+			return viewportBreaks[ viewport ][ breakValueProp ];
 		}
+		let newPreviewSize;
 		const breakValues = viewportBreaks[ viewport ];
 		if ( previewSize < breakValues.min ) {
 			newPreviewSize = breakValues.min;

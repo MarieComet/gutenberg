@@ -13,6 +13,7 @@ import {
 	Spinner,
 	Flex,
 	FlexItem,
+	Composite,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -54,6 +55,14 @@ interface GridItemProps< Item > {
 	regularFields: NormalizedField< Item >[];
 	badgeFields: NormalizedField< Item >[];
 	hasBulkActions: boolean;
+}
+
+function chunk( array: any, size: any ) {
+	const chunks = [];
+	for ( let i = 0, j = array.length; i < j; i += size ) {
+		chunks.push( array.slice( i, i + size ) );
+	}
+	return chunks;
 }
 
 function GridItem< Item >( {
@@ -120,6 +129,7 @@ function GridItem< Item >( {
 		<VStack
 			spacing={ 0 }
 			key={ id }
+			role="gridcell"
 			className={ clsx( 'dataviews-view-grid__card', {
 				'is-selected': hasBulkAction && isSelected,
 			} ) }
@@ -270,44 +280,75 @@ export default function ViewGrid< Item >( {
 	const updatedPreviewSize = useUpdatedPreviewSizeOnViewportChange();
 	const hasBulkActions = useSomeItemHasAPossibleBulkAction( actions, data );
 	const usedPreviewSize = updatedPreviewSize || view.layout?.previewSize;
-	const gridStyle = usedPreviewSize
-		? {
-				gridTemplateColumns: `repeat(${ usedPreviewSize }, minmax(0, 1fr))`,
-		  }
-		: {};
 	return (
 		<>
 			{ hasData && (
-				<Grid
-					gap={ 8 }
-					columns={ 2 }
-					alignment="top"
+				<Composite
+					role="grid"
 					className="dataviews-view-grid"
-					style={ gridStyle }
+					focusLoop
+					focusWrap
 					aria-busy={ isLoading }
 				>
-					{ data.map( ( item ) => {
-						return (
-							<GridItem
-								key={ getItemId( item ) }
-								view={ view }
-								selection={ selection }
-								onChangeSelection={ onChangeSelection }
-								onClickItem={ onClickItem }
-								isItemClickable={ isItemClickable }
-								getItemId={ getItemId }
-								item={ item }
-								actions={ actions }
-								mediaField={ mediaField }
-								titleField={ titleField }
-								descriptionField={ descriptionField }
-								regularFields={ regularFields }
-								badgeFields={ badgeFields }
-								hasBulkActions={ hasBulkActions }
-							/>
-						);
-					} ) }
-				</Grid>
+					<VStack spacing={ 8 }>
+						{ chunk( data, usedPreviewSize ).map( ( row, i ) => (
+							<Composite.Row
+								key={ i }
+								role="row"
+								className="dataviews-view-grid__row"
+							>
+								<Grid columns={ usedPreviewSize } gap={ 8 }>
+									{ row.map( ( item: any ) => (
+										<Composite.Item
+											key={ getItemId( item ) }
+											render={
+												<div
+													id={ getItemId( item ) }
+													className="dataviews-view-grid__row__gridcell"
+												>
+													<GridItem
+														view={ view }
+														selection={ selection }
+														onChangeSelection={
+															onChangeSelection
+														}
+														onClickItem={
+															onClickItem
+														}
+														isItemClickable={
+															isItemClickable
+														}
+														getItemId={ getItemId }
+														item={ item }
+														actions={ actions }
+														mediaField={
+															mediaField
+														}
+														titleField={
+															titleField
+														}
+														descriptionField={
+															descriptionField
+														}
+														regularFields={
+															regularFields
+														}
+														badgeFields={
+															badgeFields
+														}
+														hasBulkActions={
+															hasBulkActions
+														}
+													/>
+												</div>
+											}
+										/>
+									) ) }
+								</Grid>
+							</Composite.Row>
+						) ) }
+					</VStack>
+				</Composite>
 			) }
 			{ ! hasData && (
 				<div
