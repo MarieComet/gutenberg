@@ -9,6 +9,7 @@ import {
 	getPossibleBlockTransformations,
 	switchToBlockType,
 	store as blocksStore,
+	privateApis,
 } from '@wordpress/blocks';
 import { Platform } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
@@ -59,6 +60,7 @@ import {
 const MILLISECONDS_PER_HOUR = 3600 * 1000;
 const MILLISECONDS_PER_DAY = 24 * 3600 * 1000;
 const MILLISECONDS_PER_WEEK = 7 * 24 * 3600 * 1000;
+const { blockMetadataDisplayKey } = unlock( privateApis );
 
 /**
  * Shared reference to an empty array for cases where it is important to avoid
@@ -1668,6 +1670,14 @@ const canInsertBlockTypeUnmemoized = (
 		blockName = blockType.name;
 	} else {
 		blockType = getBlockType( blockName );
+	}
+
+	/*
+	 * Properties of certain blocks such as the Query block should be editable and insertable in write mode.
+	 * These blocks, however, don't always have attributes with content roles.
+	 */
+	if ( blockType.supports?.[ blockMetadataDisplayKey ]?.role === 'content' ) {
+		return true;
 	}
 
 	const isLocked = !! getTemplateLock( state, rootClientId );
