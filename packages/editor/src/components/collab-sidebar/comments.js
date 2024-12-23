@@ -405,7 +405,7 @@ const ThreadWrapper = ( {
 		: 0;
 
 	const calculateOffset = () => {
-		if ( initialOffsetTop < previousElementY + 100 ) {
+		if ( previousElementY && initialOffsetTop < previousElementY + 100 ) {
 			return previousElementY - initialOffsetTop + 100 + 20;
 		}
 		return 0;
@@ -433,6 +433,15 @@ const ThreadWrapper = ( {
 		}
 	}, [ y ] );
 
+	const previousBoard = refs.floating?.current?.previousElementSibling;
+	console.log( 'previousBoard', previousBoard );
+	console.log( 'previousBoard offsetTop', previousBoard?.offsetTop );
+	console.log( 'previousBoard clientHeight', previousBoard?.clientHeight );
+
+	console.log(
+		'current board clientHeight',
+		refs.floating?.current?.clientHeight
+	);
 	return (
 		<VStack
 			ref={ refs.setFloating }
