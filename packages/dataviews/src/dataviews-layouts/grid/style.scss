@@ -1,7 +1,4 @@
 .dataviews-view-grid {
-	display: flex;
-	align-items: flex-start;
-	justify-content: center;
 	margin-bottom: auto;
 	padding: 0 $grid-unit-60 $grid-unit-30;
 	transition: padding ease-out 0.1s;
@@ -118,7 +115,7 @@
 }
 
 .dataviews-view-grid.dataviews-view-grid {
-	@container (max-width: 480px) {
+	@container (max-width: 430px) {
 		padding-left: $grid-unit-30;
 		padding-right: $grid-unit-30;
 	}

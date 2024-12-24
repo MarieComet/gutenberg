@@ -37,7 +37,7 @@ import type {
 } from '../../types';
 import type { SetSelection } from '../../private-types';
 import getClickableItemProps from '../utils/get-clickable-item-props';
-import { useUpdatedPreviewSizeOnViewportChange } from './preview-size-picker';
+import { usePreviewSize } from './preview-size-picker';
 const { Badge } = unlock( componentsPrivateApis );
 
 interface GridItemProps< Item > {
@@ -277,9 +277,8 @@ export default function ViewGrid< Item >( {
 		{ regularFields: [], badgeFields: [] }
 	);
 	const hasData = !! data?.length;
-	const updatedPreviewSize = useUpdatedPreviewSizeOnViewportChange();
+	const previewSize = usePreviewSize();
 	const hasBulkActions = useSomeItemHasAPossibleBulkAction( actions, data );
-	const usedPreviewSize = updatedPreviewSize || view.layout?.previewSize;
 	return (
 		<>
 			{ hasData && (
@@ -291,14 +290,14 @@ export default function ViewGrid< Item >( {
 					aria-busy={ isLoading }
 				>
 					<VStack spacing={ 8 }>
-						{ chunk( data, usedPreviewSize ).map( ( row, i ) => (
+						{ chunk( data, previewSize ).map( ( row, i ) => (
 							<Composite.Row
 								key={ i }
 								role="row"
 								className="dataviews-view-grid__row"
 							>
 								<Grid
-									templateColumns={ `repeat( ${ usedPreviewSize }, minmax(0, 1fr) )` }
+									templateColumns={ `repeat( ${ previewSize }, minmax(0, 1fr) )` }
 									gap={ 8 }
 								>
 									{ row.map( ( item: any ) => (
