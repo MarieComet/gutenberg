@@ -297,7 +297,10 @@ export default function ViewGrid< Item >( {
 								role="row"
 								className="dataviews-view-grid__row"
 							>
-								<Grid columns={ usedPreviewSize } gap={ 8 }>
+								<Grid
+									templateColumns={ `repeat( ${ usedPreviewSize }, minmax(0, 1fr) )` }
+									gap={ 8 }
+								>
 									{ row.map( ( item: any ) => (
 										<Composite.Item
 											key={ getItemId( item ) }
