@@ -46,12 +46,14 @@ export function useNavigatorButton(
 			[ goTo, onClick, attributeName, escapedPath ]
 		);
 
-	maybeWarnDeprecated36pxSize( {
-		componentName: 'Navigator.Button',
-		__next40pxDefaultSize: otherProps.__next40pxDefaultSize,
-		size: otherProps.size,
-		hint: 'Set the `__next40pxDefaultSize` prop to true to start opting into the new default size, which will become the default in a future version. For icon buttons, consider setting a non-default size like `size: "compact"`.',
-	} );
+	if ( as === undefined ) {
+		maybeWarnDeprecated36pxSize( {
+			componentName: 'Navigator.Button',
+			__next40pxDefaultSize: otherProps.__next40pxDefaultSize,
+			size: otherProps.size,
+			hint: 'Set the `__next40pxDefaultSize` prop to true to start opting into the new default size, which will become the default in a future version. For icon buttons, consider setting a non-default size like `size: "compact"`.',
+		} );
+	}
 
 	return {
 		as: as ?? Button,
