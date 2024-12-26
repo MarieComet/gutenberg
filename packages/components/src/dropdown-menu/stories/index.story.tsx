@@ -123,24 +123,3 @@ export const WithChildren: StoryObj< typeof DropdownMenu > = {
 		),
 	},
 };
-
-export const WithCustomTrigger: StoryObj< typeof DropdownMenu > = {
-	...Default,
-	args: {
-		label: 'Select a direction.',
-		children: ( { onClose } ) => (
-			<MenuItem icon={ arrowUp } onClick={ onClose }>
-				Move Up
-			</MenuItem>
-		),
-		toggleProps: {
-			as: ( props ) => {
-				return (
-					<button { ...props } type="button">
-						Open menu
-					</button>
-				);
-			},
-		},
-	},
-};
