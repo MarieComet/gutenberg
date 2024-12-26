@@ -11,6 +11,15 @@ test.describe( 'data-wp-each', () => {
 
 	test.beforeEach( async ( { interactivityUtils: utils, page } ) => {
 		await page.goto( utils.getLink( 'test/directive-each' ) );
+
+		// Scroll to page bottom to trigger hydration of out-of-viewport interactive regions.
+		await page.evaluate(
+			`window.scrollTo( {
+				top: document.body.scrollHeight,
+				left: 0,
+				behavior: 'instant',
+			} );`
+		);
 	} );
 
 	test.afterAll( async ( { interactivityUtils: utils } ) => {
@@ -303,11 +312,6 @@ test.describe( 'data-wp-each', () => {
 		const elements = page
 			.getByTestId( 'navigation-updated list' )
 			.getByTestId( 'item' );
-		await elements.evaluateAll( ( els ) => {
-			for ( const el of els ) {
-				el.scrollIntoView( { behavior: 'instant' } );
-			}
-		} );
 
 		// These tags are included to check that the elements are not unmounted
 		// and mounted again. If an element remounts, its tag should be missing.
@@ -499,9 +503,6 @@ test.describe( 'data-wp-each', () => {
 		const element = page
 			.getByTestId( 'elements with directives' )
 			.getByTestId( 'item' );
-		await element.evaluate( ( el ) =>
-			el.scrollIntoView( { behavior: 'instant' } )
-		);
 		const callbackRunCount = page
 			.getByTestId( 'elements with directives' )
 			.getByTestId( 'callbackRunCount' );
@@ -518,9 +519,6 @@ test.describe( 'data-wp-each', () => {
 			page,
 		} ) => {
 			const element = page.getByTestId( testId );
-			await element.evaluate( ( el ) =>
-				el.scrollIntoView( { behavior: 'instant' } )
-			);
 			await expect( element ).toBeEmpty();
 		} );
 	}
@@ -538,9 +536,6 @@ test.describe( 'data-wp-each', () => {
 			page,
 		} ) => {
 			const element = page.getByTestId( testId );
-			await element.evaluate( ( el ) =>
-				el.scrollIntoView( { behavior: 'instant' } )
-			);
 			for ( const value of values ) {
 				await expect(
 					element.getByText( value, { exact: true } )
