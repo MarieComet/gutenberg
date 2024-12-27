@@ -64,7 +64,7 @@
 .block-library-query__toolbar-popover-content-wrapper {
 	padding: $grid-unit-15;
 	width: auto;
-	@include break-small() {
+	@include break-medium() {
 		width: 320px;
 	}
 	.block-editor-block-patterns-list {
