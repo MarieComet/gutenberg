@@ -5,6 +5,5 @@
 		"types": [ "gutenberg-env" ],
 		"checkJs": false
 	},
-	"references": [ { "path": "../a11y" }, { "path": "../data" } ],
-	"include": [ "src" ]
+	"references": [ { "path": "../a11y" }, { "path": "../data" } ]
 }
