@@ -1878,13 +1878,7 @@ export function canMoveBlock( state, clientId ) {
 	) {
 		return false;
 	}
-	const rootEditingMode = getBlockEditingMode( state, rootClientId );
-	const blockEditingMode = getBlockEditingMode( state, clientId );
-	return (
-		rootEditingMode !== 'disabled' &&
-		( rootEditingMode !== 'contentOnly' ||
-			blockEditingMode !== 'contentOnly' )
-	);
+	return getBlockEditingMode( state, rootClientId ) !== 'disabled';
 }
 
 /**
