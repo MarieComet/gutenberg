@@ -61,6 +61,17 @@ export function Comments( {
 	setShowCommentBoard,
 	canvasSidebar,
 } ) {
+	const [ heights, setHeights ] = useState( {} );
+
+	const updateHeight = ( id, newHeight ) => {
+		setHeights( ( prev ) => {
+			if ( prev[ id ] !== newHeight ) {
+				return { ...prev, [ id ]: newHeight };
+			}
+			return prev;
+		} );
+	};
+
 	const { blockCommentId } = useSelect( ( select ) => {
 		const { getBlockAttributes, getSelectedBlockClientId } =
 			select( blockEditorStore );
@@ -130,7 +141,9 @@ export function Comments( {
 						onClick={ () => setFocusThread( thread.id ) }
 						offsetsRef={ offsetsRef }
 						updateOffsets={ updateOffsets }
-						previousThread={ threads[ index - 1 ] }
+						previousThreadId={ threads[ index - 1 ]?.id }
+						updateHeight={ updateHeight }
+						heights={ heights }
 					>
 						<Thread
 							thread={ thread }
@@ -391,7 +404,9 @@ const ThreadWrapper = ( {
 	onClick,
 	offsetsRef,
 	updateOffsets,
-	previousThread,
+	previousThreadId,
+	updateHeight,
+	heights,
 } ) => {
 	const blockRef = useRef();
 	useBlockElementRef( thread.clientId, blockRef );
@@ -400,13 +415,18 @@ const ThreadWrapper = ( {
 
 	const initialOffsetTop = selectedBlockElementRect?.top;
 
-	const previousElementY = previousThread
-		? offsetsRef.current[ previousThread.id ]
+	const previousOffset = previousThreadId
+		? offsetsRef.current[ previousThreadId ]
 		: 0;
 
+	const previousBoardHeight = heights[ previousThreadId ];
+
 	const calculateOffset = () => {
-		if ( previousElementY && initialOffsetTop < previousElementY + 100 ) {
-			return previousElementY - initialOffsetTop + 100 + 20;
+		if (
+			previousOffset &&
+			initialOffsetTop < previousOffset + previousBoardHeight
+		) {
+			return previousOffset - initialOffsetTop + previousBoardHeight + 20;
 		}
 		return 0;
 	};
@@ -429,19 +449,17 @@ const ThreadWrapper = ( {
 
 	useEffect( () => {
 		if ( y !== null && y !== 0 ) {
-			updateOffsets( thread.id, y ); // Pass the offset to the parent
+			updateOffsets( thread.id, y, refs.floating?.current?.clientHeight ); // Pass the offset to the parent
 		}
-	}, [ y ] );
+	}, [ y, updateOffsets ] );
 
-	const previousBoard = refs.floating?.current?.previousElementSibling;
-	console.log( 'previousBoard', previousBoard );
-	console.log( 'previousBoard offsetTop', previousBoard?.offsetTop );
-	console.log( 'previousBoard clientHeight', previousBoard?.clientHeight );
+	useEffect( () => {
+		if ( refs.floating?.current ) {
+			const newHeight = refs.floating?.current.scrollHeight;
+			updateHeight( thread.id, newHeight );
+		}
+	}, [ thread.id, updateHeight ] );
 
-	console.log(
-		'current board clientHeight',
-		refs.floating?.current?.clientHeight
-	);
 	return (
 		<VStack
 			ref={ refs.setFloating }
