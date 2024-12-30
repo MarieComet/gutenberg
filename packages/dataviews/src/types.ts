@@ -170,6 +170,7 @@ export type NormalizedField< Item > = Field< Item > & {
 	isValid: ( item: Item, context?: ValidationContext ) => boolean;
 	enableHiding: boolean;
 	enableSorting: boolean;
+	__returnsBadge?: boolean;
 };
 
 /**
