@@ -83,25 +83,12 @@ export default function SearchEdit( {
 		style,
 	} = attributes;
 
-	const isEnhancedPagination = context?.enhancedPagination;
-
-	useEffect( () => {
-		if ( isEnhancedPagination ) {
-			// Add the name to the metadata
-			setAttributes( { metadata: { name: 'Instant Search' } } );
-		} else {
-			// Remove the name from the metadata
-			const { name, ...metadata } = attributes.metadata || {};
-			setAttributes( { metadata } );
-		}
-
-		// We disable the exhaustive-deps warning because the effect should not depend
-		// on the attributes.metadata value. We only want to re-run the effect when the
-		// isEnhancedPagination value changes.
-
-		// eslint-disable-next-line react-compiler/react-compiler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isEnhancedPagination, setAttributes ] );
+	// Check if the block is inside a Query block with enhanced pagination enabled
+	// and if the `__experimentalEnableSearchQueryBlock` flag is enabled.
+	const hasInstantSearch = !! (
+		context?.enhancedPagination &&
+		window?.__experimentalEnableSearchQueryBlock
+	);
 
 	const wasJustInsertedIntoNavigationBlock = useSelect(
 		( select ) => {
@@ -406,7 +393,7 @@ export default function SearchEdit( {
 						} }
 						className={ showLabel ? 'is-pressed' : undefined }
 					/>
-					{ ! isEnhancedPagination && (
+					{ ! hasInstantSearch && (
 						<>
 							<ToolbarDropdownMenu
 								icon={ getButtonPositionIcon() }
@@ -621,7 +608,7 @@ export default function SearchEdit( {
 				} }
 				showHandle={ isSelected }
 			>
-				{ isEnhancedPagination ? (
+				{ hasInstantSearch ? (
 					renderTextField()
 				) : (
 					<>
