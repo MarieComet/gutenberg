@@ -8,7 +8,7 @@ import {
 	resolveSelect,
 	subscribe,
 } from '@wordpress/data';
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { comment as commentIcon } from '@wordpress/icons';
 import { addFilter } from '@wordpress/hooks';
 import { store as noticesStore } from '@wordpress/notices';
@@ -221,7 +221,7 @@ function CollabSidebarContent( {
  * Renders the Collab sidebar.
  */
 export default function CollabSidebar() {
-	const [ showCommentBoard, setShowCommentBoard ] = useState( false );
+	const [ showCommentBoard, setShowCommentBoard ] = useState( null );
 	const { enableComplementaryArea } = useDispatch( interfaceStore );
 	const { getActiveComplementaryArea } = useSelect( interfaceStore );
 
@@ -246,7 +246,7 @@ export default function CollabSidebar() {
 		};
 	}, [] );
 
-	const { blockCommentId } = useSelect( ( select ) => {
+	const { blockCommentId, selectedBlockClientId } = useSelect( ( select ) => {
 		const { getBlockAttributes, getSelectedBlockClientId } =
 			select( blockEditorStore );
 		const _clientId = getSelectedBlockClientId();
@@ -255,13 +255,21 @@ export default function CollabSidebar() {
 			blockCommentId: _clientId
 				? getBlockAttributes( _clientId )?.blockCommentId
 				: null,
+			selectedBlockClientId: _clientId,
 		};
 	}, [] );
 
 	const openCollabBoard = () => {
-		setShowCommentBoard( true );
+		setShowCommentBoard( blockCommentId );
 		enableComplementaryArea( 'core', 'edit-post/collab-sidebar' );
 	};
+
+	// clear board focus when block selection is changed.
+	useEffect( () => {
+		if ( showCommentBoard !== blockCommentId ) {
+			setShowCommentBoard( null );
+		}
+	}, [ selectedBlockClientId ] );
 
 	const [ blocks ] = useEntityBlockEditor( 'postType', postType, {
 		id: postId,

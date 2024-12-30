@@ -22,7 +22,7 @@ import {
 } from '@wordpress/components';
 import { Icon, check, published, moreVertical } from '@wordpress/icons';
 import { __, _x, sprintf } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	store as blockEditorStore,
 	privateApis as blockEditorPrivateApis,
@@ -84,10 +84,6 @@ export function Comments( {
 		};
 	}, [] );
 
-	const [ focusThread, setFocusThread ] = useState(
-		showCommentBoard && blockCommentId ? blockCommentId : null
-	);
-
 	// Object to store offsets for each board.
 	const offsetsRef = useRef( {} );
 
@@ -96,11 +92,18 @@ export function Comments( {
 	};
 
 	const clearThreadFocus = () => {
-		setFocusThread( null );
-		setShowCommentBoard( false );
+		setShowCommentBoard( null );
 	};
 
 	const ParentWrapper = canvasSidebar ? ThreadWrapper : VStack;
+
+	const { selectBlock } = useDispatch( blockEditorStore );
+	const handleThreadClick = ( thread ) => {
+		if ( thread?.clientId ) {
+			selectBlock( thread.clientId ); // Use the action to select the block
+		}
+		setShowCommentBoard( thread.id );
+	};
 
 	return (
 		<>
@@ -135,10 +138,11 @@ export function Comments( {
 									blockCommentId &&
 									blockCommentId === thread.id,
 								'editor-collab-sidebar-panel__focus-thread':
-									focusThread && focusThread === thread.id,
+									showCommentBoard &&
+									showCommentBoard === thread.id,
 							}
 						) }
-						onClick={ () => setFocusThread( thread.id ) }
+						onClick={ () => handleThreadClick( thread ) }
 						offsetsRef={ offsetsRef }
 						updateOffsets={ updateOffsets }
 						previousThreadId={ threads[ index - 1 ]?.id }
@@ -151,7 +155,7 @@ export function Comments( {
 							onCommentDelete={ onCommentDelete }
 							onCommentResolve={ onCommentResolve }
 							onEditComment={ onEditComment }
-							isFocused={ focusThread === thread.id }
+							isFocused={ showCommentBoard === thread.id }
 							clearThreadFocus={ clearThreadFocus }
 						/>
 					</ParentWrapper>
