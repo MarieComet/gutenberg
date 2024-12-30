@@ -13,3 +13,13 @@ export const templateItemRoute = {
 		preview: <MaybeEditor />,
 	},
 };
+
+export const staticTemplateItemRoute = {
+	name: 'static-template-item',
+	path: '/_wp_static_template/*postId',
+	areas: {
+		sidebar: <SidebarNavigationScreenTemplatesBrowse backPath="/" />,
+		mobile: <MaybeEditor />,
+		preview: <MaybeEditor />,
+	},
+};

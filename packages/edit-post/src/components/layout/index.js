@@ -86,6 +86,7 @@ const DESIGN_POST_TYPES = [
 	'wp_template_part',
 	'wp_block',
 	'wp_navigation',
+	'_wp_static_template',
 ];
 
 function useEditorStyles( ...additionalStyles ) {
@@ -445,6 +446,17 @@ function Layout( {
 	);
 	useMetaBoxInitialization( hasActiveMetaboxes );
 
+	const editableResolvedTemplateId = useSelect(
+		( select ) => {
+			if ( typeof templateId !== 'string' ) {
+				return templateId;
+			}
+			return unlock( select( coreStore ) ).getTemplateAutoDraftId(
+				templateId
+			);
+		},
+		[ templateId ]
+	);
 	const [ paddingAppenderRef, paddingStyle ] = usePaddingAppender(
 		enablePaddingAppender
 	);
@@ -569,7 +581,7 @@ function Layout( {
 						initialEdits={ initialEdits }
 						postType={ currentPostType }
 						postId={ currentPostId }
-						templateId={ templateId }
+						templateId={ editableResolvedTemplateId }
 						className={ className }
 						styles={ styles }
 						forceIsDirty={ hasActiveMetaboxes }

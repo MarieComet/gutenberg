@@ -17,7 +17,7 @@ import { patternsRoute } from './patterns';
 import { patternItemRoute } from './pattern-item';
 import { templatePartItemRoute } from './template-part-item';
 import { templatesRoute } from './templates';
-import { templateItemRoute } from './template-item';
+import { templateItemRoute, staticTemplateItemRoute } from './template-item';
 import { pagesRoute } from './pages';
 import { pageItemRoute } from './page-item';
 import { stylebookRoute } from './stylebook';
@@ -26,6 +26,7 @@ const routes = [
 	pageItemRoute,
 	pagesRoute,
 	templateItemRoute,
+	staticTemplateItemRoute,
 	templatesRoute,
 	templatePartItemRoute,
 	patternItemRoute,
