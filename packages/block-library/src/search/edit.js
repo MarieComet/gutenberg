@@ -31,6 +31,7 @@ import {
 	__experimentalUnitControl as UnitControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { Icon, search } from '@wordpress/icons';
@@ -406,6 +407,14 @@ export default function SearchEdit( {
 					) }
 				</ToolbarGroup>
 			</BlockControls>
+
+			<InspectorControls group="secondaryDescription">
+				<Text>
+					{ __(
+						'Uses instant search for seamless results without reloading the page. Configuration is managed in the Query Loop block.'
+					) }
+				</Text>
+			</InspectorControls>
 
 			<InspectorControls>
 				<PanelBody title={ __( 'Settings' ) }>

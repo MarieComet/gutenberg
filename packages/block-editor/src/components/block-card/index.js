@@ -23,6 +23,7 @@ import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { unlock } from '../../lock-unlock';
 import { store as blockEditorStore } from '../../store';
 import BlockIcon from '../block-icon';
+import { default as InspectorControls } from '../inspector-controls';
 
 const { Badge } = unlock( componentsPrivateApis );
 
@@ -109,6 +110,11 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 						{ description }
 					</Text>
 				) }
+				<InspectorControls.Slot
+					group="secondaryDescription"
+					className="block-editor-block-card__secondary-description"
+					data-testid="block-editor-block-card__secondary-description"
+				/>
 			</VStack>
 		</div>
 	);
