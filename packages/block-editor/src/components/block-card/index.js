@@ -113,7 +113,6 @@ function BlockCard( { title, icon, description, blockType, className, name } ) {
 				<InspectorControls.Slot
 					group="secondaryDescription"
 					className="block-editor-block-card__secondary-description"
-					data-testid="block-editor-block-card__secondary-description"
 				/>
 			</VStack>
 		</div>
