@@ -52,8 +52,8 @@ addFilter(
 );
 
 function CollabSidebarContent( {
-	showCommentBoard,
-	setShowCommentBoard,
+	activeComment,
+	setActiveComment,
 	isNewComment,
 	setIsNewComment,
 	styles,
@@ -212,8 +212,8 @@ function CollabSidebarContent( {
 				onAddReply={ addNewComment }
 				onCommentDelete={ onCommentDelete }
 				onCommentResolve={ onCommentResolve }
-				showCommentBoard={ showCommentBoard }
-				setShowCommentBoard={ setShowCommentBoard }
+				activeComment={ activeComment }
+				setActiveComment={ setActiveComment }
 				canvasSidebar={ canvasSidebar }
 			/>
 		</div>
@@ -224,7 +224,7 @@ function CollabSidebarContent( {
  * Renders the Collab sidebar.
  */
 export default function CollabSidebar() {
-	const [ showCommentBoard, setShowCommentBoard ] = useState( null );
+	const [ activeComment, setActiveComment ] = useState( null );
 	const [ isNewComment, setIsNewComment ] = useState( false );
 	const { enableComplementaryArea } = useDispatch( interfaceStore );
 	const { getActiveComplementaryArea } = useSelect( interfaceStore );
@@ -264,13 +264,13 @@ export default function CollabSidebar() {
 	}, [] );
 
 	const setCommentBoardFocus = () => {
-		setShowCommentBoard( blockCommentId );
+		setActiveComment( blockCommentId );
 	};
 
 	// clear board focus when block selection is changed.
 	useEffect( () => {
-		if ( showCommentBoard !== blockCommentId ) {
-			setShowCommentBoard( null );
+		if ( activeComment !== blockCommentId ) {
+			setActiveComment( null );
 		}
 	}, [ selectedBlockClientId ] );
 
@@ -371,8 +371,8 @@ export default function CollabSidebar() {
 			>
 				<CollabSidebarContent
 					comments={ resultComments }
-					showCommentBoard={ showCommentBoard }
-					setShowCommentBoard={ setShowCommentBoard }
+					activeComment={ activeComment }
+					setActiveComment={ setActiveComment }
 					isNewComment={ isNewComment }
 					setIsNewComment={ setIsNewComment }
 				/>
@@ -386,8 +386,8 @@ export default function CollabSidebar() {
 			>
 				<CollabSidebarContent
 					comments={ sortedThreads }
-					showCommentBoard={ showCommentBoard }
-					setShowCommentBoard={ setShowCommentBoard }
+					activeComment={ activeComment }
+					setActiveComment={ setActiveComment }
 					isNewComment={ isNewComment }
 					setIsNewComment={ setIsNewComment }
 					styles={ {

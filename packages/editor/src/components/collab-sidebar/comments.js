@@ -40,15 +40,15 @@ const { useBlockElementRef } = unlock( blockEditorPrivateApis );
 /**
  * Renders the Comments component.
  *
- * @param {Object}   props                     - The component props.
- * @param {Array}    props.threads             - The array of comment threads.
- * @param {Function} props.onEditComment       - The function to handle comment editing.
- * @param {Function} props.onAddReply          - The function to add a reply to a comment.
- * @param {Function} props.onCommentDelete     - The function to delete a comment.
- * @param {Function} props.onCommentResolve    - The function to mark a comment as resolved.
- * @param {boolean}  props.showCommentBoard    - Whether to show the comment board.
- * @param {Function} props.setShowCommentBoard - The function to set the comment board visibility.
- * @param {boolean}  props.canvasSidebar       - Whether is this canvas sidebar or not.
+ * @param {Object}   props                  - The component props.
+ * @param {Array}    props.threads          - The array of comment threads.
+ * @param {Function} props.onEditComment    - The function to handle comment editing.
+ * @param {Function} props.onAddReply       - The function to add a reply to a comment.
+ * @param {Function} props.onCommentDelete  - The function to delete a comment.
+ * @param {Function} props.onCommentResolve - The function to mark a comment as resolved.
+ * @param {boolean}  props.activeComment    - Whether to show the comment board.
+ * @param {Function} props.setActiveComment - The function to set the comment board visibility.
+ * @param {boolean}  props.canvasSidebar    - Whether is this canvas sidebar or not.
  * @return {React.ReactNode} The rendered Comments component.
  */
 export function Comments( {
@@ -57,8 +57,8 @@ export function Comments( {
 	onAddReply,
 	onCommentDelete,
 	onCommentResolve,
-	showCommentBoard,
-	setShowCommentBoard,
+	activeComment,
+	setActiveComment,
 	canvasSidebar,
 } ) {
 	const [ heights, setHeights ] = useState( {} );
@@ -92,7 +92,7 @@ export function Comments( {
 	};
 
 	const clearThreadFocus = () => {
-		setShowCommentBoard( null );
+		setActiveComment( null );
 	};
 
 	const ParentWrapper = canvasSidebar ? ThreadWrapper : VStack;
@@ -102,7 +102,7 @@ export function Comments( {
 		if ( thread?.clientId ) {
 			selectBlock( thread.clientId ); // Use the action to select the block
 		}
-		setShowCommentBoard( thread.id );
+		setActiveComment( thread.id );
 	};
 
 	return (
@@ -138,8 +138,8 @@ export function Comments( {
 									blockCommentId &&
 									blockCommentId === thread.id,
 								'editor-collab-sidebar-panel__focus-thread':
-									showCommentBoard &&
-									showCommentBoard === thread.id,
+									activeComment &&
+									activeComment === thread.id,
 							}
 						) }
 						onClick={ () => handleThreadClick( thread ) }
@@ -155,7 +155,7 @@ export function Comments( {
 							onCommentDelete={ onCommentDelete }
 							onCommentResolve={ onCommentResolve }
 							onEditComment={ onEditComment }
-							isFocused={ showCommentBoard === thread.id }
+							isFocused={ activeComment === thread.id }
 							clearThreadFocus={ clearThreadFocus }
 						/>
 					</ParentWrapper>
