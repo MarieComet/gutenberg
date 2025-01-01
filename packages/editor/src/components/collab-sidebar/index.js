@@ -54,6 +54,8 @@ addFilter(
 function CollabSidebarContent( {
 	showCommentBoard,
 	setShowCommentBoard,
+	isNewComment,
+	setIsNewComment,
 	styles,
 	comments,
 	canvasSidebar = false,
@@ -198,11 +200,12 @@ function CollabSidebarContent( {
 
 	return (
 		<div className="editor-collab-sidebar-panel" style={ styles }>
-			<AddComment
-				onSubmit={ addNewComment }
-				showCommentBoard={ showCommentBoard }
-				setShowCommentBoard={ setShowCommentBoard }
-			/>
+			{ isNewComment && (
+				<AddComment
+					onSubmit={ addNewComment }
+					setIsNewComment={ setIsNewComment }
+				/>
+			) }
 			<Comments
 				threads={ comments }
 				onEditComment={ onEditComment }
@@ -222,6 +225,7 @@ function CollabSidebarContent( {
  */
 export default function CollabSidebar() {
 	const [ showCommentBoard, setShowCommentBoard ] = useState( null );
+	const [ isNewComment, setIsNewComment ] = useState( false );
 	const { enableComplementaryArea } = useDispatch( interfaceStore );
 	const { getActiveComplementaryArea } = useSelect( interfaceStore );
 
@@ -259,9 +263,8 @@ export default function CollabSidebar() {
 		};
 	}, [] );
 
-	const openCollabBoard = () => {
+	const setCommentBoardFocus = () => {
 		setShowCommentBoard( blockCommentId );
-		enableComplementaryArea( 'core', 'edit-post/collab-sidebar' );
 	};
 
 	// clear board focus when block selection is changed.
@@ -347,13 +350,19 @@ export default function CollabSidebar() {
 		return null; // or maybe return some message indicating no threads are available.
 	}
 
-	const AddCommentComponent = blockCommentId
-		? AddCommentToolbarButton
-		: AddCommentButton;
+	// Open the comment board when the user clicks on the comment button.
+	const openNewCommentBoard = () => {
+		setIsNewComment( true );
+	};
 
 	return (
 		<>
-			<AddCommentComponent onClick={ openCollabBoard } />
+			{ blockCommentId && (
+				<AddCommentToolbarButton onClick={ setCommentBoardFocus } />
+			) }
+			{ ! blockCommentId && (
+				<AddCommentButton onClick={ openNewCommentBoard } />
+			) }
 			<PluginSidebar
 				identifier={ collabHistorySidebarName }
 				// translators: Comments sidebar title
@@ -364,6 +373,8 @@ export default function CollabSidebar() {
 					comments={ resultComments }
 					showCommentBoard={ showCommentBoard }
 					setShowCommentBoard={ setShowCommentBoard }
+					isNewComment={ isNewComment }
+					setIsNewComment={ setIsNewComment }
 				/>
 			</PluginSidebar>
 			<PluginSidebar
@@ -377,6 +388,8 @@ export default function CollabSidebar() {
 					comments={ sortedThreads }
 					showCommentBoard={ showCommentBoard }
 					setShowCommentBoard={ setShowCommentBoard }
+					isNewComment={ isNewComment }
+					setIsNewComment={ setIsNewComment }
 					styles={ {
 						backgroundColor,
 					} }

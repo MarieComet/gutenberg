@@ -18,30 +18,12 @@ import CommentForm from './comment-form';
 /**
  * Renders the UI for adding a comment in the Gutenberg editor's collaboration sidebar.
  *
- * @param {Object}   props                     - The component props.
- * @param {Function} props.onSubmit            - A callback function to be called when the user submits a comment.
- * @param {boolean}  props.showCommentBoard    - The function to edit the comment.
- * @param {Function} props.setShowCommentBoard - The function to delete the comment.
+ * @param {Object}   props                 - The component props.
+ * @param {Function} props.onSubmit        - A callback function to be called when the user submits a comment.
+ * @param {Function} props.setIsNewComment - The function to set the new comment board visibility.
  * @return {React.ReactNode} The rendered comment input UI.
  */
-export function AddComment( {
-	onSubmit,
-	showCommentBoard,
-	setShowCommentBoard,
-} ) {
-	const { clientId, blockCommentId } = useSelect( ( select ) => {
-		const { getSelectedBlock } = select( blockEditorStore );
-		const selectedBlock = getSelectedBlock();
-		return {
-			clientId: selectedBlock?.clientId,
-			blockCommentId: selectedBlock?.attributes?.blockCommentId,
-		};
-	} );
-
-	if ( ! showCommentBoard || ! clientId || undefined !== blockCommentId ) {
-		return null;
-	}
-
+export function AddComment( { onSubmit, setIsNewComment } ) {
 	return (
 		<VStack
 			spacing="3"
@@ -53,9 +35,10 @@ export function AddComment( {
 			<CommentForm
 				onSubmit={ ( inputComment ) => {
 					onSubmit( inputComment );
+					setIsNewComment( false );
 				} }
 				onCancel={ () => {
-					setShowCommentBoard( false );
+					setIsNewComment( false );
 				} }
 				submitButtonText={ _x( 'Comment', 'Add comment button' ) }
 			/>
