@@ -34,6 +34,7 @@ import {
 import CommentAuthorInfo from './comment-author-info';
 import CommentForm from './comment-form';
 import { unlock } from '../../lock-unlock';
+import { AddComment } from './add-comment';
 
 const { useBlockElementRef } = unlock( blockEditorPrivateApis );
 
@@ -46,9 +47,11 @@ const { useBlockElementRef } = unlock( blockEditorPrivateApis );
  * @param {Function} props.onAddReply       - The function to add a reply to a comment.
  * @param {Function} props.onCommentDelete  - The function to delete a comment.
  * @param {Function} props.onCommentResolve - The function to mark a comment as resolved.
- * @param {boolean}  props.activeComment    - Whether to show the comment board.
- * @param {Function} props.setActiveComment - The function to set the comment board visibility.
+ * @param {boolean}  props.activeComment    - Active comment board id.
+ * @param {Function} props.setActiveComment - The function to set the active comment.
  * @param {boolean}  props.canvasSidebar    - Whether is this canvas sidebar or not.
+ * @param {Function} props.setIsNewComment  - The function to set the new comment board visibility.
+ * @param {boolean}  props.isNewComment     - Whether to show the new comment board.
  * @return {React.ReactNode} The rendered Comments component.
  */
 export function Comments( {
@@ -60,6 +63,8 @@ export function Comments( {
 	activeComment,
 	setActiveComment,
 	canvasSidebar,
+	isNewComment,
+	setIsNewComment,
 } ) {
 	const [ heights, setHeights ] = useState( {} );
 
@@ -72,7 +77,7 @@ export function Comments( {
 		} );
 	};
 
-	const { blockCommentId } = useSelect( ( select ) => {
+	const { blockCommentId, selectedBlockClientId } = useSelect( ( select ) => {
 		const { getBlockAttributes, getSelectedBlockClientId } =
 			select( blockEditorStore );
 		const _clientId = getSelectedBlockClientId();
@@ -81,6 +86,7 @@ export function Comments( {
 			blockCommentId: _clientId
 				? getBlockAttributes( _clientId )?.blockCommentId
 				: null,
+			selectedBlockClientId: _clientId,
 		};
 	}, [] );
 
@@ -123,6 +129,28 @@ export function Comments( {
 					</VStack>
 				)
 			}
+			{ isNewComment && (
+				<ParentWrapper
+					thread={ {
+						id: 'new-comment',
+						clientId: selectedBlockClientId,
+					} }
+					spacing="3"
+					className={ clsx( 'editor-collab-sidebar-panel__thread', {
+						'editor-collab-sidebar-panel__active-thread': true,
+						'editor-collab-sidebar-panel__focus-thread': true,
+					} ) }
+					offsetsRef={ offsetsRef }
+					updateOffsets={ updateOffsets }
+					updateHeight={ updateHeight }
+					heights={ heights }
+				>
+					<AddComment
+						onSubmit={ onAddReply }
+						setIsNewComment={ setIsNewComment }
+					/>
+				</ParentWrapper>
+			) }
 			{ Array.isArray( threads ) &&
 				threads.length > 0 &&
 				threads.map( ( thread, index ) => (

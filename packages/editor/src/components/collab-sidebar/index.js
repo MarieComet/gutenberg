@@ -22,7 +22,6 @@ import { store as interfaceStore } from '@wordpress/interface';
 import PluginSidebar from '../plugin-sidebar';
 import { collabHistorySidebarName, collabSidebarName } from './constants';
 import { Comments } from './comments';
-import { AddComment } from './add-comment';
 import { store as editorStore } from '../../store';
 import AddCommentButton from './comment-button';
 import AddCommentToolbarButton from './comment-button-toolbar';
@@ -200,12 +199,6 @@ function CollabSidebarContent( {
 
 	return (
 		<div className="editor-collab-sidebar-panel" style={ styles }>
-			{ isNewComment && (
-				<AddComment
-					onSubmit={ addNewComment }
-					setIsNewComment={ setIsNewComment }
-				/>
-			) }
 			<Comments
 				threads={ comments }
 				onEditComment={ onEditComment }
@@ -215,6 +208,8 @@ function CollabSidebarContent( {
 				activeComment={ activeComment }
 				setActiveComment={ setActiveComment }
 				canvasSidebar={ canvasSidebar }
+				isNewComment={ isNewComment }
+				setIsNewComment={ setIsNewComment }
 			/>
 		</div>
 	);
@@ -264,13 +259,18 @@ export default function CollabSidebar() {
 	}, [] );
 
 	const setCommentBoardFocus = () => {
-		setActiveComment( blockCommentId );
+		setActiveComment(
+			blockCommentId === activeComment ? null : blockCommentId
+		);
 	};
 
 	// clear board focus when block selection is changed.
 	useEffect( () => {
 		if ( activeComment !== blockCommentId ) {
 			setActiveComment( null );
+		}
+		if ( isNewComment ) {
+			setIsNewComment( false );
 		}
 	}, [ selectedBlockClientId ] );
 
@@ -358,7 +358,10 @@ export default function CollabSidebar() {
 	return (
 		<>
 			{ blockCommentId && (
-				<AddCommentToolbarButton onClick={ setCommentBoardFocus } />
+				<AddCommentToolbarButton
+					isActive={ !! activeComment }
+					onClick={ setCommentBoardFocus }
+				/>
 			) }
 			{ ! blockCommentId && (
 				<AddCommentButton onClick={ openNewCommentBoard } />

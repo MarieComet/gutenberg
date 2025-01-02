@@ -2,12 +2,7 @@
  * WordPress dependencies
  */
 import { _x } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
-import { store as blockEditorStore } from '@wordpress/block-editor';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -25,10 +20,7 @@ import CommentForm from './comment-form';
  */
 export function AddComment( { onSubmit, setIsNewComment } ) {
 	return (
-		<VStack
-			spacing="3"
-			className="editor-collab-sidebar-panel__thread editor-collab-sidebar-panel__active-thread editor-collab-sidebar-panel__focus-thread"
-		>
+		<>
 			<HStack alignment="left" spacing="3">
 				<CommentAuthorInfo />
 			</HStack>
@@ -42,6 +34,6 @@ export function AddComment( { onSubmit, setIsNewComment } ) {
 				} }
 				submitButtonText={ _x( 'Comment', 'Add comment button' ) }
 			/>
-		</VStack>
+		</>
 	);
 }
