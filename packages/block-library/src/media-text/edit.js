@@ -130,8 +130,35 @@ function attributesFromMedia( {
 			mediaLink: media.link || undefined,
 			href: newHref,
 			focalPoint: undefined,
+			useFeaturedImage: false,
 		} );
 	};
+}
+
+function MediaTextResolutionTool( { image, value, onChange } ) {
+	const { imageSizes } = useSelect( ( select ) => {
+		const { getSettings } = select( blockEditorStore );
+		return {
+			imageSizes: getSettings().imageSizes,
+		};
+	}, [] );
+
+	if ( ! imageSizes?.length ) {
+		return null;
+	}
+
+	const imageSizeOptions = imageSizes
+		.filter( ( { slug } ) => getImageSourceUrlBySizeSlug( image, slug ) )
+		.map( ( { name, slug } ) => ( { value: slug, label: name } ) );
+
+	return (
+		<ResolutionTool
+			value={ value }
+			defaultValue={ DEFAULT_MEDIA_SIZE_SLUG }
+			options={ imageSizeOptions }
+			onChange={ onChange }
+		/>
+	);
 }
 
 function MediaTextEdit( {
@@ -154,6 +181,7 @@ function MediaTextEdit( {
 		mediaType,
 		mediaUrl,
 		mediaWidth,
+		mediaSizeSlug,
 		rel,
 		verticalAlignment,
 		allowedBlocks,
@@ -171,11 +199,32 @@ function MediaTextEdit( {
 		postId
 	);
 
-	const featuredImageMedia = useSelect(
-		( select ) =>
-			featuredImage &&
-			select( coreStore ).getMedia( featuredImage, { context: 'view' } ),
-		[ featuredImage ]
+	const { featuredImageMedia } = useSelect(
+		( select ) => {
+			return {
+				featuredImageMedia:
+					featuredImage && useFeaturedImage
+						? select( coreStore ).getMedia( featuredImage, {
+								context: 'view',
+						  } )
+						: undefined,
+			};
+		},
+		[ featuredImage, useFeaturedImage ]
+	);
+
+	const { image } = useSelect(
+		( select ) => {
+			return {
+				image:
+					mediaId && isSelected
+						? select( coreStore ).getMedia( mediaId, {
+								context: 'view',
+						  } )
+						: null,
+			};
+		},
+		[ isSelected, mediaId ]
 	);
 
 	const featuredImageURL = useFeaturedImage
@@ -430,9 +479,9 @@ function MediaTextEdit( {
 				</ToolsPanelItem>
 			) }
 			{ mediaType === 'image' && (
-				<ResolutionTool
+				<MediaTextResolutionTool
+					image={ image }
 					value={ mediaSizeSlug }
-					options={ imageSizeOptions }
 					onChange={ updateImage }
 				/>
 			) }
