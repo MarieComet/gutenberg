@@ -4,7 +4,7 @@
 import { Path, SVG } from '@wordpress/primitives';
 
 const background = (
-	<SVG width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<SVG fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path
 			fillRule="evenodd"
 			clipRule="evenodd"
