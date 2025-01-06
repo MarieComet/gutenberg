@@ -292,6 +292,19 @@ class WP_Theme_JSON_Resolver_Gutenberg {
 				}
 			}
 
+			$separator_variations = $theme_json_data['styles']['blocks']['core/separator']['variations'] ?? array();
+			foreach ( $separator_variations as $variation => $variation_data ) {
+				$variation_separator_color = $variation_data['color']['background'] ?? null;
+				if ( $variation_separator_color ) {
+					if ( ! isset( $variation_data['color']['text'] ) ) {
+						_wp_array_set( $theme_json_data, array( 'styles', 'blocks', 'core/separator', 'variations', $variation, 'color', 'text' ), $variation_separator_color );
+					}
+					if ( ! isset( $variation_data['border']['color'] ) ) {
+						_wp_array_set( $theme_json_data, array( 'styles', 'blocks', 'core/separator', 'variations', $variation, 'border', 'color' ), $variation_separator_color );
+					}
+				}
+			}
+
 			/**
 			 * Filters the data provided by the theme for global styles and settings.
 			 *
@@ -597,6 +610,15 @@ class WP_Theme_JSON_Resolver_Gutenberg {
 		if ( $separator_color ) {
 			_wp_array_set( $config, array( 'styles', 'blocks', 'core/separator', 'color', 'text' ), $separator_color );
 			_wp_array_set( $config, array( 'styles', 'blocks', 'core/separator', 'border', 'color' ), $separator_color );
+		}
+
+		$separator_variations = $config['styles']['blocks']['core/separator']['variations'] ?? array();
+		foreach ( $separator_variations as $variation => $variation_data ) {
+			$variation_separator_color = $variation_data['color']['background'] ?? null;
+			if ( $variation_separator_color ) {
+				_wp_array_set( $config, array( 'styles', 'blocks', 'core/separator', 'variations', $variation, 'color', 'text' ), $variation_separator_color );
+				_wp_array_set( $config, array( 'styles', 'blocks', 'core/separator', 'variations', $variation, 'border', 'color' ), $variation_separator_color );
+			}
 		}
 
 		/** This filter is documented in wp-includes/class-wp-theme-json-resolver.php */

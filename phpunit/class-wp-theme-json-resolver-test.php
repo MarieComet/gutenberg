@@ -103,6 +103,7 @@ class WP_Theme_JSON_Resolver_Gutenberg_Test extends WP_UnitTestCase {
 		add_filter( 'template_root', array( $this, 'filter_set_theme_root' ) );
 		$this->queries = array();
 		// Clear caches.
+		WP_Theme_JSON_Resolver_Gutenberg::clean_cached_data();
 		wp_clean_themes_cache();
 		unset( $GLOBALS['wp_themes'] );
 	}
@@ -1508,7 +1509,8 @@ class WP_Theme_JSON_Resolver_Gutenberg_Test extends WP_UnitTestCase {
 					return $temp_theme_json;
 				}
 				return $path;
-			}
+			},
+			PHP_INT_MAX
 		);
 
 		// Get the merged data.
@@ -1611,6 +1613,48 @@ class WP_Theme_JSON_Resolver_Gutenberg_Test extends WP_UnitTestCase {
 					),
 				),
 			),
+			'block style variations'             => array(
+				'input_styles'    => array(
+					'variations' => array(
+						'wide' => array(
+							'color' => array(
+								'background' => 'green',
+								'text'       => 'red',
+							),
+						),
+						'dots' => array(
+							'color'  => array(
+								'background' => 'blue',
+							),
+							'border' => array(
+								'color' => 'pink',
+							),
+						),
+					),
+				),
+				'expected_styles' => array(
+					'variations' => array(
+						'wide' => array(
+							'color'  => array(
+								'background' => 'green',
+								'text'       => 'green', // Always set to match background.
+							),
+							'border' => array(
+								'color' => 'green', // Always overridden by background.
+							),
+						),
+						'dots' => array(
+							'color'  => array(
+								'background' => 'blue',
+								'text'       => 'blue', // Always set to match background.
+							),
+							'border' => array(
+								'color' => 'blue', // Always overridden by background.
+							),
+						),
+					),
+				),
+			),
 		);
 	}
 
@@ -1702,6 +1746,48 @@ class WP_Theme_JSON_Resolver_Gutenberg_Test extends WP_UnitTestCase {
 					),
 					'border' => array(
 						'color' => 'pink', // Kept because already defined.
+					),
+				),
+			),
+			'block style variations'             => array(
+				'input_styles'    => array(
+					'variations' => array(
+						'wide' => array(
+							'color' => array(
+								'background' => 'green',
+								'text'       => 'red',
+							),
+						),
+						'dots' => array(
+							'color'  => array(
+								'background' => 'blue',
+							),
+							'border' => array(
+								'color' => 'pink',
+							),
+						),
+					),
+				),
+				'expected_styles' => array(
+					'variations' => array(
+						'wide' => array(
+							'color'  => array(
+								'background' => 'green',
+								'text'       => 'red', // Kept because already defined.
+							),
+							'border' => array(
+								'color' => 'green', // Set because not defined.
+							),
+						),
+						'dots' => array(
+							'color'  => array(
+								'background' => 'blue',
+								'text'       => 'blue', // Always set to match background.
+							),
+							'border' => array(
+								'color' => 'pink', // Always overridden by background.
+							),
+						),
 					),
 				),
 			),
