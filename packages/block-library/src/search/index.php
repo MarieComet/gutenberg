@@ -39,12 +39,12 @@ function render_block_core_search( $attributes, $content, $block ) {
 
 	// Check if the block is using the instant search experiment.
 	$gutenberg_experiments  = get_option( 'gutenberg-experiments' );
-	$instant_search_enabled = $gutenberg_experiments && array_key_exists( 'gutenberg-search-query-block', $gutenberg_experiments );
+	$instant_search_enabled = $enhanced_pagination && $gutenberg_experiments && array_key_exists( 'gutenberg-search-query-block', $gutenberg_experiments );
 
 	$show_button = true;
 
 	// If the block is using the instant search experiment and the enhanced pagination, hide the button.
-	if ( $instant_search_enabled && $enhanced_pagination ) {
+	if ( $instant_search_enabled ) {
 		$show_button = false;
 		// If the button position is no-button, ALSO hide the button.
 	} elseif ( ! empty( $attributes['buttonPosition'] ) && 'no-button' === $attributes['buttonPosition'] ) {
@@ -113,7 +113,7 @@ function render_block_core_search( $attributes, $content, $block ) {
 		//
 		// Instant search functionality does not make sense without enhanced pagination
 		// because we might have to paginate the results of the search too!
-		if ( $enhanced_pagination && $instant_search_enabled ) {
+		if ( $instant_search_enabled ) {
 			wp_enqueue_script_module( '@wordpress/block-library/search/view' );
 
 			$input->set_attribute( 'data-wp-bind--value', 'context.search' );
@@ -195,7 +195,7 @@ function render_block_core_search( $attributes, $content, $block ) {
 	$form_context         = array();
 
 	// If it's interactive, add the directives.
-	if ( $is_expandable_searchfield || ( $enhanced_pagination && $instant_search_enabled ) ) {
+	if ( $is_expandable_searchfield || $instant_search_enabled ) {
 		$form_directives = 'data-wp-interactive="core/search"';
 	}
 
@@ -215,7 +215,7 @@ function render_block_core_search( $attributes, $content, $block ) {
 		';
 	}
 
-	if ( $enhanced_pagination && $instant_search_enabled && isset( $block->context['queryId'] ) ) {
+	if ( $instant_search_enabled && isset( $block->context['queryId'] ) ) {
 
 		$search = '';
 
