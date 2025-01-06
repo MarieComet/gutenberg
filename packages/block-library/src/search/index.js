@@ -52,7 +52,7 @@ export const settings = {
 		return sprintf(
 			/* translators: %s: The block label */
 			__( '%s (Instant search enabled)' ),
-			customName || label
+			customName || label || 'Search'
 		);
 	},
 	example: {
