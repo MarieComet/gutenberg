@@ -659,7 +659,6 @@ test.describe( 'Instant Search', () => {
 				innerBlocks: [
 					{
 						name: 'core/search',
-						attributes: { label: 'Search' },
 					},
 					{
 						name: 'core/post-template',
