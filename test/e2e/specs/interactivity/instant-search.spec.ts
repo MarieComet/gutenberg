@@ -638,5 +638,79 @@ test.describe( 'Instant Search', () => {
 				toolbar.getByRole( 'button', { name: 'Use button with icon' } )
 			).toBeVisible();
 		} );
+
+		test( 'should update List View label when Search block becomes Instant Search', async ( {
+			editor,
+			page,
+		} ) => {
+			// Insert Query block with enhanced pagination enabled
+			await editor.insertBlock( {
+				name: 'core/query',
+				attributes: {
+					enhancedPagination: true,
+					query: {
+						inherit: false,
+						perPage: 2,
+						order: 'desc',
+						orderBy: 'date',
+						offset: 0,
+					},
+				},
+				innerBlocks: [
+					{
+						name: 'core/search',
+						attributes: { label: 'Search' },
+					},
+					{
+						name: 'core/post-template',
+						innerBlocks: [
+							{ name: 'core/post-title' },
+							{ name: 'core/post-excerpt' },
+						],
+					},
+				],
+			} );
+
+			// Select the Search block
+			const searchBlock = editor.canvas.getByRole( 'document', {
+				name: 'Block: Search',
+			} );
+			await editor.selectBlocks( searchBlock );
+
+			// Open List View
+			await editor.openListView();
+			const listView = page.getByRole( 'region', {
+				name: 'Document Overview',
+			} );
+			await expect( listView ).toBeVisible();
+
+			// Verify that the Search block label includes "Instant search enabled"
+			await expect(
+				listView.getByText( 'Search (Instant search enabled)' )
+			).toBeVisible();
+
+			// Select the Query Loop block and disable enhanced pagination
+			await editor.selectBlocks(
+				editor.canvas.getByRole( 'document', {
+					name: 'Block: Query Loop',
+				} )
+			);
+			await editor.openDocumentSettingsSidebar();
+			const editorSettings = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
+			await editorSettings
+				.getByRole( 'button', { name: 'Advanced' } )
+				.click();
+			await editorSettings
+				.getByRole( 'checkbox', { name: 'Reload full page' } )
+				.click();
+
+			// Verify that the Search block label is back to normal
+			await expect( listView.getByText( 'Search' ) ).toBeVisible();
+			await expect(
+				listView.getByText( 'Search (Instant search enabled)' )
+			).toBeHidden();
+		} );
 	} );
 } );
