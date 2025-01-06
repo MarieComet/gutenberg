@@ -560,7 +560,7 @@ test.describe( 'Instant Search', () => {
 			await requestUtils.deleteAllPosts();
 		} );
 
-		test( 'should rename Search block to "Instant Search" in the List View and Inspector Controls', async ( {
+		test( 'should hide specific toolbar buttons when Search block is inside Query block with enhanced pagination', async ( {
 			editor,
 			page,
 		} ) => {
@@ -595,40 +595,29 @@ test.describe( 'Instant Search', () => {
 			} );
 			await editor.selectBlocks( searchBlock );
 
-			// Make sure the List View is open
-			await editor.openListView();
-			const listView = page.getByRole( 'region', {
-				name: 'Document Overview',
+			// Verify that the specific toolbar buttons are hidden
+			const toolbar = page.getByRole( 'toolbar', {
+				name: 'Block tools',
 			} );
-			await expect( listView ).toBeVisible();
-
-			// Check that the Search block which is a child of the Query Loop block
-			// is renamed to "Instant Search" in the List View
 			await expect(
-				listView.getByText( 'Instant Search' )
-			).toBeVisible();
+				toolbar.getByRole( 'button', {
+					name: 'Change button position',
+				} )
+			).toBeHidden();
+			await expect(
+				toolbar.getByRole( 'button', { name: 'Use button with icon' } )
+			).toBeHidden();
 
-			const editorSettings = page.getByRole( 'region', {
-				name: 'Editor settings',
-			} );
-
-			const blockCard = editorSettings.locator(
-				'.block-editor-block-card'
-			);
-
-			// Check that the Search block is renamed to "Instant Search" in the Inspector Controls title
-			await editor.canvas
-				.getByRole( 'document', { name: 'Block: Search' } )
-				.click();
-			await expect( blockCard ).toContainText( 'Instant Search' );
-
-			// Select the Query Loop block and open the Advanced View and disable enhanced pagination
+			// Select the Query Loop block and disable enhanced pagination
 			await editor.selectBlocks(
 				editor.canvas.getByRole( 'document', {
 					name: 'Block: Query Loop',
 				} )
 			);
 			await editor.openDocumentSettingsSidebar();
+			const editorSettings = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
 			await editorSettings
 				.getByRole( 'button', { name: 'Advanced' } )
 				.click();
@@ -636,15 +625,18 @@ test.describe( 'Instant Search', () => {
 				.getByRole( 'checkbox', { name: 'Reload full page' } )
 				.click();
 
-			// Check that the block is renamed back to "Search" in the Inspector Controls title
-			await editor.canvas
-				.getByRole( 'document', { name: 'Block: Search' } )
-				.click();
-			await expect( blockCard ).toContainText( 'Search' );
-			await expect( blockCard ).not.toContainText( 'Instant Search' );
+			// Select the Search block again
+			await editor.selectBlocks( searchBlock );
 
-			// Check that the Search block is renamed back to "Search" in the List View
-			await expect( listView.getByText( 'Search' ) ).toBeVisible();
+			// Verify that the toolbar buttons are now visible
+			await expect(
+				toolbar.getByRole( 'button', {
+					name: 'Change button position',
+				} )
+			).toBeVisible();
+			await expect(
+				toolbar.getByRole( 'button', { name: 'Use button with icon' } )
+			).toBeVisible();
 		} );
 	} );
 } );
