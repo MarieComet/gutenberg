@@ -48,6 +48,7 @@ export const init = async () => {
 				if ( ! hydratedIslands.has( node ) ) {
 					const fragment = getRegionRootFragment( node );
 					const vdom = toVdom( node );
+					initialVdom.set( node, vdom );
 					await splitTask();
 					hydrate( vdom, fragment );
 					await splitTask();
