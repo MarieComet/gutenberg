@@ -29,7 +29,7 @@ export const initialVdom = new WeakMap< Element, ComponentChild[] >();
 
 // Initialize the router with the initial DOM.
 export const init = async () => {
-	const pendingNodes = new Set();
+	let observedNodeCount = 0;
 
 	const intersectionObserver = new window.IntersectionObserver(
 		async ( entries ) => {
@@ -40,8 +40,8 @@ export const init = async () => {
 
 				const node = entry.target;
 				intersectionObserver.unobserve( node );
-				pendingNodes.delete( node );
-				if ( pendingNodes.size === 0 ) {
+				observedNodeCount--;
+				if ( observedNodeCount === 0 ) {
 					intersectionObserver.disconnect();
 				}
 
@@ -76,8 +76,8 @@ export const init = async () => {
 		setTimeout( resolve, 0 );
 	} );
 
+	observedNodeCount = nodes.length;
 	for ( const node of nodes ) {
-		pendingNodes.add( node );
 		intersectionObserver.observe( node );
 	}
 };
