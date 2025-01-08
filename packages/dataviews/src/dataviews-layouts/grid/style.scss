@@ -145,6 +145,9 @@
 
 
 .dataviews-view-grid__row {
+	display: grid;
+	gap: $grid-unit-40;
+
 	.dataviews-view-grid__row__gridcell {
 		outline: 0;
 		outline-style: solid;

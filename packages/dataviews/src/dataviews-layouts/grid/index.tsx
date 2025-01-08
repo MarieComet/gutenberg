@@ -7,7 +7,6 @@ import clsx from 'clsx';
  * WordPress dependencies
  */
 import {
-	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Spinner,
@@ -57,7 +56,7 @@ interface GridItemProps< Item > {
 	hasBulkActions: boolean;
 }
 
-function chunk( array: any, size: any ) {
+function chunk( array: any, size: number ) {
 	const chunks = [];
 	for ( let i = 0, j = array.length; i < j; i += size ) {
 		chunks.push( array.slice( i, i + size ) );
@@ -129,7 +128,6 @@ function GridItem< Item >( {
 		<VStack
 			spacing={ 0 }
 			key={ id }
-			role="gridcell"
 			className={ clsx( 'dataviews-view-grid__card', {
 				'is-selected': hasBulkAction && isSelected,
 			} ) }
@@ -294,59 +292,54 @@ export default function ViewGrid< Item >( {
 							<Composite.Row
 								key={ i }
 								role="row"
-								className="dataviews-view-grid__row"
+								render={
+									<div
+										className="dataviews-view-grid__row"
+										style={ {
+											gridTemplateColumns: `repeat( ${ previewSize }, minmax(0, 1fr) )`,
+										} }
+									/>
+								}
 							>
-								<Grid
-									templateColumns={ `repeat( ${ previewSize }, minmax(0, 1fr) )` }
-									gap={ 8 }
-								>
-									{ row.map( ( item: any ) => (
-										<Composite.Item
-											key={ getItemId( item ) }
-											render={
-												<div
-													id={ getItemId( item ) }
-													className="dataviews-view-grid__row__gridcell"
-												>
-													<GridItem
-														view={ view }
-														selection={ selection }
-														onChangeSelection={
-															onChangeSelection
-														}
-														onClickItem={
-															onClickItem
-														}
-														isItemClickable={
-															isItemClickable
-														}
-														getItemId={ getItemId }
-														item={ item }
-														actions={ actions }
-														mediaField={
-															mediaField
-														}
-														titleField={
-															titleField
-														}
-														descriptionField={
-															descriptionField
-														}
-														regularFields={
-															regularFields
-														}
-														badgeFields={
-															badgeFields
-														}
-														hasBulkActions={
-															hasBulkActions
-														}
-													/>
-												</div>
-											}
-										/>
-									) ) }
-								</Grid>
+								{ row.map( ( item: any ) => (
+									<Composite.Item
+										key={ getItemId( item ) }
+										render={
+											<div
+												id={ getItemId( item ) }
+												className="dataviews-view-grid__row__gridcell"
+												role="gridcell"
+											>
+												<GridItem
+													view={ view }
+													selection={ selection }
+													onChangeSelection={
+														onChangeSelection
+													}
+													onClickItem={ onClickItem }
+													isItemClickable={
+														isItemClickable
+													}
+													getItemId={ getItemId }
+													item={ item }
+													actions={ actions }
+													mediaField={ mediaField }
+													titleField={ titleField }
+													descriptionField={
+														descriptionField
+													}
+													regularFields={
+														regularFields
+													}
+													badgeFields={ badgeFields }
+													hasBulkActions={
+														hasBulkActions
+													}
+												/>
+											</div>
+										}
+									/>
+								) ) }
 							</Composite.Row>
 						) ) }
 					</VStack>
