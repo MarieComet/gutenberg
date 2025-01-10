@@ -79,6 +79,10 @@ export const init = async () => {
 
 	observedNodeCount = nodes.length;
 	for ( const node of nodes ) {
+		if ( hydratedIslands.has( node ) ) {
+			observedNodeCount--;
+			continue;
+		}
 		intersectionObserver.observe( node );
 	}
 };
