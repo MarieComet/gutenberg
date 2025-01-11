@@ -9,7 +9,7 @@ import {
 	useInnerBlocksProps,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { SelectControl } from '@wordpress/components';
+import { SelectControl, TextControl } from '@wordpress/components';
 import { useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { View } from '@wordpress/primitives';
@@ -22,13 +22,13 @@ import GroupPlaceHolder, { useShouldShowPlaceHolder } from './placeholder';
 /**
  * Render inspector controls for the Group block.
  *
- * @param {Object}   props                 Component props.
- * @param {string}   props.tagName         The HTML tag name.
- * @param {Function} props.onSelectTagName onChange function for the SelectControl.
- *
- * @return {JSX.Element}                The control group.
+ * @param {Object}                       props               Component props.
+ * @param {Object}                       props.attributes    Block attributes.
+ * @param {(attributes: Object) => void} props.setAttributes Callback for updating block attributes.
+ * @return {JSX.Element} The control group.
  */
-function GroupEditControls( { tagName, onSelectTagName } ) {
+function GroupEditControls( { attributes, setAttributes } ) {
+	const { tagName, ariaLabel } = attributes;
 	const htmlElementMessages = {
 		header: __(
 			'The <header> element should represent introductory content, typically a group of introductory or navigational aids.'
@@ -48,6 +48,9 @@ function GroupEditControls( { tagName, onSelectTagName } ) {
 		footer: __(
 			'The <footer> element should represent a footer for its nearest sectioning element (e.g.: <section>, <article>, <main> etc.).'
 		),
+		nav: __(
+			'The <nav> element should represent a section of a page that links to other pages or to parts within the page.'
+		),
 	};
 	return (
 		<InspectorControls group="advanced">
@@ -63,11 +66,31 @@ function GroupEditControls( { tagName, onSelectTagName } ) {
 					{ label: '<article>', value: 'article' },
 					{ label: '<aside>', value: 'aside' },
 					{ label: '<footer>', value: 'footer' },
+					{ label: '<nav>', value: 'nav' },
 				] }
 				value={ tagName }
-				onChange={ onSelectTagName }
+				onChange={ ( value ) => {
+					setAttributes( {
+						tagName: value,
+						ariaLabel: value === 'nav' ? ariaLabel : undefined,
+					} );
+				} }
 				help={ htmlElementMessages[ tagName ] }
 			/>
+			{ tagName === 'nav' && (
+				<TextControl
+					label={ __( 'Navigation label' ) }
+					value={ ariaLabel || '' }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					onChange={ ( value ) => {
+						setAttributes( { ariaLabel: value } );
+					} }
+					help={ __(
+						'Add a label to describe the purpose of this navigation element.'
+					) }
+				/>
+			) }
 		</InspectorControls>
 	);
 }
@@ -144,10 +167,8 @@ function GroupEdit( { attributes, name, setAttributes, clientId } ) {
 	return (
 		<>
 			<GroupEditControls
-				tagName={ TagName }
-				onSelectTagName={ ( value ) =>
-					setAttributes( { tagName: value } )
-				}
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 			{ showPlaceholder && (
 				<View>
