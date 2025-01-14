@@ -82,7 +82,8 @@
 	padding: 1px 0;
 }
 
-.editor-document-outline.has-no-headings {
+.document-outline.has-no-headings,
+.document-outline.has-no-main {
 	& > svg {
 		margin-top: $grid-unit-30 + $grid-unit-05;
 	}

@@ -73,6 +73,15 @@ function EmptyOutlineIllustration() {
 	);
 }
 
+const incorrectMainTag = [
+	<br key="incorrect-break-main" />,
+	<em key="incorrect-message-main">
+		{ __(
+			'Your template should have exactly one main element. Adjust the HTML element in the Advanced panel of the block.'
+		) }
+	</em>,
+];
+
 /**
  * Returns an array of heading blocks enhanced with the following properties:
  * level   - An integer with the heading level.
@@ -92,6 +101,17 @@ const computeOutlineHeadings = ( blocks = [] ) => {
 			};
 		}
 		return computeOutlineHeadings( block.innerBlocks );
+	} );
+};
+
+const computeOutlineMainElements = ( blocks = [] ) => {
+	return blocks.flatMap( ( block = {} ) => {
+		if ( block.attributes.tagName === 'main' ) {
+			return {
+				...block,
+			};
+		}
+		return computeOutlineMainElements( block.innerBlocks );
 	} );
 };
 
@@ -129,18 +149,7 @@ export default function DocumentOutline( {
 	const prevHeadingLevelRef = useRef( 1 );
 
 	const headings = computeOutlineHeadings( blocks );
-	if ( headings.length < 1 ) {
-		return (
-			<div className="editor-document-outline has-no-headings">
-				<EmptyOutlineIllustration />
-				<p>
-					{ __(
-						'Navigate the structure of your document and address issues like empty or incorrect heading levels.'
-					) }
-				</p>
-			</div>
-		);
-	}
+	const mainElements = computeOutlineMainElements( blocks );
 
 	// Not great but it's the simplest way to locate the title right now.
 	const titleNode = document.querySelector( '.editor-post-title__input' );
@@ -154,9 +163,48 @@ export default function DocumentOutline( {
 	);
 	const hasMultipleH1 = countByLevel[ 1 ] > 1;
 
+	const classNames =
+		'document-outline' +
+		( headings.length < 1 ? ' has-no-headings' : '' ) +
+		( mainElements.length === 0 ? ' has-no-main' : '' );
+
 	return (
-		<div className="document-outline">
+		<div className={ classNames }>
+			{ headings.length < 1 && (
+				<>
+					<EmptyOutlineIllustration />
+					<p>
+						{ __(
+							'Navigate the structure of your document and address issues like empty or incorrect heading levels.'
+						) }
+					</p>
+				</>
+			) }
+			{ mainElements.length === 0 && (
+				<p>
+					{ __(
+						'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
+					) }
+				</p>
+			) }
 			<ul>
+				{ mainElements.map( ( item ) => {
+					return (
+						<DocumentOutlineItem
+							key={ item.clientId }
+							level={ __( 'Main' ) }
+							isValid
+							isDisabled={ hasOutlineItemsDisabled }
+							href={ `#block-${ item.clientId }` }
+							onSelect={ () => {
+								selectBlock( item.clientId );
+								onSelect?.();
+							} }
+						>
+							{ mainElements.length !== 1 && incorrectMainTag }
+						</DocumentOutlineItem>
+					);
+				} ) }
 				{ hasTitle && (
 					<DocumentOutlineItem
 						level={ __( 'Title' ) }
