@@ -287,7 +287,7 @@ export default function DocumentOutline( {
 			className={ clsx(
 				'document-outline',
 				headings.length < 1 && 'has-no-headings',
-				mainElements.length === 0 && 'has-no-main'
+				isEditingTemplate && mainElements.length === 0 && 'has-no-main'
 			) }
 		>
 			{ headings.length < 1 && (
