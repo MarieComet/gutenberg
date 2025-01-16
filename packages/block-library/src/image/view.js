@@ -102,6 +102,13 @@ const { state, actions, callbacks } = store(
 
 				// Computes the styles of the overlay for the animation.
 				callbacks.setOverlayStyles();
+
+				const lightboxOverlay = document.querySelector(
+					'dialog#wp-core-image-lightbox-overlay'
+				);
+				if ( lightboxOverlay ) {
+					lightboxOverlay.showModal();
+				}
 			},
 			hideLightbox() {
 				if ( state.overlayEnabled ) {
@@ -126,6 +133,13 @@ const { state, actions, callbacks } = store(
 						// Resets the current image id to mark the overlay as closed.
 						state.currentImageId = null;
 					}, 450 );
+
+					const lightboxOverlay = document.querySelector(
+						'dialog#wp-core-image-lightbox-overlay'
+					);
+					if ( lightboxOverlay ) {
+						lightboxOverlay.close();
+					}
 				}
 			},
 			handleKeydown( event ) {
