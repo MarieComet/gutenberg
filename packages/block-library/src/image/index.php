@@ -269,14 +269,14 @@ function block_core_image_print_lightbox_overlay() {
 	}
 
 	echo <<<HTML
-		<div
+		<dialog
 			class="wp-lightbox-overlay zoom"
 			data-wp-interactive="core/image"
 			data-wp-context='{}'
 			data-wp-bind--role="state.roleAttribute"
 			data-wp-bind--aria-label="state.currentImage.ariaLabel"
 			data-wp-bind--aria-modal="state.ariaModal"
-			data-wp-class--active="state.overlayEnabled"
+			data-wp-bind--open="state.overlayEnabled"
 			data-wp-class--show-closing-animation="state.showClosingAnimation"
 			data-wp-watch="callbacks.setOverlayFocus"
 			data-wp-on--keydown="actions.handleKeydown"
@@ -303,7 +303,7 @@ function block_core_image_print_lightbox_overlay() {
 					</figure>
 				</div>
 				<div class="scrim" style="background-color: $background_color" aria-hidden="true"></div>
-		</div>
+		</dialog>
 HTML;
 }
 
