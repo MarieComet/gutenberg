@@ -287,7 +287,6 @@ function block_core_image_print_lightbox_overlay() {
 			data-wp-on-async-window--resize="callbacks.setOverlayStyles"
 			data-wp-on-async-window--scroll="actions.handleScroll"
 			data-wp-bind--style="state.overlayStyles"
-			tabindex="-1"
 			>
 				<button type="button" aria-label="$close_button_label" style="fill: $close_button_color" class="close-button">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z"></path></svg>
