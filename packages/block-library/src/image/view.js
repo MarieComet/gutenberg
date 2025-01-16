@@ -84,13 +84,40 @@ const { state, actions, callbacks } = store(
 		},
 		actions: {
 			showLightbox() {
+				if ( ! actions.setCurrentImage() ) {
+					return;
+				}
+
+				const lightboxOverlay = document.querySelector(
+					'#wp-core-image-lightbox-overlay[popover]'
+				);
+				if ( lightboxOverlay ) {
+					lightboxOverlay.showPopover();
+				}
+			},
+			hideLightbox() {
+				const lightboxOverlay = document.querySelector(
+					'#wp-core-image-lightbox-overlay[popover]'
+				);
+				if ( lightboxOverlay ) {
+					lightboxOverlay.hidePopover();
+				}
+			},
+			setCurrentImage() {
 				const { imageId } = getContext();
 
 				// Bails out if the image has not loaded yet.
 				if ( ! state.metadata[ imageId ].imageRef?.complete ) {
-					return;
+					return false;
 				}
 
+				state.currentImageId = imageId;
+				return true;
+			},
+			resetCurrentImage() {
+				state.currentImageId = null;
+			},
+			handleShowLightbox() {
 				// Stores the positions of the scroll to fix it until the overlay is
 				// closed.
 				state.scrollTopReset = document.documentElement.scrollTop;
@@ -98,12 +125,11 @@ const { state, actions, callbacks } = store(
 
 				// Sets the current expanded image in the state and enables the overlay.
 				state.overlayEnabled = true;
-				state.currentImageId = imageId;
 
 				// Computes the styles of the overlay for the animation.
 				callbacks.setOverlayStyles();
 			},
-			hideLightbox() {
+			handleHideLightbox() {
 				if ( state.overlayEnabled ) {
 					// Starts the overlay closing animation. The showClosingAnimation
 					// class is used to avoid showing it on page load.
@@ -123,9 +149,22 @@ const { state, actions, callbacks } = store(
 							preventScroll: true,
 						} );
 
+						// Resets the closing animation class.
+						state.showClosingAnimation = false;
+
 						// Resets the current image id to mark the overlay as closed.
-						state.currentImageId = null;
+						actions.resetCurrentImage();
 					}, 450 );
+				}
+			},
+			handleToggle( event ) {
+				if ( event.newState === 'open' && ! state.overlayEnabled ) {
+					actions.handleShowLightbox();
+				} else if (
+					event.newState !== 'open' &&
+					state.overlayEnabled
+				) {
+					actions.handleHideLightbox();
 				}
 			},
 			handleKeydown( event ) {
@@ -135,10 +174,6 @@ const { state, actions, callbacks } = store(
 						event.preventDefault();
 						const { ref } = getElement();
 						ref.querySelector( 'button' ).focus();
-					}
-					// Closes the lightbox when the user presses the escape key.
-					if ( event.key === 'Escape' ) {
-						actions.hideLightbox();
 					}
 				}
 			},
