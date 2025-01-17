@@ -466,12 +466,12 @@ button.wp-block-navigation-item__content {
 	}
 }
 .wp-block-navigation__responsive-container {
-	display: none;
 	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;
-	bottom: 0;
+	width: 100%;
+	height: 100vh;
+	box-sizing: border-box;
 
 	// Low specificity so that themes can override.
 	& :where(.wp-block-navigation-item a) {
@@ -486,9 +486,15 @@ button.wp-block-navigation-item__content {
 		align-items: var(--navigation-layout-align, initial);
 	}
 
+	&[popover] {
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
 	// If the responsive wrapper is present but overlay is not open,
 	// overlay styles shouldn't apply.
-	&:not(.is-menu-open.is-menu-open) {
+	&:not(:popover-open) {
 		color: inherit !important;
 		background-color: inherit !important;
 	}
@@ -498,7 +504,7 @@ button.wp-block-navigation-item__content {
 	// Inherit as much as we can regarding colors, fonts, sizes,
 	// but otherwise provide a baseline.
 	// In a future version, we can explore more customizability.
-	&.is-menu-open {
+	&:popover-open {
 		display: flex; // Needs to be set to override "none".
 		flex-direction: column;
 		background-color: inherit;
@@ -517,9 +523,6 @@ button.wp-block-navigation-item__content {
 
 		// Allow modal to scroll.
 		overflow: auto;
-
-		// Give it a z-index just higher than the adminbar.
-		z-index: 100000;
 
 		.wp-block-navigation__responsive-container-content {
 			// Add padding above to accommodate close button.
@@ -612,11 +615,11 @@ button.wp-block-navigation-item__content {
 
 	@include break-small() {
 		&:not(.hidden-by-default) {
-			&:not(.is-menu-open) {
+			&:not(:popover-open) {
 				display: block;
 				width: 100%;
+				height: auto;
 				position: relative;
-				z-index: auto;
 				background-color: inherit;
 
 				.wp-block-navigation__responsive-container-close {
@@ -625,7 +628,7 @@ button.wp-block-navigation-item__content {
 			}
 		}
 
-		&.is-menu-open {
+		&:popover-open {
 			// Override breakpoint-inherited submenu rules.
 			.wp-block-navigation__submenu-container.wp-block-navigation__submenu-container.wp-block-navigation__submenu-container.wp-block-navigation__submenu-container {
 				left: 0;
@@ -636,12 +639,12 @@ button.wp-block-navigation-item__content {
 
 // Default menu background and font color.
 .wp-block-navigation:not(.has-background)
-.wp-block-navigation__responsive-container.is-menu-open {
+.wp-block-navigation__responsive-container:popover-open {
 	background-color: #fff;
 }
 
 .wp-block-navigation:not(.has-text-color)
-.wp-block-navigation__responsive-container.is-menu-open {
+.wp-block-navigation__responsive-container:popover-open {
 	color: #000;
 }
 
@@ -697,7 +700,6 @@ button.wp-block-navigation-item__content {
 	position: absolute;
 	top: 0;
 	right: 0;
-	z-index: 2; // Needs to be above the modal z index itself.
 
 	// When set to collapse into a text button, it should inherit the parent font.
 	// This needs specificity to override inherited properties by the button element and component.
@@ -728,9 +730,9 @@ button.wp-block-navigation-item__content {
 	}
 }
 
-.is-menu-open .wp-block-navigation__responsive-close,
-.is-menu-open .wp-block-navigation__responsive-dialog,
-.is-menu-open .wp-block-navigation__responsive-container-content {
+.wp-block-navigation__responsive-container:popover-open .wp-block-navigation__responsive-close,
+.wp-block-navigation__responsive-container:popover-open .wp-block-navigation__responsive-dialog,
+.wp-block-navigation__responsive-container:popover-open .wp-block-navigation__responsive-container-content {
 	box-sizing: border-box;
 }
 
@@ -739,8 +741,8 @@ button.wp-block-navigation-item__content {
 }
 
 // Adjust open dialog top margin when admin-bar is visible.
-// Needs to be scoped to .is-menu-open, or it will shift the position of any other navigations that may be present.
-.has-modal-open .admin-bar .is-menu-open .wp-block-navigation__responsive-dialog {
+// Needs to be scoped to :popover-open, or it will shift the position of any other navigations that may be present.
+.has-modal-open .admin-bar .wp-block-navigation__responsive-container:popover-open .wp-block-navigation__responsive-dialog {
 	margin-top: $admin-bar-height-big;
 
 	// Handle smaller admin-bar.

@@ -496,17 +496,12 @@ class WP_Navigation_Block_Renderer {
 		$responsive_dialog_directives    = '';
 		$close_button_directives         = '';
 		if ( $is_interactive ) {
-			$open_button_directives                  = '
-				data-wp-on-async--click="actions.openMenuOnClick"
-				data-wp-on--keydown="actions.handleMenuKeydown"
-			';
+			$open_button_directives                  = '';
 			$responsive_container_directives         = '
-				data-wp-class--has-modal-open="state.isMenuOpen"
-				data-wp-class--is-menu-open="state.isMenuOpen"
 				data-wp-watch="callbacks.initMenu"
+				data-wp-on--toggle="actions.handleToggle"
 				data-wp-on--keydown="actions.handleMenuKeydown"
 				data-wp-on-async--focusout="actions.handleMenuFocusout"
-				tabindex="-1"
 			';
 			$responsive_dialog_directives            = '
 				data-wp-bind--aria-modal="state.ariaModal"
@@ -524,8 +519,8 @@ class WP_Navigation_Block_Renderer {
 		$overlay_inline_styles = esc_attr( safecss_filter_attr( $colors['overlay_inline_styles'] ) );
 
 		return sprintf(
-			'<button aria-haspopup="dialog" %3$s class="%6$s" %10$s>%8$s</button>
-				<div class="%5$s" %7$s id="%1$s" %11$s>
+			'<button popovertarget="%1$s" aria-haspopup="dialog" %3$s class="%6$s" %10$s>%8$s</button>
+				<div popover="auto" class="%5$s" %7$s id="%1$s" %11$s>
 					<div class="wp-block-navigation__responsive-close" tabindex="-1">
 						<div class="wp-block-navigation__responsive-dialog" %12$s>
 							<button %4$s class="wp-block-navigation__responsive-container-close" %13$s>%9$s</button>

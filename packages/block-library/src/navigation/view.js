@@ -77,12 +77,6 @@ const { state, actions } = store(
 					actions.closeMenu( 'hover' );
 				}
 			},
-			openMenuOnClick() {
-				const ctx = getContext();
-				const { ref } = getElement();
-				ctx.previousFocus = ref;
-				actions.openMenu( 'click' );
-			},
 			closeMenuOnClick() {
 				actions.closeMenu( 'click' );
 				actions.closeMenu( 'focus' );
@@ -110,8 +104,8 @@ const { state, actions } = store(
 				const { type, firstFocusableElement, lastFocusableElement } =
 					getContext();
 				if ( state.menuOpenedBy.click ) {
-					// If Escape close the menu.
-					if ( event?.key === 'Escape' ) {
+					// If Escape close the menu. For the overlay this works out of the box due to [popover].
+					if ( type !== 'overlay' && event?.key === 'Escape' ) {
 						actions.closeMenu( 'click' );
 						actions.closeMenu( 'focus' );
 						return;
@@ -158,21 +152,29 @@ const { state, actions } = store(
 				}
 			},
 
-			openMenu( menuOpenedOn = 'click' ) {
-				const { type } = getContext();
-				state.menuOpenedBy[ menuOpenedOn ] = true;
-				if ( type === 'overlay' ) {
-					// Add a `has-modal-open` class to the <html> root.
-					document.documentElement.classList.add( 'has-modal-open' );
-				}
-			},
-
-			closeMenu( menuClosedOn = 'click' ) {
+			handleToggle( event ) {
 				const ctx = getContext();
-				state.menuOpenedBy[ menuClosedOn ] = false;
-				// Check if the menu is still open or not.
-				if ( ! state.isMenuOpen ) {
+				window.console.log( event.newState, ctx );
+				if ( event.newState === 'open' ) {
+					// Ensure state is up to date.
+					if ( ! state.isMenuOpen ) {
+						state.menuOpenedBy.click = true;
+					}
+					if ( ctx.type === 'overlay' ) {
+						// Add a `has-modal-open` class to the <html> root.
+						document.documentElement.classList.add(
+							'has-modal-open'
+						);
+					}
+				} else {
+					// Ensure state is up to date.
+					if ( state.isMenuOpen ) {
+						state.menuOpenedBy.click = false;
+						state.menuOpenedBy.focus = false;
+						state.menuOpenedBy.hover = false;
+					}
 					if (
+						ctx.type !== 'overlay' &&
 						ctx.modal?.contains( window.document.activeElement )
 					) {
 						ctx.previousFocus?.focus();
@@ -186,11 +188,29 @@ const { state, actions } = store(
 					}
 				}
 			},
+
+			openMenu( menuOpenedOn = 'click' ) {
+				const ctx = getContext();
+				window.console.log( 'openMenu', ctx.modal );
+				state.menuOpenedBy[ menuOpenedOn ] = true;
+				ctx.modal?.showPopover();
+			},
+
+			closeMenu( menuClosedOn = 'click' ) {
+				const ctx = getContext();
+				window.console.log( 'closeMenu', ctx.modal );
+				state.menuOpenedBy[ menuClosedOn ] = false;
+				// Check if the menu is still open or not.
+				if ( ! state.isMenuOpen ) {
+					ctx.modal?.hidePopover();
+				}
+			},
 		},
 		callbacks: {
 			initMenu() {
 				const ctx = getContext();
 				const { ref } = getElement();
+				window.console.log( 'watchmenu', state.isMenuOpen, ref );
 				if ( state.isMenuOpen ) {
 					const focusableElements =
 						ref.querySelectorAll( focusableSelectors );
