@@ -83,12 +83,6 @@ function ListViewBlockSelectButton(
 		onDragStart?.( event );
 	};
 
-	const handleRename = () => {
-		if ( canRename ) {
-			setIsRenameModalOpen( true );
-		}
-	};
-
 	/**
 	 * @param {KeyboardEvent} event
 	 */
@@ -106,7 +100,9 @@ function ListViewBlockSelectButton(
 					className
 				) }
 				onClick={ onClick }
-				onDoubleClick={ handleRename }
+				onDoubleClick={ () =>
+					canRename ? setIsRenameModalOpen( true ) : undefined
+				}
 				onContextMenu={ onContextMenu }
 				onKeyDown={ onKeyDown }
 				onMouseDown={ onMouseDown }
