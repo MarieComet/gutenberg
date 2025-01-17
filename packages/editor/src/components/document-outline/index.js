@@ -195,11 +195,12 @@ export default function DocumentOutline( {
 
 	const documentOutlineItems = ( { item } ) => {
 		if ( isEditingTemplate && item.type === 'main' ) {
+			const isValid = mainElements.length === 1;
 			return (
 				<li key={ item.clientId }>
 					<DocumentOutlineItem
 						level={ __( 'Main' ) }
-						isValid
+						isValid={ isValid }
 						isDisabled={ hasOutlineItemsDisabled }
 						href={ `#block-${ item.clientId }` }
 						onSelect={ () => {
@@ -207,7 +208,7 @@ export default function DocumentOutline( {
 							onSelect?.();
 						} }
 					>
-						{ incorrectMainTag }
+						{ ! isValid && incorrectMainTag }
 					</DocumentOutlineItem>
 					{ /*
 					 * Some blocks with the main tagName, such as groups,
