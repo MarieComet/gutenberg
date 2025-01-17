@@ -161,44 +161,61 @@ export default function DocumentOutline( {
 	const prevHeadingLevelRef = useRef( 1 );
 
 	const outlineElements = computeOutlineElements( blocks, isEditingTemplate );
-	const headings = outlineElements.filter(
-		( item ) => item.type === 'heading'
-	);
-	const mainElements = outlineElements.filter(
-		( item ) => item.type === 'main'
-	);
+	const countElements = ( elements, type, countByLevel = false ) => {
+		return elements.reduce(
+			( acc, item ) => {
+				if ( item.type === type ) {
+					acc.count++;
+					// Count the number of headings by level, to check if there is more than one H1.
+					if ( countByLevel && type === 'heading' ) {
+						acc.levels[ item.level ] =
+							( acc.levels[ item.level ] || 0 ) + 1;
+					}
+				}
+				// Include nested blocks.
+				if ( item.children?.length ) {
+					const nestedItems = countElements(
+						item.children,
+						type,
+						countByLevel
+					);
+					acc.count += nestedItems.count;
+					// Count the number of headings by level, to check if there is more than one H1.
+					if ( countByLevel && type === 'heading' ) {
+						Object.entries( nestedItems.levels ).forEach(
+							( [ level, count ] ) => {
+								acc.levels[ level ] =
+									( acc.levels[ level ] || 0 ) + count;
+							}
+						);
+					}
+				}
+				return acc;
+			},
+			{ count: 0, levels: {} }
+		);
+	};
+
+	const mainElements = countElements( outlineElements, 'main' ).count;
+	const headings = countElements( outlineElements, 'heading' ).count;
+	const headingsByLevel = countElements(
+		outlineElements,
+		'heading',
+		true
+	).levels;
+	const hasMultipleH1 = headingsByLevel[ 1 ] > 1;
 
 	// Not great but it's the simplest way to locate the title right now.
 	const titleNode = document.querySelector( '.editor-post-title__input' );
 	const hasTitle = isTitleSupported && title && titleNode;
 
-	// Count the number of headings and nested headings by level, to determine if there are multiple H1s.
-	const countByLevel = outlineElements.reduce( ( acc, element ) => {
-		if ( element.type === 'heading' ) {
-			acc[ element.level ] = ( acc[ element.level ] || 0 ) + 1;
-		}
-		if (
-			element.type === 'main' &&
-			element.children &&
-			element.children.length > 0
-		) {
-			element.children.forEach( ( child ) => {
-				if ( child.type === 'heading' ) {
-					acc[ child.level ] = ( acc[ child.level ] || 0 ) + 1;
-				}
-			} );
-		}
-
-		return acc;
-	}, {} );
-	const hasMultipleH1 = countByLevel[ 1 ] > 1;
-
 	const documentOutlineItems = ( { item } ) => {
 		if ( isEditingTemplate && item.type === 'main' ) {
-			const isValid = mainElements.length === 1;
+			const isValid = mainElements === 1;
 			return (
-				<li key={ item.clientId }>
+				<>
 					<DocumentOutlineItem
+						key={ item.clientId }
 						level={ __( 'Main' ) }
 						isValid={ isValid }
 						isDisabled={ hasOutlineItemsDisabled }
@@ -230,7 +247,7 @@ export default function DocumentOutline( {
 							) }
 						</ul>
 					) }
-				</li>
+				</>
 			);
 		}
 
@@ -249,8 +266,9 @@ export default function DocumentOutline( {
 			prevHeadingLevelRef.current = item.level;
 
 			return (
-				<li key={ item.clientId }>
+				<>
 					<DocumentOutlineItem
+						key={ item.clientId }
 						level={ `H${ item.level }` }
 						isValid={ isValid }
 						isDisabled={ hasOutlineItemsDisabled }
@@ -276,7 +294,7 @@ export default function DocumentOutline( {
 							! hasMultipleH1 &&
 							singleH1Headings }
 					</DocumentOutlineItem>
-				</li>
+				</>
 			);
 		}
 
@@ -287,11 +305,11 @@ export default function DocumentOutline( {
 		<div
 			className={ clsx(
 				'document-outline',
-				headings.length < 1 && 'has-no-headings',
-				isEditingTemplate && mainElements.length === 0 && 'has-no-main'
+				headings < 1 && 'has-no-headings',
+				isEditingTemplate && mainElements === 0 && 'has-no-main'
 			) }
 		>
-			{ headings.length < 1 && (
+			{ headings < 1 && (
 				<>
 					<EmptyOutlineIllustration />
 					<p>
@@ -301,7 +319,7 @@ export default function DocumentOutline( {
 					</p>
 				</>
 			) }
-			{ isEditingTemplate && mainElements.length === 0 && (
+			{ isEditingTemplate && mainElements === 0 && (
 				<p>
 					{ __(
 						'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
