@@ -270,6 +270,11 @@ function block_core_image_print_lightbox_overlay() {
 	}
 
 	echo <<<HTML
+		<style>
+			.wp-lightbox-overlay[popover]::backdrop {
+				background-color: $background_color;
+			}
+		</style>
 		<div
 			id="wp-core-image-lightbox-overlay"
 			popover="auto"
