@@ -233,7 +233,7 @@ export default function DocumentOutline( {
 					 * These inner blocks should be included in the outline.
 					 */ }
 					{ item.children.length > 0 && (
-						<ul>
+						<ul className="document-outline__nested">
 							{ item.children.map( ( child ) =>
 								documentOutlineItems( {
 									item: child,
