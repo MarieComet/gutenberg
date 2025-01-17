@@ -93,11 +93,7 @@ function ListViewBlockSelectButton(
 	 * @param {KeyboardEvent} event
 	 */
 	function onKeyDown( event ) {
-		if ( event.keyCode === ENTER ) {
-			handleRename();
-		}
-
-		if ( event.keyCode === SPACE ) {
+		if ( event.keyCode === ENTER || event.keyCode === SPACE ) {
 			onClick( event );
 		}
 	}
