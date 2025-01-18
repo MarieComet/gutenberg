@@ -82,7 +82,7 @@ const incorrectMainTag = [
 	<br key="incorrect-break-main" />,
 	<em key="incorrect-message-main">
 		{ __(
-			'Your template should have exactly one main element. Adjust the HTML element in the Advanced panel of the block.'
+			'(Your template should have exactly one main element. Adjust the HTML element in the Advanced panel of the block.)'
 		) }
 	</em>,
 ];
@@ -111,14 +111,19 @@ const computeOutlineElements = ( blocks = [], isEditingTemplate = false ) => {
 		}
 
 		if ( isMain ) {
-			return {
-				...block,
-				type: 'main',
-				children: computeOutlineElements(
-					block.innerBlocks,
-					isEditingTemplate
-				),
-			};
+			const children = computeOutlineElements(
+				block.innerBlocks || [],
+				isEditingTemplate
+			);
+			return [
+				{
+					...block,
+					type: 'main',
+					children,
+				},
+				// Flatten the children so that they are not nested under the main.
+				...children,
+			];
 		}
 
 		return computeOutlineElements( block.innerBlocks, isEditingTemplate );
@@ -161,155 +166,35 @@ export default function DocumentOutline( {
 	const prevHeadingLevelRef = useRef( 1 );
 
 	const outlineElements = computeOutlineElements( blocks, isEditingTemplate );
-	const countElements = ( elements, type, countByLevel = false ) => {
-		return elements.reduce(
-			( acc, item ) => {
-				if ( item.type === type ) {
-					acc.count++;
-					// Count the number of headings by level, to check if there is more than one H1.
-					if ( countByLevel && type === 'heading' ) {
-						acc.levels[ item.level ] =
-							( acc.levels[ item.level ] || 0 ) + 1;
-					}
-				}
-				// Include nested blocks.
-				if ( item.children?.length ) {
-					const nestedItems = countElements(
-						item.children,
-						type,
-						countByLevel
-					);
-					acc.count += nestedItems.count;
-					// Count the number of headings by level, to check if there is more than one H1.
-					if ( countByLevel && type === 'heading' ) {
-						Object.entries( nestedItems.levels ).forEach(
-							( [ level, count ] ) => {
-								acc.levels[ level ] =
-									( acc.levels[ level ] || 0 ) + count;
-							}
-						);
-					}
-				}
-				return acc;
-			},
-			{ count: 0, levels: {} }
-		);
-	};
-
-	const mainElements = countElements( outlineElements, 'main' ).count;
-	const headings = countElements( outlineElements, 'heading' ).count;
-	const headingsByLevel = countElements(
-		outlineElements,
-		'heading',
-		true
-	).levels;
+	const headings = outlineElements.filter(
+		( item ) => item.type === 'heading'
+	);
+	const mainElements = outlineElements.filter(
+		( item ) => item.type === 'main'
+	);
+	const headingsByLevel = headings.reduce( ( acc, heading ) => {
+		acc[ heading.level ] = ( acc[ heading.level ] || 0 ) + 1;
+		return acc;
+	}, {} );
 	const hasMultipleH1 = headingsByLevel[ 1 ] > 1;
 
-	// Not great but it's the simplest way to locate the title right now.
+	/**
+	 * TODO: Update hasTitle to work with the iframe in the block editor.
+	 * The titleNode is not found with the querySelector when the editor is iframed.
+	 * See https://github.com/WordPress/gutenberg/issues/47624
+	 */
 	const titleNode = document.querySelector( '.editor-post-title__input' );
 	const hasTitle = isTitleSupported && title && titleNode;
-
-	const documentOutlineItems = ( { item } ) => {
-		if ( isEditingTemplate && item.type === 'main' ) {
-			const isValid = mainElements === 1;
-			return (
-				<>
-					<DocumentOutlineItem
-						key={ item.clientId }
-						level={ __( 'Main' ) }
-						isValid={ isValid }
-						isDisabled={ hasOutlineItemsDisabled }
-						href={ `#block-${ item.clientId }` }
-						onSelect={ () => {
-							selectBlock( item.clientId );
-							onSelect?.();
-						} }
-					>
-						{ ! isValid && incorrectMainTag }
-					</DocumentOutlineItem>
-					{ /*
-					 * Some blocks with the main tagName, such as groups,
-					 * can have multiple levels of nested inner blocks.
-					 * These inner blocks should be included in the outline.
-					 */ }
-					{ item.children.length > 0 && (
-						<ul className="document-outline__nested">
-							{ item.children.map( ( child ) =>
-								documentOutlineItems( {
-									item: child,
-									prevHeadingLevelRef,
-									hasMultipleH1,
-									hasTitle,
-									hasOutlineItemsDisabled,
-									selectBlock,
-									onSelect,
-								} )
-							) }
-						</ul>
-					) }
-				</>
-			);
-		}
-
-		if ( item.type === 'heading' ) {
-			// Headings remain the same, go up by one, or down by any amount.
-			// Otherwise there are missing levels.
-			const isIncorrectLevel =
-				item.level > prevHeadingLevelRef.current + 1;
-
-			const isValid =
-				! item.isEmpty &&
-				! isIncorrectLevel &&
-				!! item.level &&
-				( item.level !== 1 || ( ! hasMultipleH1 && ! hasTitle ) );
-
-			prevHeadingLevelRef.current = item.level;
-
-			return (
-				<>
-					<DocumentOutlineItem
-						key={ item.clientId }
-						level={ `H${ item.level }` }
-						isValid={ isValid }
-						isDisabled={ hasOutlineItemsDisabled }
-						href={ `#block-${ item.clientId }` }
-						onSelect={ () => {
-							selectBlock( item.clientId );
-							onSelect?.();
-						} }
-					>
-						{ item.isEmpty
-							? emptyHeadingContent
-							: getTextContent(
-									create( {
-										html: item.attributes.content,
-									} )
-							  ) }
-						{ isIncorrectLevel && incorrectLevelContent }
-						{ item.level === 1 &&
-							hasMultipleH1 &&
-							multipleH1Headings }
-						{ hasTitle &&
-							item.level === 1 &&
-							! hasMultipleH1 &&
-							singleH1Headings }
-					</DocumentOutlineItem>
-				</>
-			);
-		}
-
-		return null;
-	};
 
 	return (
 		<div
 			className={ clsx(
 				'document-outline',
-				headings < 1 && 'has-no-headings',
-				isEditingTemplate && mainElements === 0 && 'has-no-main'
+				headings.length < 1 && 'has-no-headings',
+				isEditingTemplate && mainElements.length === 0 && 'has-no-main'
 			) }
 		>
-			{ headings < 1 && (
+			{ headings.length < 1 && (
 				<>
 					<EmptyOutlineIllustration />
 					<p>
@@ -319,7 +204,7 @@ export default function DocumentOutline( {
 					</p>
 				</>
 			) }
-			{ isEditingTemplate && mainElements === 0 && (
+			{ isEditingTemplate && mainElements.length === 0 && (
 				<p>
 					{ __(
 						'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
@@ -327,17 +212,80 @@ export default function DocumentOutline( {
 				</p>
 			) }
 			<ul>
-				{ outlineElements.map( ( item ) =>
-					documentOutlineItems( {
-						item,
-						prevHeadingLevelRef,
-						hasMultipleH1,
-						hasTitle,
-						hasOutlineItemsDisabled,
-						selectBlock,
-						onSelect,
-					} )
-				) }
+				{ outlineElements.map( ( item ) => {
+					const isHeading = item.type === 'heading';
+					const isMain = item.type === 'main';
+					const level = isMain ? __( 'Main' ) : `H${ item.level }`;
+
+					const isValid = isMain
+						? mainElements.length === 1
+						: ! item.isEmpty &&
+						  !! item.level &&
+						  item.level <= prevHeadingLevelRef.current + 1 &&
+						  ( item.level !== 1 ||
+								( ! hasMultipleH1 && ! hasTitle ) );
+
+					if ( isEditingTemplate && isMain ) {
+						return (
+							<DocumentOutlineItem
+								key={ item.clientId }
+								level={ level }
+								isValid={ isValid }
+								isDisabled={ hasOutlineItemsDisabled }
+								href={ `#block-${ item.clientId }` }
+								onSelect={ () => {
+									selectBlock( item.clientId );
+									onSelect?.();
+								} }
+							>
+								{ ! isValid && incorrectMainTag }
+							</DocumentOutlineItem>
+						);
+					}
+
+					if ( isHeading ) {
+						// Headings remain the same, go up by one, or down by any amount.
+						// Otherwise there are missing levels.
+						const isIncorrectLevel =
+							item.level > prevHeadingLevelRef.current + 1;
+						prevHeadingLevelRef.current = item.level;
+
+						return (
+							<>
+								<DocumentOutlineItem
+									key={ item.clientId }
+									level={ level }
+									isValid={ isValid }
+									isDisabled={ hasOutlineItemsDisabled }
+									href={ `#block-${ item.clientId }` }
+									onSelect={ () => {
+										selectBlock( item.clientId );
+										onSelect?.();
+									} }
+								>
+									{ item.isEmpty
+										? emptyHeadingContent
+										: getTextContent(
+												create( {
+													html: item.attributes
+														.content,
+												} )
+										  ) }
+									{ isIncorrectLevel &&
+										incorrectLevelContent }
+									{ item.level === 1 &&
+										hasMultipleH1 &&
+										multipleH1Headings }
+									{ hasTitle &&
+										item.level === 1 &&
+										! hasMultipleH1 &&
+										singleH1Headings }
+								</DocumentOutlineItem>
+							</>
+						);
+					}
+					return null;
+				} ) }
 			</ul>
 		</div>
 	);
