@@ -66,7 +66,7 @@ function GroupEditControls( { attributes, setAttributes } ) {
 						setAttributes( { ariaLabel: value } );
 					} }
 					help={ __(
-						'Add a label to describe the purpose of this navigation element.'
+						'If a page includes more than one navigation, each should have a unique label.'
 					) }
 				/>
 			) }
