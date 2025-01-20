@@ -18,6 +18,7 @@ export default function PostPanelRowButton( {
 	onClick,
 	label,
 	displayedValue,
+	description,
 	icon,
 	isExpanded,
 	...props
@@ -52,7 +53,7 @@ export default function PostPanelRowButton( {
 				</HStack>
 			</Button>
 			<div hidden id={ descriptionId }>
-				{ displayedValue }
+				{ description || displayedValue }
 			</div>
 		</>
 	);

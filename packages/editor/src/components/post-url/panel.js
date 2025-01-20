@@ -3,7 +3,7 @@
  */
 import { useMemo, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { Dropdown, ExternalLink } from '@wordpress/components';
+import { Dropdown } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { safeDecodeURIComponent } from '@wordpress/url';
 import { store as coreStore } from '@wordpress/core-data';
@@ -53,8 +53,6 @@ export default function PostURLPanel() {
 		[ popoverAnchor ]
 	);
 
-	const label = isFrontPage ? __( 'Link' ) : __( 'Slug' );
-
 	return (
 		<PostURLCheck>
 			<PostPanelRow ref={ setPopoverAnchor }>
@@ -68,7 +66,7 @@ export default function PostURLPanel() {
 							<PostURLToggle
 								isOpen={ isOpen }
 								onClick={ onToggle }
-								label={ label }
+								label={ __( 'Slug' ) }
 							/>
 						) }
 						renderContent={ ( { onClose } ) => (
@@ -109,12 +107,25 @@ function FrontPageLink() {
 	}, [] );
 
 	return (
-		<ExternalLink
-			className="editor-post-url__front-page-link"
+		<PostPanelRowButton
+			label={ __( 'Link' ) }
+			displayedValue={
+				<span>
+					<span>{ postLink } &#8599;</span>
+				</span>
+			}
+			description={
+				<>
+					{
+						/* translators: accessibility text */
+						__( '(opens in a new tab)' )
+					}
+					{ postLink }
+				</>
+			}
 			href={ postLink }
 			target="_blank"
-		>
-			{ postLink }
-		</ExternalLink>
+			className="editor-post-url__front-page-link"
+		/>
 	);
 }
