@@ -20,6 +20,7 @@ export default function PostPanelRowButton( {
 	displayedValue,
 	icon,
 	isExpanded,
+	...props
 } ) {
 	const descriptionId = useInstanceId(
 		PostPanelRowButton,
@@ -35,6 +36,7 @@ export default function PostPanelRowButton( {
 				aria-expanded={ isExpanded }
 				onClick={ onClick }
 				aria-describedby={ descriptionId }
+				{ ...props }
 			>
 				<HStack as="span">
 					<span className="editor-post-panel__row-button-label">
