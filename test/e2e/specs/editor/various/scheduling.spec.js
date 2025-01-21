@@ -42,7 +42,7 @@ test.describe( 'Scheduling', () => {
 
 				// Open the datepicker.
 				await page
-					.getByRole( 'button', { name: 'Change date' } )
+					.getByRole( 'button', { name: 'Publish date' } )
 					.click();
 
 				// Change the publishing date to a year in the future.
@@ -69,7 +69,7 @@ test.describe( 'Scheduling', () => {
 	} ) => {
 		await admin.createNewPost();
 		await editor.openDocumentSettingsSidebar();
-		await page.getByRole( 'button', { name: 'Change date' } ).click();
+		await page.getByRole( 'button', { name: 'Publish date' } ).click();
 
 		const calendar = page.getByRole( 'application', { name: 'Calendar' } );
 		const prevMonth = calendar.getByRole( 'button', {

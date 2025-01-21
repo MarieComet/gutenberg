@@ -109,7 +109,7 @@ test.describe( 'Post Editor Template mode', () => {
 			} )
 			.click();
 		await expect(
-			page.getByRole( 'button', { name: 'Template options' } )
+			page.getByRole( 'button', { name: 'Template' } )
 		).toHaveText( 'Single Entries' );
 	} );
 
@@ -175,7 +175,7 @@ class PostEditorTemplateMode {
 		// Only match the beginning of Select template: because it contains the template name or slug afterwards.
 		await this.editorSettingsSidebar
 			.getByRole( 'button', {
-				name: 'Template options',
+				name: 'Template',
 			} )
 			.click();
 	}

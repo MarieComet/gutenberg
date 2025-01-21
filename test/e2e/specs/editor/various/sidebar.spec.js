@@ -123,7 +123,7 @@ test.describe( 'Sidebar', () => {
 			name: 'Set featured image',
 		} );
 		const postDiscussionPanel = page.getByRole( 'button', {
-			name: 'Change discussion options',
+			name: 'Discussion',
 		} );
 		const postAuthorPanel = page.getByRole( 'button', {
 			name: 'admin',

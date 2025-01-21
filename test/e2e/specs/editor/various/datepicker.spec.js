@@ -36,15 +36,15 @@ TIMEZONES.forEach( ( timezone ) => {
 			page,
 		} ) => {
 			await expect(
-				page.getByRole( 'button', { name: 'Change date' } )
-			).toHaveText( 'Immediately' );
+				page.getByRole( 'button', { name: 'Publish date' } )
+			).toContainText( 'Immediately' );
 		} );
 
 		test( 'should show the publishing date if the date is in the past', async ( {
 			page,
 		} ) => {
 			const datepicker = page.getByRole( 'button', {
-				name: 'Change date',
+				name: 'Publish date',
 			} );
 			await datepicker.click();
 
@@ -58,15 +58,15 @@ TIMEZONES.forEach( ( timezone ) => {
 
 			// The expected date format will be "Sep 26, 2018 11:52 pm".
 			await expect(
-				page.getByRole( 'button', { name: 'Change date' } )
-			).toContainText( /^[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
+				page.getByRole( 'button', { name: 'Publish date' } )
+			).toContainText( /[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
 		} );
 
 		test( 'should show the publishing date if the date is in the future', async ( {
 			page,
 		} ) => {
 			const datepicker = page.getByRole( 'button', {
-				name: 'Change date',
+				name: 'Publish date',
 			} );
 			await datepicker.click();
 
@@ -80,15 +80,15 @@ TIMEZONES.forEach( ( timezone ) => {
 
 			// The expected date format will be "Sep 26, 2018 11:52 pm".
 			await expect(
-				page.getByRole( 'button', { name: 'Change date' } )
-			).toContainText( /^[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
+				page.getByRole( 'button', { name: 'Publish date' } )
+			).toContainText( /[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
 		} );
 
 		test( 'should show the publishing date as "Immediately" if the date is cleared', async ( {
 			page,
 		} ) => {
 			const datepicker = page.getByRole( 'button', {
-				name: 'Change date',
+				name: 'Publish date',
 			} );
 			await datepicker.click();
 
@@ -108,8 +108,8 @@ TIMEZONES.forEach( ( timezone ) => {
 				.click();
 
 			await expect(
-				page.getByRole( 'button', { name: 'Change date' } )
-			).toHaveText( 'Immediately' );
+				page.getByRole( 'button', { name: 'Publish date' } )
+			).toContainText( 'Immediately' );
 		} );
 	} );
 } );

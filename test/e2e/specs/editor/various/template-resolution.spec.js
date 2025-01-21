@@ -57,12 +57,12 @@ test.describe( 'Template resolution', () => {
 			await admin.editPost( newPage.id );
 			await editor.openDocumentSettingsSidebar();
 			await expect(
-				page.getByRole( 'button', { name: 'Template options' } )
+				page.getByRole( 'button', { name: 'Template' } )
 			).toHaveText( 'Single Entries' );
 			await updateSiteSettings( { requestUtils, pageId: newPage.id } );
 			await page.reload();
 			await expect(
-				page.getByRole( 'button', { name: 'Template options' } )
+				page.getByRole( 'button', { name: 'Template' } )
 			).toHaveText( 'Index' );
 		} );
 		test( 'Site editor proper template resolution', async ( {
@@ -83,7 +83,7 @@ test.describe( 'Template resolution', () => {
 			} );
 			await editor.openDocumentSettingsSidebar();
 			await expect(
-				page.getByRole( 'button', { name: 'Template options' } )
+				page.getByRole( 'button', { name: 'Template' } )
 			).toHaveText( 'Index' );
 		} );
 	} );
