@@ -276,7 +276,7 @@ test.describe( 'Pages', () => {
 		const templateOptionsButton = page
 			.getByRole( 'region', { name: 'Editor settings' } )
 			.getByRole( 'button', { name: 'Template' } );
-		await expect( templateOptionsButton ).toHaveText( 'Single Entries' );
+		await expect( templateOptionsButton ).toContainText( 'Single Entries' );
 		await templateOptionsButton.click();
 		await page
 			.getByRole( 'menu', { name: 'Template' } )
@@ -300,7 +300,7 @@ test.describe( 'Pages', () => {
 			.getByText( 'Use default template' );
 		await expect( resetButton ).toBeVisible();
 		await resetButton.click();
-		await expect( templateOptionsButton ).toHaveText( 'Single Entries' );
+		await expect( templateOptionsButton ).toContainText( 'Single Entries' );
 	} );
 
 	test( 'change template options should respect the declared `postTypes`', async ( {

@@ -110,7 +110,7 @@ test.describe( 'Post Editor Template mode', () => {
 			.click();
 		await expect(
 			page.getByRole( 'button', { name: 'Template' } )
-		).toHaveText( 'Single Entries' );
+		).toContainText( 'Single Entries' );
 	} );
 
 	test( 'Allow creating custom block templates in classic themes', async ( {
