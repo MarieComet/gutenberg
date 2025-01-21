@@ -59,7 +59,10 @@ export default function PostPanelRowButton( {
 						{ label }
 					</span>
 					<span
-						className="editor-post-panel__row-button-value"
+						className={ clsx(
+							'editor-post-panel__row-button-value',
+							{ 'has-icon': !! icon }
+						) }
 						aria-hidden="true"
 					>
 						{ icon && <Icon icon={ icon } /> }

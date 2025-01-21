@@ -24,4 +24,9 @@
 	padding-left: $grid-unit-15;
 	padding-right: $grid-unit-15;
 	color: $gray-900;
+
+	&.has-icon {
+		padding-left: $grid-unit-10;
+		gap: $grid-unit-05;
+	}
 }
