@@ -69,7 +69,7 @@ export default function PostSchedulePanel() {
 					contentClassName="editor-post-schedule__dialog"
 					renderToggle={ ( { onToggle, isOpen } ) => (
 						<PostPanelRowButton
-							label={ __( 'Publish date' ) }
+							label={ __( 'Publish' ) }
 							displayedValue={ label }
 							className="editor-post-schedule__dialog-toggle"
 							onClick={ onToggle }

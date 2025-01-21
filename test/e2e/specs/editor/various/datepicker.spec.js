@@ -35,16 +35,22 @@ TIMEZONES.forEach( ( timezone ) => {
 		test( 'should show the publishing date as "Immediately" if the date is not altered', async ( {
 			page,
 		} ) => {
+			const settingsRegion = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
 			await expect(
-				page.getByRole( 'button', { name: 'Publish date' } )
+				settingsRegion.getByRole( 'button', { name: 'Publish' } )
 			).toContainText( 'Immediately' );
 		} );
 
 		test( 'should show the publishing date if the date is in the past', async ( {
 			page,
 		} ) => {
-			const datepicker = page.getByRole( 'button', {
-				name: 'Publish date',
+			const settingsRegion = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
+			const datepicker = settingsRegion.getByRole( 'button', {
+				name: 'Publish',
 			} );
 			await datepicker.click();
 
@@ -58,15 +64,18 @@ TIMEZONES.forEach( ( timezone ) => {
 
 			// The expected date format will be "Sep 26, 2018 11:52 pm".
 			await expect(
-				page.getByRole( 'button', { name: 'Publish date' } )
+				settingsRegion.getByRole( 'button', { name: 'Publish' } )
 			).toContainText( /[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
 		} );
 
 		test( 'should show the publishing date if the date is in the future', async ( {
 			page,
 		} ) => {
-			const datepicker = page.getByRole( 'button', {
-				name: 'Publish date',
+			const settingsRegion = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
+			const datepicker = settingsRegion.getByRole( 'button', {
+				name: 'Publish',
 			} );
 			await datepicker.click();
 
@@ -80,15 +89,18 @@ TIMEZONES.forEach( ( timezone ) => {
 
 			// The expected date format will be "Sep 26, 2018 11:52 pm".
 			await expect(
-				page.getByRole( 'button', { name: 'Publish date' } )
+				settingsRegion.getByRole( 'button', { name: 'Publish' } )
 			).toContainText( /[A-Za-z]+\s\d{1,2},\s\d{1,4}/ );
 		} );
 
 		test( 'should show the publishing date as "Immediately" if the date is cleared', async ( {
 			page,
 		} ) => {
-			const datepicker = page.getByRole( 'button', {
-				name: 'Publish date',
+			const settingsRegion = page.getByRole( 'region', {
+				name: 'Editor settings',
+			} );
+			const datepicker = settingsRegion.getByRole( 'button', {
+				name: 'Publish',
 			} );
 			await datepicker.click();
 
@@ -108,7 +120,7 @@ TIMEZONES.forEach( ( timezone ) => {
 				.click();
 
 			await expect(
-				page.getByRole( 'button', { name: 'Publish date' } )
+				settingsRegion.getByRole( 'button', { name: 'Publish' } )
 			).toContainText( 'Immediately' );
 		} );
 	} );
