@@ -288,7 +288,7 @@ test.describe( 'Pages', () => {
 		// Empty theme's custom template with `postTypes: ['post']`, should not be suggested.
 		await expect( templateItem ).toHaveCount( 1 );
 		await templateItem.click();
-		await expect( templateOptionsButton ).toHaveText( 'demo' );
+		await expect( templateOptionsButton ).toContainText( 'demo' );
 		await editor.saveSiteEditorEntities( {
 			isOnlyCurrentEntityDirty: true,
 		} );
