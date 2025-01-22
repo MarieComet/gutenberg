@@ -45,7 +45,12 @@ test.describe( 'Post visibility', () => {
 		await editor.openDocumentSettingsSidebar();
 
 		// Set a publish date for the next month.
-		await page.click( 'role=button[name="Publish date"i]' );
+		await page
+			.getByRole( 'region', { name: 'Editor settings' } )
+			.getByRole( 'button', {
+				name: 'Publish',
+			} )
+			.click();
 
 		await page.click( 'role=button[name="View next month"i]' );
 		await page.click( 'role=application[name="Calendar"] >> text=15' );
