@@ -83,15 +83,15 @@ const { state, actions, callbacks } = store(
 			},
 		},
 		actions: {
-			showLightbox() {
-				const lightboxOverlay = document.querySelector(
-					'#wp-core-image-lightbox-overlay[popover]'
-				);
-				if ( lightboxOverlay ) {
-					lightboxOverlay.showPopover();
+			hideLightbox( event ) {
+				/*
+				 * This handler is purely for the custom action of hiding the lightbox when clicking anywhere inside.
+				 * If this handler is triggered due to a click on the close button, it should be ignored as that
+				 * button automatically hides the lightbox via `popovertarget` and `popovertargetaction`.
+				 */
+				if ( event?.target?.tagName === 'BUTTON' ) {
+					return;
 				}
-			},
-			hideLightbox() {
 				const lightboxOverlay = document.querySelector(
 					'#wp-core-image-lightbox-overlay[popover]'
 				);
