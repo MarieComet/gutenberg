@@ -84,10 +84,6 @@ const { state, actions, callbacks } = store(
 		},
 		actions: {
 			showLightbox() {
-				if ( ! actions.setCurrentImage() ) {
-					return;
-				}
-
 				const lightboxOverlay = document.querySelector(
 					'#wp-core-image-lightbox-overlay[popover]'
 				);
@@ -108,11 +104,10 @@ const { state, actions, callbacks } = store(
 
 				// Bails out if the image has not loaded yet.
 				if ( ! state.metadata[ imageId ].imageRef?.complete ) {
-					return false;
+					return;
 				}
 
 				state.currentImageId = imageId;
-				return true;
 			},
 			resetCurrentImage() {
 				state.currentImageId = null;
