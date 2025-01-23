@@ -284,7 +284,6 @@ function block_core_image_print_lightbox_overlay() {
 			data-wp-bind--role="state.roleAttribute"
 			data-wp-bind--aria-label="state.currentImage.ariaLabel"
 			data-wp-bind--aria-modal="state.ariaModal"
-			data-wp-class--show-closing-animation="state.showClosingAnimation"
 			data-wp-watch="callbacks.setOverlayFocus"
 			data-wp-on--toggle="actions.handleToggle"
 			data-wp-on--keydown="actions.handleKeydown"

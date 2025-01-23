@@ -126,14 +126,11 @@ const { state, actions, callbacks } = store(
 			},
 			handleHideLightbox() {
 				if ( state.overlayEnabled ) {
-					// Starts the overlay closing animation. The showClosingAnimation
-					// class is used to avoid showing it on page load.
-					state.showClosingAnimation = true;
 					state.overlayEnabled = false;
 
 					// Waits until the close animation has completed before allowing a
 					// user to scroll again. The duration of this animation is defined in
-					// the `styles.scss` file, but in any case we should wait a few
+					// the `style.scss` file, but in any case we should wait a few
 					// milliseconds longer than the duration, otherwise a user may scroll
 					// too soon and cause the animation to look sloppy.
 					setTimeout( function () {
@@ -143,9 +140,6 @@ const { state, actions, callbacks } = store(
 						state.currentImage.buttonRef.focus( {
 							preventScroll: true,
 						} );
-
-						// Resets the closing animation class.
-						state.showClosingAnimation = false;
 
 						// Resets the current image id to mark the overlay as closed.
 						actions.resetCurrentImage();
