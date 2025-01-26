@@ -44,7 +44,7 @@ import { unlock } from '../../lock-unlock';
 import SaveKeyboardShortcut from '../save-keyboard-shortcut';
 import { useIsSiteEditorLoading } from './hooks';
 import useMovingAnimation from './animation';
-import SidebarContent from '../sidebar';
+import SidebarContent, { SidebarNavigationContext } from '../sidebar';
 import SaveHub from '../save-hub';
 import SavePanel from '../save-panel';
 
@@ -54,6 +54,30 @@ const { NavigableRegion, GlobalStylesProvider } = unlock( editorPrivateApis );
 const { useLocation } = unlock( routerPrivateApis );
 
 const ANIMATION_DURATION = 0.3;
+
+// Navigation state that is updated when navigating back or forward. Helps us
+// manage the animations and also focus.
+function createNavState() {
+	let state = {
+		direction: null,
+		focusSelector: null,
+	};
+
+	return {
+		get() {
+			return state;
+		},
+		navigate( direction, focusSelector = null ) {
+			state = {
+				direction,
+				focusSelector:
+					direction === 'forward' && focusSelector
+						? focusSelector
+						: state.focusSelector,
+			};
+		},
+	};
+}
 
 function Layout() {
 	const { query, name: routeKey, areas, widths } = useLocation();
@@ -90,6 +114,8 @@ function Layout() {
 		// Should not depend on the previous canvas mode value but the next.
 	}, [ canvas ] );
 
+	const [ navState ] = useState( createNavState );
+
 	return (
 		<>
 			<UnsavedChangesWarning />
@@ -108,74 +134,75 @@ function Layout() {
 				) }
 			>
 				<div className="edit-site-layout__content">
-					{ /*
+					<SidebarNavigationContext.Provider value={ navState }>
+						{ /*
 						The NavigableRegion must always be rendered and not use
 						`inert` otherwise `useNavigateRegions` will fail.
 					*/ }
-					{ ( ! isMobileViewport || ! areas.mobile ) && (
-						<NavigableRegion
-							ariaLabel={ __( 'Navigation' ) }
-							className="edit-site-layout__sidebar-region"
-						>
-							<AnimatePresence>
-								{ canvas === 'view' && (
-									<motion.div
-										initial={ { opacity: 0 } }
-										animate={ { opacity: 1 } }
-										exit={ { opacity: 0 } }
-										transition={ {
-											type: 'tween',
-											duration:
-												// Disable transition in mobile to emulate a full page transition.
-												disableMotion ||
-												isMobileViewport
-													? 0
-													: ANIMATION_DURATION,
-											ease: 'easeOut',
-										} }
-										className="edit-site-layout__sidebar"
-									>
-										<SiteHub
+						{ ( ! isMobileViewport || ! areas.mobile ) && (
+							<NavigableRegion
+								ariaLabel={ __( 'Navigation' ) }
+								className="edit-site-layout__sidebar-region"
+							>
+								<AnimatePresence>
+									{ canvas === 'view' && (
+										<motion.div
+											initial={ { opacity: 0 } }
+											animate={ { opacity: 1 } }
+											exit={ { opacity: 0 } }
+											transition={ {
+												type: 'tween',
+												duration:
+													// Disable transition in mobile to emulate a full page transition.
+													disableMotion ||
+													isMobileViewport
+														? 0
+														: ANIMATION_DURATION,
+												ease: 'easeOut',
+											} }
+											className="edit-site-layout__sidebar"
+										>
+											<SiteHub
+												ref={ toggleRef }
+												isTransparent={
+													isResizableFrameOversized
+												}
+											/>
+											<SidebarContent
+												shouldAnimate={
+													routeKey !== 'styles'
+												}
+												routeKey={ routeKey }
+											>
+												<ErrorBoundary>
+													{ areas.sidebar }
+												</ErrorBoundary>
+											</SidebarContent>
+											<SaveHub />
+											<SavePanel />
+										</motion.div>
+									) }
+								</AnimatePresence>
+							</NavigableRegion>
+						) }
+
+						{ isMobileViewport && areas.mobile && (
+							<div className="edit-site-layout__mobile">
+								{ canvas !== 'edit' && (
+									<SidebarContent routeKey={ routeKey }>
+										<SiteHubMobile
 											ref={ toggleRef }
 											isTransparent={
 												isResizableFrameOversized
 											}
 										/>
-										<SidebarContent
-											shouldAnimate={
-												routeKey !== 'styles'
-											}
-											routeKey={ routeKey }
-										>
-											<ErrorBoundary>
-												{ areas.sidebar }
-											</ErrorBoundary>
-										</SidebarContent>
-										<SaveHub />
-										<SavePanel />
-									</motion.div>
+									</SidebarContent>
 								) }
-							</AnimatePresence>
-						</NavigableRegion>
-					) }
-
+								<ErrorBoundary>{ areas.mobile }</ErrorBoundary>
+							</div>
+						) }
+					</SidebarNavigationContext.Provider>
 					<EditorSnackbars />
-
-					{ isMobileViewport && areas.mobile && (
-						<div className="edit-site-layout__mobile">
-							{ canvas !== 'edit' && (
-								<SidebarContent routeKey={ routeKey }>
-									<SiteHubMobile
-										ref={ toggleRef }
-										isTransparent={
-											isResizableFrameOversized
-										}
-									/>
-								</SidebarContent>
-							) }
-							<ErrorBoundary>{ areas.mobile }</ErrorBoundary>
-						</div>
-					) }
 
 					{ ! isMobileViewport &&
 						areas.content &&
