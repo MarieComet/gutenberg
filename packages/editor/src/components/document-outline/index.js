@@ -91,15 +91,15 @@ const incorrectMainTag = [
  * Returns an array of heading blocks and blocks with the main tagName.
  *
  * @param {?Array}  blocks            An array of blocks.
- * @param {boolean} isEditingTemplate Indicates if a template is being edited.
+ * @param {boolean} isShowingTemplate Indicates if a template is being edited or previewed.
  *
  * @return {Array} An array of heading blocks and blocks with the main tagName.
  */
-const computeOutlineElements = ( blocks = [], isEditingTemplate = false ) => {
+const computeOutlineElements = ( blocks = [], isShowingTemplate = false ) => {
 	return blocks.flatMap( ( block = {} ) => {
 		const isHeading = block.name === 'core/heading';
 		const isMain =
-			isEditingTemplate && block.attributes?.tagName === 'main';
+			isShowingTemplate && block.attributes?.tagName === 'main';
 
 		if ( isHeading ) {
 			return {
@@ -113,7 +113,7 @@ const computeOutlineElements = ( blocks = [], isEditingTemplate = false ) => {
 		if ( isMain ) {
 			const children = computeOutlineElements(
 				block.innerBlocks || [],
-				isEditingTemplate
+				isShowingTemplate
 			);
 			return [
 				{
@@ -126,7 +126,7 @@ const computeOutlineElements = ( blocks = [], isEditingTemplate = false ) => {
 			];
 		}
 
-		return computeOutlineElements( block.innerBlocks, isEditingTemplate );
+		return computeOutlineElements( block.innerBlocks, isShowingTemplate );
 	} );
 };
 
@@ -148,10 +148,11 @@ export default function DocumentOutline( {
 	hasOutlineItemsDisabled,
 } ) {
 	const { selectBlock } = useDispatch( blockEditorStore );
-	const { blocks, title, isTitleSupported, isEditingTemplate } = useSelect(
+	const { blocks, title, isTitleSupported, isShowingTemplate } = useSelect(
 		( select ) => {
 			const { getBlocks } = select( blockEditorStore );
-			const { getEditedPostAttribute } = select( editorStore );
+			const { getEditedPostAttribute, getRenderingMode } =
+				select( editorStore );
 			const { getPostType } = select( coreStore );
 			const postType = getPostType( getEditedPostAttribute( 'type' ) );
 
@@ -159,13 +160,14 @@ export default function DocumentOutline( {
 				title: getEditedPostAttribute( 'title' ),
 				blocks: getBlocks(),
 				isTitleSupported: postType?.supports?.title ?? false,
-				isEditingTemplate: postType?.slug === 'wp_template',
+				isShowingTemplate:
+					postType?.slug === 'wp_template' ||
+					getRenderingMode() === 'template-locked',
 			};
 		}
 	);
 	const prevHeadingLevelRef = useRef( 1 );
-
-	const outlineElements = computeOutlineElements( blocks, isEditingTemplate );
+	const outlineElements = computeOutlineElements( blocks, isShowingTemplate );
 	const headings = outlineElements.filter(
 		( item ) => item.type === 'heading'
 	);
@@ -191,7 +193,7 @@ export default function DocumentOutline( {
 			className={ clsx(
 				'document-outline',
 				headings.length < 1 && 'has-no-headings',
-				isEditingTemplate && mainElements.length === 0 && 'has-no-main'
+				isShowingTemplate && mainElements.length === 0 && 'has-no-main'
 			) }
 		>
 			{ headings.length < 1 && (
@@ -204,7 +206,7 @@ export default function DocumentOutline( {
 					</p>
 				</>
 			) }
-			{ isEditingTemplate && mainElements.length === 0 && (
+			{ isShowingTemplate && mainElements.length === 0 && (
 				<p>
 					{ __(
 						'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
@@ -225,7 +227,7 @@ export default function DocumentOutline( {
 						  ( item.level !== 1 ||
 								( ! hasMultipleH1 && ! hasTitle ) );
 
-					if ( isEditingTemplate && isMain ) {
+					if ( isShowingTemplate && isMain ) {
 						return (
 							<DocumentOutlineItem
 								key={ item.clientId }
