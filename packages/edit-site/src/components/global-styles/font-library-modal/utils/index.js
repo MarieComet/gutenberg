@@ -34,36 +34,30 @@ export function isUrlEncoded( url ) {
 	return url !== decodeURIComponent( url );
 }
 
-export function getFontFaceVariantName( face ) {
+function getFontFaceVariant( face ) {
 	const matchedWeight = FONT_WEIGHTS.find(
 		( weight ) => weight.value === face.fontWeight
 	);
-	const weightName = matchedWeight?.label || face.fontWeight;
-
 	const matchedStyle = FONT_STYLES.find(
 		( style ) => style.value === face.fontStyle
 	);
+	return [ matchedWeight, matchedStyle ];
+}
 
+export function getFontFaceVariantName( face ) {
+	const [ weight, style ] = getFontFaceVariant( face );
+	const weightName = weight?.label || face.fontWeight;
 	const styleName =
-		face.fontStyle === 'normal'
-			? ''
-			: matchedStyle?.label || face.fontStyle;
+		face.fontStyle === 'normal' ? '' : style?.label || face.fontStyle;
 	return `${ weightName } ${ styleName }`;
 }
 
 export function getFontFaceVariantSlug( face ) {
-	const matchedWeight = FONT_WEIGHTS.find(
-		( weight ) => weight.value === face.fontWeight
-	);
-	const weightName = matchedWeight?.slug || face.fontWeight;
-
-	const matchedStyle = FONT_STYLES.find(
-		( style ) => style.value === face.fontStyle
-	);
-
-	const styleName =
-		face.fontStyle === 'normal' ? '' : matchedStyle?.slug || face.fontStyle;
-	return `${ weightName } ${ styleName }`;
+	const [ weight, style ] = getFontFaceVariant( face );
+	const weightSlug = weight?.slug || face.fontWeight;
+	const styleSlug =
+		face.fontStyle === 'normal' ? '' : style?.slug || face.fontStyle;
+	return `${ weightSlug } ${ styleSlug }`;
 }
 
 export function mergeFontFaces( existing = [], incoming = [] ) {
