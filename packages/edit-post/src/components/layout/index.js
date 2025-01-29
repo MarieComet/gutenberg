@@ -418,6 +418,7 @@ function Layout( {
 		hasHistory,
 		isWelcomeGuideVisible,
 		templateId,
+		isDevicePreview,
 	} = useSelect(
 		( select ) => {
 			const { get } = select( preferencesStore );
@@ -425,6 +426,8 @@ function Layout( {
 				select( editPostStore )
 			);
 			const { canUser, getPostType } = select( coreStore );
+			const { getDeviceType, getEditorMode, getRenderingMode } =
+				select( editorStore );
 			const { __unstableGetEditorMode } = unlock(
 				select( blockEditorStore )
 			);
@@ -440,7 +443,7 @@ function Layout( {
 			const isZoomOut = __unstableGetEditorMode() === 'zoom-out';
 
 			return {
-				mode: select( editorStore ).getEditorMode(),
+				mode: getEditorMode(),
 				isFullscreenActive:
 					select( editPostStore ).isFeatureActive( 'fullscreenMode' ),
 				hasActiveMetaboxes: select( editPostStore ).hasMetaBoxes(),
@@ -450,6 +453,7 @@ function Layout( {
 				isDistractionFree: get( 'core', 'distractionFree' ),
 				showMetaBoxes:
 					! DESIGN_POST_TYPES.includes( currentPostType ) &&
+					getRenderingMode() === 'post-only' &&
 					! isZoomOut,
 				isWelcomeGuideVisible: isFeatureActive( 'welcomeGuide' ),
 				templateId:
@@ -459,6 +463,7 @@ function Layout( {
 					! isEditingTemplate
 						? getEditedPostTemplateId()
 						: null,
+				isDevicePreview: getDeviceType() !== 'Desktop',
 			};
 		},
 		[ currentPostType, isEditingTemplate, settings.supportsTemplateMode ]
@@ -601,7 +606,11 @@ function Layout( {
 						extraContent={
 							! isDistractionFree &&
 							showMetaBoxes && (
-								<MetaBoxesMain isLegacy={ ! shouldIframe } />
+								<MetaBoxesMain
+									isLegacy={
+										! shouldIframe || isDevicePreview
+									}
+								/>
 							)
 						}
 					>
