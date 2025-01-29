@@ -35,11 +35,34 @@ export function isUrlEncoded( url ) {
 }
 
 export function getFontFaceVariantName( face ) {
-	const weightName = FONT_WEIGHTS[ face.fontWeight ] || face.fontWeight;
+	const matchedWeight = FONT_WEIGHTS.find(
+		( weight ) => weight.value === face.fontWeight
+	);
+	const weightName = matchedWeight?.label || face.fontWeight;
+
+	const matchedStyle = FONT_STYLES.find(
+		( style ) => style.value === face.fontStyle
+	);
+
 	const styleName =
 		face.fontStyle === 'normal'
 			? ''
-			: FONT_STYLES[ face.fontStyle ] || face.fontStyle;
+			: matchedStyle?.label || face.fontStyle;
+	return `${ weightName } ${ styleName }`;
+}
+
+export function getFontFaceVariantSlug( face ) {
+	const matchedWeight = FONT_WEIGHTS.find(
+		( weight ) => weight.value === face.fontWeight
+	);
+	const weightName = matchedWeight?.slug || face.fontWeight;
+
+	const matchedStyle = FONT_STYLES.find(
+		( style ) => style.value === face.fontStyle
+	);
+
+	const styleName =
+		face.fontStyle === 'normal' ? '' : matchedStyle?.slug || face.fontStyle;
 	return `${ weightName } ${ styleName }`;
 }
 

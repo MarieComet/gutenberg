@@ -11,7 +11,7 @@ import {
 /**
  * Internal dependencies
  */
-import { getFontFaceVariantName } from './utils';
+import { getFontFaceVariantName, getFontFaceVariantSlug } from './utils';
 import { FontLibraryContext } from './context';
 import FontDemo from './font-demo';
 import { unlock } from '../../../lock-unlock';
@@ -42,7 +42,7 @@ function LibraryFontVariant( { face, font } ) {
 
 	const displayName = font.name + ' ' + getFontFaceVariantName( face );
 	const checkboxId = kebabCase(
-		`${ font.slug }-${ getFontFaceVariantName( face ) }`
+		`${ font.slug }-${ getFontFaceVariantSlug( face ) }`
 	);
 
 	return (

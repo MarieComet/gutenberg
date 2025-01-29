@@ -10,7 +10,7 @@ import {
 /**
  * Internal dependencies
  */
-import { getFontFaceVariantName } from './utils';
+import { getFontFaceVariantName, getFontFaceVariantSlug } from './utils';
 import FontDemo from './font-demo';
 import { unlock } from '../../../lock-unlock';
 
@@ -32,7 +32,7 @@ function CollectionFontVariant( {
 
 	const displayName = font.name + ' ' + getFontFaceVariantName( face );
 	const checkboxId = kebabCase(
-		`${ font.slug }-${ getFontFaceVariantName( face ) }`
+		`${ font.slug }-${ getFontFaceVariantSlug( face ) }`
 	);
 
 	return (
