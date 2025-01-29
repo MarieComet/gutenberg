@@ -10,6 +10,7 @@ There are a few new concepts to consider when building themes:
 -   **Frontend & Editor Styles** - To get the most out of blocks, theme authors will want to make sure Core styles look good and opt-in, or write their own styles to best fit their theme.
 -   **Block Tools** - Themes can opt-in to several block tools like line height, custom units.
 -   **Core Block Patterns** - Themes can opt-out of the default block patterns.
+-   **Stylebook** -Themes can opt-in to displaying the stylebook, with a preview of various blocks.
 
 By default, blocks provide their styles to enable basic support for blocks in themes without any change. They also [provide opt-in opinionated styles](#default-block-styles). Themes can add/override these styles, or they can provide no styles at all, and rely fully on what the blocks provide.
 
@@ -511,3 +512,19 @@ This feature is only relevant for non block based themes, as block based themes 
 The standalone template part editor does not allow editors to create new, or delete existing template parts. This is because the theme manually needs to include the template part in the PHP template.
 
 You can find out more about block based template parts in the [themes handbook block template and template parts section](https://developer.wordpress.org/themes/block-themes/templates-and-template-parts/#block-c5fa39a2-a27d-4bd2-98d0-dc6249a0801a).
+
+## Stylebook
+
+The stylebook is a way to preview the design of various blocks, without needing to place them in the editor.
+It is accessed from the Apperance > Design menu.
+
+```php
+add_theme_support(
+	'editor',
+	array(
+		'stylebook'
+	)
+);
+```
+
+This feature is only relevant for non block based themes, as block based themes already support the Stylebook as part of the site editor.
