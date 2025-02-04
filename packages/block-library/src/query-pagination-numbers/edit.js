@@ -9,6 +9,11 @@ import {
 	RangeControl,
 } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import { useToolsPanelDropdownMenuProps } from '../utils/hooks';
+
 const createPaginationItem = ( content, Tag = 'a', extraClass = '' ) => (
 	<Tag key={ content } className={ `page-numbers ${ extraClass }` }>
 		{ content }
@@ -50,6 +55,7 @@ export default function QueryPaginationNumbersEdit( {
 	const paginationNumbers = previewPaginationNumbers(
 		parseInt( midSize, 10 )
 	);
+	const dropdownMenuProps = useToolsPanelDropdownMenuProps();
 
 	return (
 		<>
@@ -57,10 +63,11 @@ export default function QueryPaginationNumbersEdit( {
 				<ToolsPanel
 					label={ __( 'Settings' ) }
 					resetAll={ () => setAttributes( { midSize: 2 } ) }
+					dropdownMenuProps={ dropdownMenuProps }
 				>
 					<ToolsPanelItem
 						label={ __( 'Number of links' ) }
-						hasValue={ () => midSize !== undefined }
+						hasValue={ () => midSize !== 2 }
 						onDeselect={ () => setAttributes( { midSize: 2 } ) }
 						isShownByDefault
 					>
