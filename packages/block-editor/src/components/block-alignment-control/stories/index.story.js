@@ -8,14 +8,18 @@ import { useState } from '@wordpress/element';
  */
 import { BlockAlignmentControl } from '../';
 
-/**
- * The `BlockAlignmentControl` component is used to render block alignment options in the editor. The different alignment options it provides are `left`, `center`, `right`, `wide` and `full`.
- *
- * If you want to use the block alignment control in a toolbar, you should use the `BlockAlignmentToolbar` component instead.
- */
 const meta = {
 	title: 'BlockEditor/BlockAlignmentControl',
 	component: BlockAlignmentControl,
+	parameters: {
+		docs: {
+			canvas: { sourceState: 'shown' },
+			description: {
+				component:
+					'A control for selecting block alignment options in the editor. The different alignment options it provides are `left`, `center`, `right`, `wide` and `full`',
+			},
+		},
+	},
 	argTypes: {
 		value: {
 			control: { type: null },

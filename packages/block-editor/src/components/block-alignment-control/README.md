@@ -41,11 +41,7 @@ A callback function invoked when the toolbar's alignment value is changed via an
 ### `controls`
 
 -   **Type:** `Array`
--   **Default:**
-
-```js
-[ 'none', 'left', 'center', 'right', 'wide', 'full' ];
-```
+-   **Default:** [ `none`, `left`, `center`, `right`, `wide`, `full` ]
 
 An array of available alignment controls.
 

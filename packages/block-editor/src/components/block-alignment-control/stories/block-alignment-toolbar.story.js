@@ -8,14 +8,17 @@ import { useState } from '@wordpress/element';
  */
 import { BlockAlignmentToolbar } from '../';
 
-/**
- * The `BlockAlignmentToolbar` component is used to render block alignment options in the editor. The different alignment options it provides are `left`, `center`, `right`, `wide` and `full`.
- */
-const meta = {
+export default {
 	title: 'BlockEditor/BlockAlignmentToolbar',
 	component: BlockAlignmentToolbar,
 	parameters: {
-		docs: { canvas: { sourceState: 'shown' } },
+		docs: {
+			canvas: { sourceState: 'shown' },
+			description: {
+				component:
+					'A control for selecting block alignment options in the toolbar. The different alignment options it provides are `left`, `center`, `right`, `wide` and `full`',
+			},
+		},
 	},
 	argTypes: {
 		value: {
@@ -33,13 +36,11 @@ const meta = {
 			description: 'An array of available alignment controls.',
 		},
 		isCollapsed: {
-			control: { type: null },
+			control: 'boolean',
 			description: 'Whether the toolbar should be collapsed.',
 		},
 	},
 };
-
-export default meta;
 
 export const Default = {
 	render: function Template( { onChange, ...args } ) {
@@ -55,4 +56,9 @@ export const Default = {
 			/>
 		);
 	},
+};
+
+Default.args = {
+	defaultValue: 'undefined',
+	panelId: 'panel-id',
 };
