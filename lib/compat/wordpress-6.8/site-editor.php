@@ -137,13 +137,44 @@ function gutenberg_styles_wp_die_handler( $default_handler ) {
 add_filter( 'wp_die_handler', 'gutenberg_styles_wp_die_handler' );
 
 /**
+ * Registers the stylebook theme support.
+ * Ensures that the stylebook theme support is available in the editors by setting show_in_rest to true.
+ * Backports into wp-includes\theme.php create_initial_theme_features().
+ */
+add_action(
+	'setup_theme',
+	function () {
+		register_theme_feature(
+			'stylebook',
+			array(
+				'description'  => __( 'test' ),
+				'show_in_rest' => true,
+			)
+		);
+	},
+	0
+);
+
+/**
+ * Enables the stylebook theme support.
+ * Backports into wp-includes\theme.php _add_default_theme_supports().
+ */
+add_action(
+	'after_setup_theme',
+	function () {
+		add_theme_support( 'stylebook' );
+	},
+	1
+);
+
+/**
  * Add a Styles submenu under the Appearance menu
  * for Classic themes.
  *
  * @global array $submenu
  */
 function gutenberg_add_styles_submenu_item() {
-	if ( ! wp_is_block_theme() && ( current_theme_supports( 'editor-styles' ) || wp_theme_has_theme_json() ) ) {
+	if ( ! wp_is_block_theme() && current_theme_supports( 'stylebook' ) ) {
 		global $submenu;
 
 		$styles_menu_item = array(

@@ -358,8 +358,15 @@ function StyleBook( {
  * @return {Object} Style Book Preview component.
  */
 export const StyleBookPreview = ( { userConfig = {}, isStatic = false } ) => {
-	const siteEditorSettings = useSelect(
-		( select ) => select( siteEditorStore ).getSettings(),
+	const { isBlockTheme, hasStyleBook, siteEditorSettings } = useSelect(
+		( select ) => {
+			const { getCurrentTheme, getThemeSupports } = select( coreStore );
+			return {
+				isBlockTheme: getCurrentTheme()?.is_block_theme,
+				hasStyleBook: !! getThemeSupports()?.stylebook,
+				siteEditorSettings: select( siteEditorStore ).getSettings(),
+			};
+		},
 		[]
 	);
 
@@ -457,7 +464,6 @@ export const StyleBookPreview = ( { userConfig = {}, isStatic = false } ) => {
 		: { examples: examplesForSinglePageUse };
 
 	const { base: baseConfig } = useContext( GlobalStylesContext );
-	const goTo = getStyleBookNavigationFromPath( section );
 
 	const mergedConfig = useMemo( () => {
 		if ( ! isObjectEmpty( userConfig ) && ! isObjectEmpty( baseConfig ) ) {
@@ -479,6 +485,18 @@ export const StyleBookPreview = ( { userConfig = {}, isStatic = false } ) => {
 		} ),
 		[ globalStyles, siteEditorSettings, userConfig ]
 	);
+
+	if ( ! isBlockTheme && ! hasStyleBook ) {
+		return (
+			<p className="edit-site-style-book__unsupported">
+				{ __(
+					'The theme you are currently using does not support the Stylebook.'
+				) }
+			</p>
+		);
+	}
+
+	const goTo = getStyleBookNavigationFromPath( section );
 
 	return (
 		<div className="edit-site-style-book">

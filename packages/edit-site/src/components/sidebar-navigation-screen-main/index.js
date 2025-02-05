@@ -18,6 +18,12 @@ import { unlock } from '../../lock-unlock';
 import { store as editSiteStore } from '../../store';
 
 export function MainSidebarNavigationContent( { isBlockBasedTheme = true } ) {
+	const showStylebookMenu = useSelect(
+		( select ) =>
+			select( coreStore ).getThemeSupports()?.stylebook || false,
+		[]
+	);
+
 	return (
 		<ItemGroup className="edit-site-sidebar-navigation-screen-main">
 			{ isBlockBasedTheme && (
@@ -55,7 +61,7 @@ export function MainSidebarNavigationContent( { isBlockBasedTheme = true } ) {
 					</SidebarNavigationItem>
 				</>
 			) }
-			{ ! isBlockBasedTheme && (
+			{ ! isBlockBasedTheme && showStylebookMenu && (
 				<SidebarNavigationItem
 					uid="stylebook-navigation-item"
 					to="/stylebook"
