@@ -114,8 +114,6 @@ function Iframe( {
 	/** @type {[Document, import('react').Dispatch<Document>]} */
 	const [ iframeDocument, setIframeDocument ] = useState();
 	const [ bodyClasses, setBodyClasses ] = useState( [] );
-	const clearerRef = useBlockSelectionClearer();
-	const [ before, writingFlowRef, after ] = useWritingFlow();
 
 	const setRef = useRefEffect( ( node ) => {
 		node._load = () => {
@@ -259,14 +257,15 @@ function Iframe( {
 
 	useEffect( () => cleanup, [ cleanup ] );
 
-	const disabledRef = useDisabled( { isDisabled: ! readonly } );
+	const clearerRef = useBlockSelectionClearer();
+	const [ before, writingFlowRef, after ] = useWritingFlow();
 	const bubbleEventsRef = useBubbleEvents( iframeDocument );
 	// Avoids attaching some refs and rendering the focus capture div elements
 	// that are are only needed in edit mode.
 	const isEditable = tabIndex >= 0 && ! readonly;
 	const bodyRef = useMergeRefs( [
 		contentRef,
-		disabledRef,
+		useDisabled( { isDisabled: ! readonly } ),
 		isEditable ? bubbleEventsRef : null,
 		isEditable ? clearerRef : null,
 		isEditable ? writingFlowRef : null,
