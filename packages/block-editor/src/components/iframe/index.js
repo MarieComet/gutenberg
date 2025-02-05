@@ -107,15 +107,10 @@ function Iframe( {
 	title = __( 'Editor canvas' ),
 	...props
 } ) {
-	const { resolvedAssets, isPreviewMode } = useSelect( ( select ) => {
+	const { styles = '', scripts = '' } = useSelect( ( select ) => {
 		const { getSettings } = select( blockEditorStore );
-		const settings = getSettings();
-		return {
-			resolvedAssets: settings.__unstableResolvedAssets,
-			isPreviewMode: settings.isPreviewMode,
-		};
+		return getSettings().__unstableResolvedAssets;
 	}, [] );
-	const { styles = '', scripts = '' } = resolvedAssets;
 	/** @type {[Document, import('react').Dispatch<Document>]} */
 	const [ iframeDocument, setIframeDocument ] = useState();
 	const [ bodyClasses, setBodyClasses ] = useState( [] );
@@ -163,13 +158,11 @@ function Iframe( {
 					compatStyle.cloneNode( true )
 				);
 
-				if ( ! isPreviewMode ) {
-					// eslint-disable-next-line no-console
-					console.warn(
-						`${ compatStyle.id } was added to the iframe incorrectly. Please use block.json or enqueue_block_assets to add styles to the iframe.`,
-						compatStyle
-					);
-				}
+				// eslint-disable-next-line no-console
+				console.warn(
+					`${ compatStyle.id } was added to the iframe incorrectly. Please use block.json or enqueue_block_assets to add styles to the iframe.`,
+					compatStyle
+				);
 			}
 
 			iFrameDocument.addEventListener(
@@ -227,15 +220,6 @@ function Iframe( {
 		iframeDocument,
 	} );
 
-	const disabledRef = useDisabled( { isDisabled: ! readonly } );
-	const bodyRef = useMergeRefs( [
-		useBubbleEvents( iframeDocument ),
-		contentRef,
-		clearerRef,
-		writingFlowRef,
-		disabledRef,
-	] );
-
 	// Correct doctype is required to enable rendering in standards
 	// mode. Also preload the styles to avoid a flash of unstyled
 	// content.
@@ -275,13 +259,22 @@ function Iframe( {
 
 	useEffect( () => cleanup, [ cleanup ] );
 
-	// Make sure to not render the before and after focusable div elements in view
-	// mode. They're only needed to capture focus in edit mode.
-	const shouldRenderFocusCaptureElements = tabIndex >= 0 && ! isPreviewMode;
+	const disabledRef = useDisabled( { isDisabled: ! readonly } );
+	const bubbleEventsRef = useBubbleEvents( iframeDocument );
+	// Avoids attaching some refs and rendering the focus capture div elements
+	// that are are only needed in edit mode.
+	const isEditable = tabIndex >= 0 && ! readonly;
+	const bodyRef = useMergeRefs( [
+		contentRef,
+		disabledRef,
+		isEditable ? bubbleEventsRef : null,
+		isEditable ? clearerRef : null,
+		isEditable ? writingFlowRef : null,
+	] );
 
 	const iframe = (
 		<>
-			{ shouldRenderFocusCaptureElements && before }
+			{ isEditable && before }
 			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */ }
 			<iframe
 				{ ...props }
@@ -349,7 +342,7 @@ function Iframe( {
 						iframeDocument.documentElement
 					) }
 			</iframe>
-			{ shouldRenderFocusCaptureElements && after }
+			{ isEditable && after }
 		</>
 	);
 
