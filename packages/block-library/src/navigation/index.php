@@ -496,7 +496,6 @@ class WP_Navigation_Block_Renderer {
 		$responsive_dialog_directives    = '';
 		if ( $is_interactive ) {
 			$responsive_container_directives         = '
-				data-wp-watch="callbacks.initMenu"
 				data-wp-on--toggle="actions.handleToggle"
 				data-wp-on--keydown="actions.handleMenuKeydown"
 			';

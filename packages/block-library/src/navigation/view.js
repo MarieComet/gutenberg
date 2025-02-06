@@ -157,6 +157,7 @@ const { state, actions } = store(
 			handleToggle( event ) {
 				const ctx = getContext();
 				window.console.log( event.newState, ctx );
+				const { ref } = getElement();
 				if ( event.newState === 'open' ) {
 					// Ensure state is up to date.
 					if ( ! state.isMenuOpen ) {
@@ -168,6 +169,13 @@ const { state, actions } = store(
 							'has-modal-open'
 						);
 					}
+					// Ensure focus is trapped in the popover.
+					const focusableElements =
+						ref.querySelectorAll( focusableSelectors );
+					ctx.modal = ref;
+					ctx.firstFocusableElement = focusableElements[ 0 ];
+					ctx.lastFocusableElement =
+						focusableElements[ focusableElements.length - 1 ];
 				} else {
 					// Ensure state is up to date.
 					if ( state.isMenuOpen ) {
