@@ -77,10 +77,6 @@ const { state, actions } = store(
 					actions.closeMenu( 'hover' );
 				}
 			},
-			closeMenuOnClick() {
-				actions.closeMenu( 'click' );
-				actions.closeMenu( 'focus' );
-			},
 			openMenuOnFocus() {
 				actions.openMenu( 'focus' );
 			},

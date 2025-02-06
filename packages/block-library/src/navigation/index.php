@@ -492,12 +492,9 @@ class WP_Navigation_Block_Renderer {
 		$toggle_aria_label_close     = $should_display_icon_label ? 'aria-label="' . __( 'Close menu' ) . '"' : ''; // Close button label.
 
 		// Add Interactivity API directives to the markup if needed.
-		$open_button_directives          = '';
 		$responsive_container_directives = '';
 		$responsive_dialog_directives    = '';
-		$close_button_directives         = '';
 		if ( $is_interactive ) {
-			$open_button_directives                  = '';
 			$responsive_container_directives         = '
 				data-wp-watch="callbacks.initMenu"
 				data-wp-on--toggle="actions.handleToggle"
@@ -509,9 +506,6 @@ class WP_Navigation_Block_Renderer {
 				data-wp-bind--aria-label="state.ariaLabel"
 				data-wp-bind--role="state.roleAttribute"
 			';
-			$close_button_directives                 = '
-				data-wp-on-async--click="actions.closeMenuOnClick"
-			';
 			$responsive_container_content_directives = '
 				data-wp-watch="callbacks.focusFirstElement"
 			';
@@ -520,12 +514,12 @@ class WP_Navigation_Block_Renderer {
 		$overlay_inline_styles = esc_attr( safecss_filter_attr( $colors['overlay_inline_styles'] ) );
 
 		return sprintf(
-			'<button popovertarget="%1$s" aria-haspopup="dialog" %3$s class="%6$s" %10$s>%8$s</button>
-				<div popover="auto" class="%5$s" %7$s id="%1$s" %11$s>
+			'<button popovertarget="%1$s" aria-haspopup="dialog" %3$s class="%6$s">%8$s</button>
+				<div popover="auto" class="%5$s" %7$s id="%1$s" %10$s>
 					<div class="wp-block-navigation__responsive-close" tabindex="-1">
-						<div class="wp-block-navigation__responsive-dialog" %12$s>
-							<button %4$s class="wp-block-navigation__responsive-container-close" %13$s>%9$s</button>
-							<div class="wp-block-navigation__responsive-container-content" %14$s id="%1$s-content">
+						<div class="wp-block-navigation__responsive-dialog" %11$s>
+							<button popovertarget="%1$s" %4$s class="wp-block-navigation__responsive-container-close">%9$s</button>
+							<div class="wp-block-navigation__responsive-container-content" %12$s id="%1$s-content">
 								%2$s
 							</div>
 						</div>
@@ -540,10 +534,8 @@ class WP_Navigation_Block_Renderer {
 			( ! empty( $overlay_inline_styles ) ) ? "style=\"$overlay_inline_styles\"" : '',
 			$toggle_button_content,
 			$toggle_close_button_content,
-			$open_button_directives,
 			$responsive_container_directives,
 			$responsive_dialog_directives,
-			$close_button_directives,
 			$responsive_container_content_directives
 		);
 	}
