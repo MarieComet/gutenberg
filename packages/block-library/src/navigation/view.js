@@ -78,22 +78,27 @@ const { state, actions } = store(
 				}
 			},
 			openMenuOnFocus() {
-				actions.openMenu( 'focus' );
+				const { type } = getContext();
+				if ( type === 'submenu' ) {
+					actions.openMenu( 'focus' );
+				}
 			},
 			toggleMenuOnClick() {
 				const ctx = getContext();
-				const { ref } = getElement();
-				// Safari won't send focus to the clicked element, so we need to manually place it: https://bugs.webkit.org/show_bug.cgi?id=22261
-				if ( window.document.activeElement !== ref ) {
-					ref.focus();
-				}
-				const { menuOpenedBy } = state;
-				if ( menuOpenedBy.click || menuOpenedBy.focus ) {
-					actions.closeMenu( 'click' );
-					actions.closeMenu( 'focus' );
-				} else {
-					ctx.previousFocus = ref;
-					actions.openMenu( 'click' );
+				if ( ctx.type === 'submenu' ) {
+					const { ref } = getElement();
+					// Safari won't send focus to the clicked element, so we need to manually place it: https://bugs.webkit.org/show_bug.cgi?id=22261
+					if ( window.document.activeElement !== ref ) {
+						ref.focus();
+					}
+					const { menuOpenedBy } = state;
+					if ( menuOpenedBy.click || menuOpenedBy.focus ) {
+						actions.closeMenu( 'click' );
+						actions.closeMenu( 'focus' );
+					} else {
+						ctx.previousFocus = ref;
+						actions.openMenu( 'click' );
+					}
 				}
 			},
 			handleMenuKeydown( event ) {
@@ -101,7 +106,7 @@ const { state, actions } = store(
 					getContext();
 				if ( state.menuOpenedBy.click ) {
 					// If Escape close the menu. For the overlay this works out of the box due to [popover].
-					if ( type !== 'overlay' && event?.key === 'Escape' ) {
+					if ( type === 'submenu' && event?.key === 'Escape' ) {
 						actions.closeMenu( 'click' );
 						actions.closeMenu( 'focus' );
 						return;
