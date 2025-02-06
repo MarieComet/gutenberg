@@ -99,7 +99,7 @@ function useBubbleEvents( iframeDocument ) {
 function Iframe( {
 	contentRef,
 	children,
-	tabIndex = 0,
+	tabIndex,
 	scale = 1,
 	frameSize = 0,
 	readonly,
@@ -107,10 +107,15 @@ function Iframe( {
 	title = __( 'Editor canvas' ),
 	...props
 } ) {
-	const { styles = '', scripts = '' } = useSelect( ( select ) => {
+	const { resolvedAssets, isPreviewMode } = useSelect( ( select ) => {
 		const { getSettings } = select( blockEditorStore );
-		return getSettings().__unstableResolvedAssets;
+		const settings = getSettings();
+		return {
+			resolvedAssets: settings.__unstableResolvedAssets,
+			isPreviewMode: settings.isPreviewMode,
+		};
 	}, [] );
+	const { styles = '', scripts = '' } = resolvedAssets;
 	/** @type {[Document, import('react').Dispatch<Document>]} */
 	const [ iframeDocument, setIframeDocument ] = useState();
 	const [ bodyClasses, setBodyClasses ] = useState( [] );
@@ -260,9 +265,8 @@ function Iframe( {
 	const clearerRef = useBlockSelectionClearer();
 	const [ before, writingFlowRef, after ] = useWritingFlow();
 	const bubbleEventsRef = useBubbleEvents( iframeDocument );
-	// Avoids attaching some refs and rendering the focus capture div elements
-	// that are are only needed in edit mode.
-	const isEditable = tabIndex >= 0 && ! readonly;
+	// Some refs are only needed if editing is enabled.
+	const isEditable = ! ( isPreviewMode || readonly );
 	const bodyRef = useMergeRefs( [
 		contentRef,
 		useDisabled( { isDisabled: ! readonly } ),
@@ -270,10 +274,15 @@ function Iframe( {
 		isEditable ? clearerRef : null,
 		isEditable ? writingFlowRef : null,
 	] );
+	// The before and after focusable div elements should be output only if the
+	// writing flow behaviors are enabled (isEditable). The tabIndex condition
+	// may be useless now in core but kept as it’s been around since:
+	// https://github.com/WordPress/gutenberg/pull/28165
+	const shouldRenderFocusCaptureElements = tabIndex >= 0 || isEditable;
 
 	const iframe = (
 		<>
-			{ isEditable && before }
+			{ shouldRenderFocusCaptureElements && before }
 			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */ }
 			<iframe
 				{ ...props }
@@ -341,7 +350,7 @@ function Iframe( {
 						iframeDocument.documentElement
 					) }
 			</iframe>
-			{ isEditable && after }
+			{ shouldRenderFocusCaptureElements && after }
 		</>
 	);
 
