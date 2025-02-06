@@ -142,11 +142,12 @@ const { state, actions } = store(
 				// `window.document.activeElement` doesn't change.
 
 				// The event.relatedTarget is null when something outside the navigation menu is clicked. This is only necessary for Safari.
+				// TODO: Double-check this change here. See https://github.com/WordPress/gutenberg/pull/60406#issuecomment-2641303669.
 				if (
-					event.relatedTarget === null ||
-					( ! modal?.contains( event.relatedTarget ) &&
-						event.target !== window.document.activeElement &&
-						type === 'submenu' )
+					type === 'submenu' &&
+					( event.relatedTarget === null ||
+						( ! modal?.contains( event.relatedTarget ) &&
+							event.target !== window.document.activeElement ) )
 				) {
 					actions.closeMenu( 'click' );
 					actions.closeMenu( 'focus' );
