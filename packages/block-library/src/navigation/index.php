@@ -499,7 +499,6 @@ class WP_Navigation_Block_Renderer {
 				data-wp-watch="callbacks.initMenu"
 				data-wp-on--toggle="actions.handleToggle"
 				data-wp-on--keydown="actions.handleMenuKeydown"
-				data-wp-on-async--focusout="actions.handleMenuFocusout"
 			';
 			$responsive_dialog_directives            = '
 				data-wp-bind--aria-modal="state.ariaModal"
