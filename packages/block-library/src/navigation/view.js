@@ -172,7 +172,6 @@ const { state, actions } = store(
 					// Ensure focus is trapped in the popover.
 					const focusableElements =
 						ref.querySelectorAll( focusableSelectors );
-					ctx.modal = ref;
 					ctx.firstFocusableElement = focusableElements[ 0 ];
 					ctx.lastFocusableElement =
 						focusableElements[ focusableElements.length - 1 ];
@@ -189,7 +188,6 @@ const { state, actions } = store(
 					) {
 						ctx.previousFocus?.focus();
 					}
-					ctx.modal = null;
 					ctx.previousFocus = null;
 					if ( ctx.type === 'overlay' ) {
 						document.documentElement.classList.remove(
@@ -217,19 +215,13 @@ const { state, actions } = store(
 			},
 		},
 		callbacks: {
-			initMenu() {
+			setModal() {
 				const ctx = getContext();
 				const { ref } = getElement();
-				window.console.log( 'watchmenu', state.isMenuOpen, ref );
-				if ( state.isMenuOpen ) {
-					const focusableElements =
-						ref.querySelectorAll( focusableSelectors );
-					ctx.modal = ref;
-					ctx.firstFocusableElement = focusableElements[ 0 ];
-					ctx.lastFocusableElement =
-						focusableElements[ focusableElements.length - 1 ];
-				}
+				ctx.modal = ref;
+				window.console.log( 'setModal', ctx.modal );
 			},
+
 			focusFirstElement() {
 				const { ref } = getElement();
 				if ( state.isMenuOpen ) {

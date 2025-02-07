@@ -498,6 +498,7 @@ class WP_Navigation_Block_Renderer {
 			$responsive_container_directives         = '
 				data-wp-on--toggle="actions.handleToggle"
 				data-wp-on--keydown="actions.handleMenuKeydown"
+				data-wp-watch="callbacks.setModal"
 			';
 			$responsive_dialog_directives            = '
 				data-wp-bind--aria-modal="state.ariaModal"
@@ -796,18 +797,23 @@ if ( defined( 'IS_GUTENBERG_PLUGIN' ) && IS_GUTENBERG_PLUGIN ) {
  * @return string Submenu markup with the directives injected.
  */
 function block_core_navigation_add_directives_to_submenu( $tags, $block_attributes ) {
+	static $unique_id_counter = 0;
+
 	while ( $tags->next_tag(
 		array(
 			'tag_name'   => 'LI',
 			'class_name' => 'has-child',
 		)
 	) ) {
+		$unique_id_counter++;
+		$anchor_name = "wp-block-navigation-submenu-container-{$unique_id_counter}";
+
 		// Add directives to the parent `<li>`.
 		$tags->set_attribute( 'data-wp-interactive', 'core/navigation' );
 		$tags->set_attribute( 'data-wp-context', '{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null }' );
-		$tags->set_attribute( 'data-wp-watch', 'callbacks.initMenu' );
 		$tags->set_attribute( 'data-wp-on--focusout', 'actions.handleMenuFocusout' );
 		$tags->set_attribute( 'data-wp-on--keydown', 'actions.handleMenuKeydown' );
+		$tags->set_attribute( 'style', "anchor-name: --{$anchor_name};" );
 
 		// This is a fix for Safari. Without it, Safari doesn't change the active
 		// element when the user clicks on a button. It can be removed once we add
@@ -827,9 +833,8 @@ function block_core_navigation_add_directives_to_submenu( $tags, $block_attribut
 				'class_name' => 'wp-block-navigation-submenu__toggle',
 			)
 		) ) {
-			$tags->set_attribute( 'data-wp-on-async--click', 'actions.toggleMenuOnClick' );
-			$tags->set_attribute( 'data-wp-bind--aria-expanded', 'state.isMenuOpen' );
-			// The `aria-expanded` attribute for SSR is already added in the submenu block.
+			// Set bookmark to amend the submenu toggle based on the submenu container below.
+			$tags->set_bookmark( 'nav-submenu-toggle' );
 		}
 		// Add directives to the submenu.
 		if ( $tags->next_tag(
@@ -838,7 +843,26 @@ function block_core_navigation_add_directives_to_submenu( $tags, $block_attribut
 				'class_name' => 'wp-block-navigation__submenu-container',
 			)
 		) ) {
+			$id = $tags->get_attribute( 'id' );
+			if ( ! $id ) {
+				$id = $anchor_name;
+				$tags->set_attribute( 'id', $id );
+			}
+			$tags->set_attribute( 'popover', isset( $block_attributes['openSubmenusOnClick'] ) && $block_attributes['openSubmenusOnClick'] ? 'auto' : 'hint' );
+			$tags->set_attribute( 'data-wp-on--toggle', 'actions.handleToggle' );
 			$tags->set_attribute( 'data-wp-on-async--focus', 'actions.openMenuOnFocus' );
+			$tags->set_attribute( 'data-wp-watch', 'callbacks.setModal' );
+			$tags->set_attribute( 'style', "position-anchor: --{$anchor_name};" );
+
+			// Set the ID of the submenu container as `popovertarget` on its submenu button if present.
+			$tags->set_bookmark( 'nav-submenu-container' );
+			if ( $tags->seek( 'nav-submenu-toggle' ) ) {
+				$tags->set_attribute( 'popovertarget', $id );
+				$tags->remove_attribute( 'aria-expanded' ); // Unnecessary when using `popovertarget`.
+			}
+			$tags->seek( 'nav-submenu-container' );
+			$tags->release_bookmark( 'nav-submenu-toggle' );
+			$tags->release_bookmark( 'nav-submenu-container' );
 		}
 
 		// Iterate through subitems if exist.
