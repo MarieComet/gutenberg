@@ -426,8 +426,7 @@ function Layout( {
 				select( editPostStore )
 			);
 			const { canUser, getPostType } = select( coreStore );
-			const { getDeviceType, getEditorMode, getRenderingMode } =
-				select( editorStore );
+			const { getDeviceType, getEditorMode } = select( editorStore );
 			const { __unstableGetEditorMode } = unlock(
 				select( blockEditorStore )
 			);
@@ -453,7 +452,6 @@ function Layout( {
 				isDistractionFree: get( 'core', 'distractionFree' ),
 				showMetaBoxes:
 					! DESIGN_POST_TYPES.includes( currentPostType ) &&
-					getRenderingMode() === 'post-only' &&
 					! isZoomOut,
 				isWelcomeGuideVisible: isFeatureActive( 'welcomeGuide' ),
 				templateId:
