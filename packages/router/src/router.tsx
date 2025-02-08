@@ -42,6 +42,7 @@ interface Match {
 	widths: Record< string, number >;
 	query?: Record< string, any >;
 	params?: Record< string, any >;
+	state: Location[ 'state' ];
 }
 
 export type BeforeNavigate = ( arg: {
