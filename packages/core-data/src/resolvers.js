@@ -517,7 +517,12 @@ export const canUser =
 			resourcePath =
 				entityConfig.baseURL + ( resource.id ? '/' + resource.id : '' );
 		} else {
-			resourcePath = `/wp/v2/${ resource }` + ( id ? '/' + id : '' );
+			// Allows checking permissions for non-default (`/wp/v2`) namespaces
+			// such as `/wp-block-editor/v1`.
+			const isCustomNamespace = !! resource?.startsWith( '/' );
+			resourcePath =
+				( isCustomNamespace ? resource : `/wp/v2/${ resource }` ) +
+				( id ? '/' + id : '' );
 		}
 
 		let response;

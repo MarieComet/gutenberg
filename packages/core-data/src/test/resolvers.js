@@ -707,6 +707,28 @@ describe( 'canUser', () => {
 			true
 		);
 	} );
+
+	it( 'allows checking permissions for non-default namespaces', async () => {
+		triggerFetch.mockImplementation( () => ( {
+			headers: new Map( [ [ 'allow', 'GET' ] ] ),
+		} ) );
+
+		await canUser(
+			'read',
+			'/wp-block-editor/v1/export'
+		)( { dispatch, registry, resolveSelect } );
+
+		expect( triggerFetch ).toHaveBeenCalledWith( {
+			path: '/wp-block-editor/v1/export',
+			method: 'OPTIONS',
+			parse: false,
+		} );
+
+		expect( dispatch.receiveUserPermission ).toHaveBeenCalledWith(
+			'read//wp-block-editor/v1/export',
+			true
+		);
+	} );
 } );
 
 describe( 'getAutosaves', () => {

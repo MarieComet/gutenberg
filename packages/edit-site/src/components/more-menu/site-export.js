@@ -5,12 +5,24 @@ import { __, _x } from '@wordpress/i18n';
 import { MenuItem } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { download } from '@wordpress/icons';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 import { downloadBlob } from '@wordpress/blob';
 import { store as noticesStore } from '@wordpress/notices';
 
 export default function SiteExport() {
+	const { isBlockBasedTheme, canExport } = useSelect( ( select ) => {
+		const { canUser, getCurrentTheme } = select( coreStore );
+		return {
+			isBlockBasedTheme: getCurrentTheme().is_block_theme,
+			canExport: canUser( 'read', '/wp-block-editor/v1/export' ) ?? false,
+		};
+	}, [] );
 	const { createErrorNotice } = useDispatch( noticesStore );
+
+	if ( ! isBlockBasedTheme || ! canExport ) {
+		return null;
+	}
 
 	async function handleExport() {
 		try {
