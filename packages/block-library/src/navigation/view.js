@@ -161,13 +161,13 @@ const { state, actions } = store(
 						document.documentElement.classList.add(
 							'has-modal-open'
 						);
+						// Set context for focus trap in the popover for the overlay.
+						const focusableElements =
+							ref.querySelectorAll( focusableSelectors );
+						ctx.firstFocusableElement = focusableElements[ 0 ];
+						ctx.lastFocusableElement =
+							focusableElements[ focusableElements.length - 1 ];
 					}
-					// Ensure focus is trapped in the popover.
-					const focusableElements =
-						ref.querySelectorAll( focusableSelectors );
-					ctx.firstFocusableElement = focusableElements[ 0 ];
-					ctx.lastFocusableElement =
-						focusableElements[ focusableElements.length - 1 ];
 				} else {
 					// Ensure state is up to date.
 					if ( state.isMenuOpen ) {
