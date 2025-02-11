@@ -178,7 +178,10 @@ $navigation-icon-size: 24px;
 		&[popover] {
 			margin: 0;
 			padding: 0;
-			border: 0;
+			right: auto;
+			left: anchor(left);
+			top: anchor(bottom);
+			bottom: auto;
 		}
 
 		// Submenu items.
@@ -211,11 +214,6 @@ $navigation-icon-size: 24px;
 			.wp-block-navigation__submenu-container {
 				left: 100%;
 				top: -1px; // Border width.
-
-				&[popover] {
-					left: anchor(left);
-					top: anchor(bottom);
-				}
 
 				// Prevent the menu from disappearing when the mouse is over the gap
 				&::before {
@@ -397,6 +395,7 @@ button.wp-block-navigation-item__content {
 		right: 0;
 
 		&[popover] {
+			left: auto;
 			right: anchor(right);
 		}
 
