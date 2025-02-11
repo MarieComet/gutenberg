@@ -60,10 +60,11 @@ export default function ListViewSidebar() {
 
 	// Must merge the refs together so focus can be handled properly in the next function.
 	const listViewContainerRef = useMergeRefs( [
-		focusOnMountRef,
 		listViewRef,
 		setDropZoneElement,
 	] );
+
+	const tabsPanelRef = useMergeRefs( [ focusOnMountRef, tabsRef ] );
 
 	/*
 	 * Callback function to handle list view or outline focus.
@@ -77,15 +78,19 @@ export default function ListViewSidebar() {
 		const tabPanelFocus = focus.tabbable.find( tabsRef.current )[ 0 ];
 		// List view tab is selected.
 		if ( currentTab === 'list-view' ) {
-			// Either focus the list view or the tab panel. Must have a fallback because the list view does not render when there are no blocks.
-			const listViewApplicationFocus = focus.tabbable.find(
-				listViewRef.current
-			)[ 0 ];
+			// Either focus the list view or the tab panel. Must have a fallback
+			// because the list view does not render when there are no blocks.
+			const listViewSelectedItem = focus.tabbable
+				.find( listViewRef.current )
+				.filter( ( item ) =>
+					item.hasAttribute( 'data-is-selected' )
+				)[ 0 ];
 			const listViewFocusArea = sidebarRef.current.contains(
-				listViewApplicationFocus
+				listViewSelectedItem
 			)
-				? listViewApplicationFocus
+				? listViewSelectedItem
 				: tabPanelFocus;
+
 			listViewFocusArea.focus();
 			// Outline tab is selected.
 		} else {
@@ -147,7 +152,7 @@ export default function ListViewSidebar() {
 				onClose={ closeListView }
 				onSelect={ ( tabName ) => setTab( tabName ) }
 				defaultTabId="list-view"
-				ref={ tabsRef }
+				ref={ tabsPanelRef }
 				closeButtonLabel={ __( 'Close' ) }
 			/>
 		</div>
