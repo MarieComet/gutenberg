@@ -159,6 +159,12 @@ $navigation-icon-size: 24px;
 		background-color: inherit;
 		color: inherit;
 		position: absolute;
+		margin: 0;
+		padding: 0;
+		right: auto;
+		left: anchor(left);
+		top: anchor(bottom);
+		bottom: auto;
 		display: flex;
 		flex-direction: column;
 		align-items: normal;
@@ -170,18 +176,21 @@ $navigation-icon-size: 24px;
 		}
 		visibility: hidden;
 
+		// Submenu indentation when there's no background.
+		margin-left: -1px; // Border width.
+
 		// Don't take up space when the menu is collapsed.
 		width: 0;
 		height: 0;
 		overflow: hidden; // Overflow is necessary to set, otherwise submenu items will take up space.
 
-		&[popover] {
-			margin: 0;
-			padding: 0;
-			right: auto;
-			left: anchor(left);
-			top: anchor(bottom);
-			bottom: auto;
+		&:popover-open {
+			visibility: visible;
+			overflow: visible;
+			opacity: 1;
+			width: auto;
+			height: auto;
+			min-width: 200px;
 		}
 
 		// Submenu items.
@@ -203,16 +212,11 @@ $navigation-icon-size: 24px;
 			margin: 0;
 		}
 
-		// Submenu indentation when there's no background.
-		left: -1px; // Border width.
-		top: 100%;
-
 		// Indentation for all submenus.
 		// Nested submenus sit to the left on large breakpoints.
 		// On smaller breakpoints, they open vertically, accordion-style.
 		@include break-medium {
 			.wp-block-navigation__submenu-container {
-				left: 100%;
 				top: -1px; // Border width.
 
 				// Prevent the menu from disappearing when the mouse is over the gap
@@ -238,50 +242,17 @@ $navigation-icon-size: 24px;
 			}
 		}
 	}
-
-	// Custom menu items.
-	// Show submenus on hover unless they open on click.
-	&:not(.open-on-click):hover > .wp-block-navigation__submenu-container {
-		visibility: visible;
-		overflow: visible;
-		opacity: 1;
-		width: auto;
-		height: auto;
-		min-width: 200px;
-	}
-
-	// Keep submenus open when focus is within.
-	&:not(.open-on-click):not(.open-on-hover-click):focus-within > .wp-block-navigation__submenu-container {
-		visibility: visible;
-		overflow: visible;
-		opacity: 1;
-		width: auto;
-		height: auto;
-		min-width: 200px;
-	}
-
-	// Show submenus on click.
-	.wp-block-navigation-submenu__toggle[aria-expanded="true"] ~ .wp-block-navigation__submenu-container {
-		visibility: visible;
-		overflow: visible;
-		opacity: 1;
-		width: auto;
-		height: auto;
-		min-width: 200px;
-	}
 }
 
 // Submenu indentation when there's a background.
 .wp-block-navigation.has-background
 .has-child
 .wp-block-navigation__submenu-container {
-	left: 0;
-	top: 100%;
+	margin-left: 0;
 
 	// There's no border on submenus when there are backgrounds.
 	@include break-medium {
 		.wp-block-navigation__submenu-container {
-			left: 100%;
 			top: 0;
 		}
 	}
@@ -392,12 +363,7 @@ button.wp-block-navigation-item__content {
 	// First submenu.
 	.wp-block-navigation__submenu-container {
 		left: auto;
-		right: 0;
-
-		&[popover] {
-			left: auto;
-			right: anchor(right);
-		}
+		right: anchor(right);
 
 		// Nested submenus.
 		// On smaller breakpoints, nested menus open downwards.

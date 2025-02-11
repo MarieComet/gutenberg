@@ -811,7 +811,9 @@ function block_core_navigation_add_directives_to_submenu( $tags, $block_attribut
 		// Add directives to the parent `<li>`.
 		$tags->set_attribute( 'data-wp-interactive', 'core/navigation' );
 		$tags->set_attribute( 'data-wp-context', '{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null }' );
-		$tags->set_attribute( 'data-wp-on--focusout', 'actions.handleMenuFocusout' );
+		// TODO: Check if this is intended. Before this was on the submenu container, but then caused it to never open from focus alone.
+		$tags->set_attribute( 'data-wp-on--focusin', 'actions.openMenuOnFocus' );
+		$tags->set_attribute( 'data-wp-on--focusout', 'actions.closeMenuOnFocus' );
 		$tags->set_attribute( 'style', "anchor-name: --{$anchor_name};" );
 
 		// This is a fix for Safari. Without it, Safari doesn't change the active
@@ -847,9 +849,9 @@ function block_core_navigation_add_directives_to_submenu( $tags, $block_attribut
 				$id = $anchor_name;
 				$tags->set_attribute( 'id', $id );
 			}
-			$tags->set_attribute( 'popover', isset( $block_attributes['openSubmenusOnClick'] ) && $block_attributes['openSubmenusOnClick'] ? 'auto' : 'hint' );
+			// TODO: `popover=hint` is not supported yet, but eventually it should be used if the menu opens on hover.
+			$tags->set_attribute( 'popover', /* isset( $block_attributes['openSubmenusOnClick'] ) && $block_attributes['openSubmenusOnClick'] ? 'auto' : 'hint' */ 'auto' );
 			$tags->set_attribute( 'data-wp-on--toggle', 'actions.handleToggle' );
-			$tags->set_attribute( 'data-wp-on-async--focus', 'actions.openMenuOnFocus' );
 			$tags->set_attribute( 'data-wp-watch', 'callbacks.setModal' );
 			$tags->set_attribute( 'style', "position-anchor: --{$anchor_name};" );
 

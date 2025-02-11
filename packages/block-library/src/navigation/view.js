@@ -66,6 +66,7 @@ const { state, actions } = store(
 					actions.openMenu( 'hover' );
 				}
 			},
+
 			closeMenuOnHover() {
 				const { type, overlayOpenedBy } = getContext();
 				if (
@@ -77,12 +78,37 @@ const { state, actions } = store(
 					actions.closeMenu( 'hover' );
 				}
 			},
+
 			openMenuOnFocus() {
 				const { type } = getContext();
+				window.console.log( 'openMenuOnFocus', type );
 				if ( type === 'submenu' ) {
 					actions.openMenu( 'focus' );
 				}
 			},
+
+			closeMenuOnFocus( event ) {
+				const { modal, type } = getContext();
+				window.console.log( 'closeMenuOnFocus', type );
+				// If focus is outside modal, and in the document, close menu
+				// event.target === The element losing focus
+				// event.relatedTarget === The element receiving focus (if any)
+				// When focusout is outside the document,
+				// `window.document.activeElement` doesn't change.
+
+				// The event.relatedTarget is null when something outside the navigation menu is clicked. This is only necessary for Safari.
+				// TODO: Double-check this change here. See https://github.com/WordPress/gutenberg/pull/60406#issuecomment-2641303669.
+				if (
+					type === 'submenu' &&
+					( event.relatedTarget === null ||
+						( ! modal?.contains( event.relatedTarget ) &&
+							event.target !== window.document.activeElement ) )
+				) {
+					actions.closeMenu( 'click' );
+					actions.closeMenu( 'focus' );
+				}
+			},
+
 			toggleMenuOnClick() {
 				const ctx = getContext();
 				if ( ctx.type === 'submenu' ) {
@@ -101,6 +127,7 @@ const { state, actions } = store(
 					}
 				}
 			},
+
 			handleMenuKeydown( event ) {
 				const { type, firstFocusableElement, lastFocusableElement } =
 					getContext();
@@ -124,26 +151,6 @@ const { state, actions } = store(
 						event.preventDefault();
 						firstFocusableElement.focus();
 					}
-				}
-			},
-			handleMenuFocusout( event ) {
-				const { modal, type } = getContext();
-				// If focus is outside modal, and in the document, close menu
-				// event.target === The element losing focus
-				// event.relatedTarget === The element receiving focus (if any)
-				// When focusout is outside the document,
-				// `window.document.activeElement` doesn't change.
-
-				// The event.relatedTarget is null when something outside the navigation menu is clicked. This is only necessary for Safari.
-				// TODO: Double-check this change here. See https://github.com/WordPress/gutenberg/pull/60406#issuecomment-2641303669.
-				if (
-					type === 'submenu' &&
-					( event.relatedTarget === null ||
-						( ! modal?.contains( event.relatedTarget ) &&
-							event.target !== window.document.activeElement ) )
-				) {
-					actions.closeMenu( 'click' );
-					actions.closeMenu( 'focus' );
 				}
 			},
 
@@ -192,14 +199,14 @@ const { state, actions } = store(
 
 			openMenu( menuOpenedOn = 'click' ) {
 				const ctx = getContext();
-				window.console.log( 'openMenu', ctx.modal );
+				//window.console.log( 'openMenu', ctx.modal );
 				state.menuOpenedBy[ menuOpenedOn ] = true;
 				ctx.modal?.showPopover();
 			},
 
 			closeMenu( menuClosedOn = 'click' ) {
 				const ctx = getContext();
-				window.console.log( 'closeMenu', ctx.modal );
+				//window.console.log( 'closeMenu', ctx.modal );
 				state.menuOpenedBy[ menuClosedOn ] = false;
 				// Check if the menu is still open or not.
 				if ( ! state.isMenuOpen ) {
