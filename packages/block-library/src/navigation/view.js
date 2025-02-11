@@ -104,32 +104,25 @@ const { state, actions } = store(
 			handleMenuKeydown( event ) {
 				const { type, firstFocusableElement, lastFocusableElement } =
 					getContext();
-				if ( state.menuOpenedBy.click ) {
-					// If Escape close the menu. For the overlay this works out of the box due to [popover].
-					if ( type === 'submenu' && event?.key === 'Escape' ) {
-						actions.closeMenu( 'click' );
-						actions.closeMenu( 'focus' );
-						return;
-					}
-
-					// Trap focus if it is an overlay (main menu).
-					if ( type === 'overlay' && event.key === 'Tab' ) {
-						// If shift + tab it change the direction.
-						if (
-							event.shiftKey &&
-							window.document.activeElement ===
-								firstFocusableElement
-						) {
-							event.preventDefault();
-							lastFocusableElement.focus();
-						} else if (
-							! event.shiftKey &&
-							window.document.activeElement ===
-								lastFocusableElement
-						) {
-							event.preventDefault();
-							firstFocusableElement.focus();
-						}
+				// Trap focus if it is an overlay (main menu).
+				if (
+					state.menuOpenedBy.click &&
+					type === 'overlay' &&
+					event.key === 'Tab'
+				) {
+					// If shift + tab it change the direction.
+					if (
+						event.shiftKey &&
+						window.document.activeElement === firstFocusableElement
+					) {
+						event.preventDefault();
+						lastFocusableElement.focus();
+					} else if (
+						! event.shiftKey &&
+						window.document.activeElement === lastFocusableElement
+					) {
+						event.preventDefault();
+						firstFocusableElement.focus();
 					}
 				}
 			},
