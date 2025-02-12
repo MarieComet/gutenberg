@@ -53,7 +53,7 @@ export default function ListViewSidebar() {
 
 	// This ref refers to the sidebar as a whole.
 	const sidebarRef = useRef();
-	// This ref refers to the tab panel.
+	// This ref refers to the tablist.
 	const tabsRef = useRef();
 	// This ref refers to the list view application area.
 	const listViewRef = useRef();
