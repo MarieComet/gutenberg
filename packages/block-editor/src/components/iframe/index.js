@@ -274,15 +274,12 @@ function Iframe( {
 		isEditable ? clearerRef : null,
 		isEditable ? writingFlowRef : null,
 	] );
-	// The before and after focusable div elements should be output only if the
-	// writing flow behaviors are enabled (isEditable). The tabIndex condition
-	// may be useless now in core but kept as it’s been around since:
-	// https://github.com/WordPress/gutenberg/pull/28165
-	const shouldRenderFocusCaptureElements = tabIndex >= 0 || isEditable;
+	// The before and after elements are only needed if editable.
+	const [ usedBefore, usedAfter ] = isEditable ? [ before, after ] : [];
 
 	const iframe = (
 		<>
-			{ shouldRenderFocusCaptureElements && before }
+			{ usedBefore }
 			{ /* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */ }
 			<iframe
 				{ ...props }
@@ -350,7 +347,7 @@ function Iframe( {
 						iframeDocument.documentElement
 					) }
 			</iframe>
-			{ shouldRenderFocusCaptureElements && after }
+			{ usedAfter }
 		</>
 	);
 
