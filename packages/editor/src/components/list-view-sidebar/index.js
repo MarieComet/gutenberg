@@ -74,27 +74,28 @@ export default function ListViewSidebar() {
 	 * @return void
 	 */
 	function handleSidebarFocus( currentTab ) {
-		// Tab panel focus.
-		const tabPanelFocus = focus.tabbable.find( tabsRef.current )[ 0 ];
+		// Active tab in the tablist.
+		const activeTab = focus.tabbable.find( tabsRef.current )[ 0 ];
 		// List view tab is selected.
 		if ( currentTab === 'list-view' ) {
-			// Either focus the list view or the tab panel. Must have a fallback
-			// because the list view does not render when there are no blocks.
+			// Either focus the list view selected item or the active tab in the
+			// tablist. Must have a fallback because the list view does not
+			// render when there are no blocks.
 			const listViewSelectedItem = focus.tabbable
 				.find( listViewRef.current )
 				.filter( ( item ) =>
 					item.hasAttribute( 'data-is-selected' )
 				)[ 0 ];
-			const listViewFocusArea = sidebarRef.current.contains(
+			const listViewFocusTarget = sidebarRef.current.contains(
 				listViewSelectedItem
 			)
 				? listViewSelectedItem
-				: tabPanelFocus;
+				: activeTab;
 
-			listViewFocusArea.focus();
+			listViewFocusTarget.focus();
 			// Outline tab is selected.
 		} else {
-			tabPanelFocus.focus();
+			activeTab.focus();
 		}
 	}
 
