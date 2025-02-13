@@ -594,7 +594,7 @@ function gutenberg_incremental_id_per_prefix( $prefix = '' ) {
  *
  * @return string The generated unique ID for the array.
  */
-function gutenberg_unique_prefixed_id_from_array( array $data, string $prefix = '' ): string {
+function gutenberg_unique_id_from_values( array $data, string $prefix = '' ): string {
 	$serialized = wp_json_encode( $data );
 	$hash       = substr( md5( $serialized ), 0, 8 );
 	return $prefix . $hash;
@@ -853,7 +853,7 @@ function gutenberg_render_layout_support_flag( $block_content, $block ) {
 		 * make the CSS class names stable across paginations for features like the
 		 * enhanced pagination of the Query block.
 		 */
-		$container_class = gutenberg_unique_prefixed_id_from_array(
+		$container_class = gutenberg_unique_id_from_values(
 			array(
 				$used_layout,
 				$has_block_gap_support,
