@@ -91,7 +91,7 @@ interface DirectiveOptions {
 }
 
 export interface Evaluate {
-	( entry: DirectiveEntry, ...args: any[] ): any;
+	( entry: DirectiveEntry ): any;
 }
 
 interface GetEvaluate {
@@ -231,7 +231,7 @@ const resolve = ( path: string, namespace: string ) => {
 // Generate the evaluate function.
 export const getEvaluate: GetEvaluate =
 	( { scope } ) =>
-	( entry, ...args ) => {
+	( entry ) => {
 		let { value: path, namespace } = entry;
 		if ( typeof path !== 'string' ) {
 			throw new Error( 'The `value` prop should be a string path' );
@@ -241,9 +241,10 @@ export const getEvaluate: GetEvaluate =
 			path[ 0 ] === '!' && !! ( path = path.slice( 1 ) );
 		setScope( scope );
 		const value = resolve( path, namespace );
-		const result = typeof value === 'function' ? value( ...args ) : value;
 		resetScope();
-		return hasNegationOperator ? ! result : result;
+		return hasNegationOperator && typeof value !== 'function'
+			? ! value
+			: value;
 	};
 
 // Separate directives by priority. The resulting array contains objects

@@ -102,10 +102,12 @@ const getGlobalEventDirective = (
 			.forEach( ( entry ) => {
 				const eventName = entry.suffix.split( '--', 1 )[ 0 ];
 				useInit( () => {
-					const cb = ( event: Event ) => evaluate( entry, event );
+					const callback = ( event: Event ) =>
+						evaluate( entry )( event );
 					const globalVar = type === 'window' ? window : document;
-					globalVar.addEventListener( eventName, cb );
-					return () => globalVar.removeEventListener( eventName, cb );
+					globalVar.addEventListener( eventName, callback );
+					return () =>
+						globalVar.removeEventListener( eventName, callback );
 				} );
 			} );
 	};
@@ -126,15 +128,16 @@ const getGlobalAsyncEventDirective = (
 			.forEach( ( entry ) => {
 				const eventName = entry.suffix.split( '--', 1 )[ 0 ];
 				useInit( () => {
-					const cb = async ( event: Event ) => {
+					const callback = async ( event: Event ) => {
 						await splitTask();
-						evaluate( entry, event );
+						evaluate( entry )( event );
 					};
 					const globalVar = type === 'window' ? window : document;
-					globalVar.addEventListener( eventName, cb, {
+					globalVar.addEventListener( eventName, callback, {
 						passive: true,
 					} );
-					return () => globalVar.removeEventListener( eventName, cb );
+					return () =>
+						globalVar.removeEventListener( eventName, callback );
 				} );
 			} );
 	};
@@ -206,7 +209,8 @@ export default () => {
 						start = performance.now();
 					}
 				}
-				const result = evaluate( entry );
+				const cb = evaluate( entry );
+				const result = cb();
 				if ( globalThis.IS_GUTENBERG_PLUGIN ) {
 					if ( globalThis.SCRIPT_DEBUG ) {
 						performance.measure(
@@ -239,7 +243,8 @@ export default () => {
 						start = performance.now();
 					}
 				}
-				const result = evaluate( entry );
+				const cb = evaluate( entry );
+				const result = cb();
 				if ( globalThis.IS_GUTENBERG_PLUGIN ) {
 					if ( globalThis.SCRIPT_DEBUG ) {
 						performance.measure(
@@ -286,7 +291,8 @@ export default () => {
 							start = performance.now();
 						}
 					}
-					evaluate( entry, event );
+					const cb = evaluate( entry );
+					cb( event );
 					if ( globalThis.IS_GUTENBERG_PLUGIN ) {
 						if ( globalThis.SCRIPT_DEBUG ) {
 							performance.measure(
@@ -332,7 +338,8 @@ export default () => {
 					}
 					entries.forEach( async ( entry ) => {
 						await splitTask();
-						evaluate( entry, event );
+						const cb = evaluate( entry );
+						cb( event );
 					} );
 				};
 			} );
@@ -360,7 +367,17 @@ export default () => {
 				.filter( isNonDefaultDirectiveSuffix )
 				.forEach( ( entry ) => {
 					const className = entry.suffix;
-					const result = evaluate( entry );
+					let result = evaluate( entry );
+
+					// Deprecated: Support for function values.
+					if ( typeof result === 'function' ) {
+						result =
+							entry.value[ 0 ] === '!' ? ! result() : result();
+						warn(
+							'The use of functions in `data-wp-class` is deprecated and will stop working in a future version of WordPress. Please use derived state instead. See: https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/core-concepts/undestanding-global-state-local-context-and-derived-state/'
+						);
+					}
+
 					const currentClass = element.props.class || '';
 					const classFinder = new RegExp(
 						`(^|\\s)${ className }(\\s|$)`,
@@ -400,7 +417,16 @@ export default () => {
 	directive( 'style', ( { directives: { style }, element, evaluate } ) => {
 		style.filter( isNonDefaultDirectiveSuffix ).forEach( ( entry ) => {
 			const styleProp = entry.suffix;
-			const result = evaluate( entry );
+			let result = evaluate( entry );
+
+			// Deprecated: Support for function values.
+			if ( typeof result === 'function' ) {
+				result = entry.value[ 0 ] === '!' ? ! result() : result();
+				warn(
+					'The use of functions in `data-wp-style` is deprecated and will stop working in a future version of WordPress. Please use derived state instead. See: https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/core-concepts/undestanding-global-state-local-context-and-derived-state/'
+				);
+			}
+
 			element.props.style = element.props.style || {};
 			if ( typeof element.props.style === 'string' ) {
 				element.props.style = cssStringToObject( element.props.style );
@@ -434,7 +460,16 @@ export default () => {
 	directive( 'bind', ( { directives: { bind }, element, evaluate } ) => {
 		bind.filter( isNonDefaultDirectiveSuffix ).forEach( ( entry ) => {
 			const attribute = entry.suffix;
-			const result = evaluate( entry );
+			let result = evaluate( entry );
+
+			// Deprecated: Support for function values.
+			if ( typeof result === 'function' ) {
+				result = entry.value[ 0 ] === '!' ? ! result() : result();
+				warn(
+					'The use of functions in `data-wp-bind` is deprecated and will stop working in a future version of WordPress. Please use derived state instead. See: https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/core-concepts/undestanding-global-state-local-context-and-derived-state/'
+				);
+			}
+
 			element.props[ attribute ] = result;
 
 			/*
@@ -535,7 +570,16 @@ export default () => {
 		}
 
 		try {
-			const result = evaluate( entry );
+			let result = evaluate( entry );
+
+			// Deprecated: Support for function values.
+			if ( typeof result === 'function' ) {
+				result = entry.value[ 0 ] === '!' ? ! result() : result();
+				warn(
+					'The use of functions in `data-wp-text` is deprecated and will stop working in a future version of WordPress. Please use derived state instead. See: https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/core-concepts/undestanding-global-state-local-context-and-derived-state/'
+				);
+			}
+
 			element.props.children =
 				typeof result === 'object' ? null : result.toString();
 		} catch ( e ) {
@@ -545,7 +589,7 @@ export default () => {
 
 	// data-wp-run
 	directive( 'run', ( { directives: { run }, evaluate } ) => {
-		run.forEach( ( entry ) => evaluate( entry ) );
+		run.forEach( ( entry ) => evaluate( entry )() );
 	} );
 
 	// data-wp-each--[item]
@@ -565,9 +609,17 @@ export default () => {
 			const inheritedValue = useContext( inheritedContext );
 
 			const [ entry ] = each;
-			const { namespace } = entry;
+			const { namespace, value } = entry;
 
-			const iterable = evaluate( entry );
+			let iterable = evaluate( entry );
+
+			// Deprecated: Support for function values.
+			if ( typeof iterable === 'function' ) {
+				iterable = value[ 0 ] === '!' ? ! iterable() : iterable();
+				warn(
+					'The use of functions in `data-wp-each` is deprecated and will stop working in a future version of WordPress. Please use derived state instead. See: https://developer.wordpress.org/block-editor/reference-guides/interactivity-api/core-concepts/undestanding-global-state-local-context-and-derived-state/'
+				);
+			}
 
 			if ( typeof iterable?.[ Symbol.iterator ] !== 'function' ) {
 				return;
