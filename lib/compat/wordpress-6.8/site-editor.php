@@ -147,7 +147,7 @@ add_action(
 		register_theme_feature(
 			'stylebook',
 			array(
-				'description'  => __( 'test' ),
+				'description'  => __( 'Whether a classic theme uses the Stylebook.' ),
 				'show_in_rest' => true,
 			)
 		);
