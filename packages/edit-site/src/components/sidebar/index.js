@@ -17,13 +17,13 @@ import { unlock } from '../../lock-unlock';
 
 const { useLocation } = unlock( routerPrivateApis );
 
-// Focus a sidebar element after a navigation. The element to focus is either
+// Focus an element after a navigation. The element to focus is either
 // specified by `focusSelector` (when navigating back) or it is the first
-// tabbable element (usually the "Back" button).
+// tabbable element in the sidebar (usually the "Back" button).
 function focusSidebarElement( el, direction, focusSelector ) {
 	let elementToFocus;
 	if ( direction === 'back' && focusSelector ) {
-		elementToFocus = el.querySelector( focusSelector );
+		elementToFocus = el.ownerDocument.querySelector( focusSelector );
 	}
 	if ( direction !== null && ! elementToFocus ) {
 		const [ firstTabbable ] = focus.tabbable.find( el );
