@@ -621,7 +621,33 @@ function gutenberg_render_layout_support_flag( $block_content, $block ) {
 
 	// Child layout specific logic.
 	if ( $child_layout ) {
-		$container_content_class   = wp_unique_prefixed_id( 'wp-container-content-' );
+		/*
+		 * Generates a unique class for child block layout styles.
+		 *
+		 * To ensure consistent class generation across different page renders,
+		 * only properties that affect layout styling are used. These properties
+		 * come from `$block['attrs']['style']['layout']` and `$block['parentLayout']`.
+		 *
+		 * As long as these properties coincide, the generated class will be the same.
+		 */
+		$container_content_class = gutenberg_unique_id_from_values(
+			array(
+				'layout'       => array_intersect_key(
+					$block['attrs']['style']['layout'] ?? array(),
+					array_flip(
+						array( 'selfStretch', 'flexSize', 'columnStart', 'columnSpan', 'rowStart', 'rowSpan' )
+					)
+				),
+				'parentLayout' => array_intersect_key(
+					$block['parentLayout'] ?? array(),
+					array_flip(
+						array( 'minimumColumnWidth', 'columnCount' )
+					)
+				),
+			),
+			'wp-container-content-'
+		);
+
 		$child_layout_declarations = array();
 		$child_layout_styles       = array();
 
