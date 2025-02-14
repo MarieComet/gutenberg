@@ -82,6 +82,21 @@ export default function SidebarNavigationScreenNavigationMenus( { backPath } ) {
 
 	const hasNavigationMenus = !! navigationMenus?.length;
 
+	const isBlockBasedTheme = useSelect(
+		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
+		[]
+	);
+
+	if ( ! isBlockBasedTheme ) {
+		return (
+			<p className="edit-site-layout__area__unsupported">
+				{ __(
+					'The theme you are currently using is not compatible with the Site Editor.'
+				) }
+			</p>
+		);
+	}
+
 	if ( isLoading ) {
 		return (
 			<SidebarNavigationScreenWrapper backPath={ backPath }>
