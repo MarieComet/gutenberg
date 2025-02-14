@@ -413,7 +413,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 	public function test_layout_support_flag_renders_classnames_on_wrapper( $args, $expected_output ) {
 		switch_theme( 'default' );
 		$actual_output = gutenberg_render_layout_support_flag( $args['block_content'], $args['block'] );
-		$this->assertEquals( $expected_output, $actual_output );
+		$this->assertMatchesRegularExpression( $expected_output, $actual_output );
 	}
 
 	/**
@@ -440,7 +440,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"></div>',
+				'expected_output' => '/<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><\\/div>/',
 			),
 			'single wrapper block layout with constrained type' => array(
 				'args'            => array(
@@ -459,7 +459,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '<div class="wp-block-group is-layout-constrained wp-block-group-is-layout-constrained"></div>',
+				'expected_output' => '/<div class="wp-block-group is-layout-constrained wp-block-group-is-layout-constrained"><\\/div>/',
 			),
 			'multiple wrapper block layout with flow type' => array(
 				'args'            => array(
@@ -480,7 +480,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '<div class="wp-block-group"><div class="wp-block-group__inner-wrapper is-layout-flow wp-block-group-is-layout-flow"></div></div>',
+				'expected_output' => '/<div class="wp-block-group"><div class="wp-block-group__inner-wrapper is-layout-flow wp-block-group-is-layout-flow"><\\/div><\\/div>/',
 			),
 			'block with child layout'                      => array(
 				'args'            => array(
@@ -501,7 +501,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '<p class="wp-container-content-1">Some text.</p>', // The generated classname number assumes `wp_unique_prefixed_id( 'wp-container-content-' )` will not have run previously in this test.
+				'expected_output' => '/<p class="wp-container-content-[a-f0-9]{8}">Some text.<\\/p>/',
 			),
 		);
 	}
