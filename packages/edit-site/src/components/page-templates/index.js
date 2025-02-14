@@ -199,8 +199,12 @@ export default function PageTemplates() {
 	);
 
 	if ( ! isBlockBasedTheme ) {
-		return __(
-			'The theme you are currently using is not compatible with the Site Editor.'
+		return (
+			<p className="edit-site-layout__area__unsupported">
+				{ __(
+					'The theme you are currently using is not compatible with the Site Editor.'
+				) }
+			</p>
 		);
 	}
 
