@@ -8,6 +8,8 @@ import { useViewportMatch } from '@wordpress/compose';
 import { Button } from '@wordpress/components';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { seen } from '@wordpress/icons';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -72,6 +74,15 @@ export default function GlobalStylesUIWrapper() {
 	);
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const [ section, onChangeSection ] = useSection();
+
+	const isBlockBasedTheme = useSelect(
+		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
+		[]
+	);
+
+	if ( ! isBlockBasedTheme ) {
+		return null;
+	}
 
 	return (
 		<>

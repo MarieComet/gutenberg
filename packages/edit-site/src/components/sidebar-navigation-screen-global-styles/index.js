@@ -2,11 +2,12 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { store as preferencesStore } from '@wordpress/preferences';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { addQueryArgs } from '@wordpress/url';
+import { store as coreStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
@@ -45,6 +46,11 @@ export default function SidebarNavigationScreenGlobalStyles() {
 	);
 	const { set: setPreference } = useDispatch( preferencesStore );
 
+	const isBlockBasedTheme = useSelect(
+		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
+		[]
+	);
+
 	const openGlobalStyles = useCallback( async () => {
 		history.navigate( addQueryArgs( path, { canvas: 'edit' } ), {
 			transition: 'canvas-mode-edit-transition',
@@ -67,6 +73,16 @@ export default function SidebarNavigationScreenGlobalStyles() {
 	// If there are no revisions, do not render a footer.
 	const shouldShowGlobalStylesFooter =
 		!! revisionsCount && ! isLoadingRevisions;
+
+	if ( ! isBlockBasedTheme ) {
+		return (
+			<p className="edit-site-layout__area__unsupported">
+				{ __(
+					'The theme you are currently using is not compatible with the Site Editor.'
+				) }
+			</p>
+		);
+	}
 
 	return (
 		<>
