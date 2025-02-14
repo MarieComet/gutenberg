@@ -627,6 +627,7 @@ function ListViewBlock( {
 								tabIndex,
 								onClick: clearSettingsAnchorRect,
 								onFocus,
+								size: 'small',
 							} }
 							disableOpenOnArrowDown
 							expand={ expand }
