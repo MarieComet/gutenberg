@@ -75,13 +75,7 @@ export default function SidebarNavigationScreenGlobalStyles() {
 		!! revisionsCount && ! isLoadingRevisions;
 
 	if ( ! isBlockBasedTheme ) {
-		return (
-			<p className="edit-site-layout__area__unsupported">
-				{ __(
-					'The theme you are currently using is not compatible with the Site Editor.'
-				) }
-			</p>
-		);
+		return null;
 	}
 
 	return (
