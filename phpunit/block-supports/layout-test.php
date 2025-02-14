@@ -503,6 +503,46 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 				),
 				'expected_output' => '/<p class="wp-container-content-[a-f0-9]{8}">Some text.<\\/p>/',
 			),
+			'single wrapper block layout with flex type'   => array(
+				'args'            => array(
+					'block_content' => '<div class="wp-block-group"></div>',
+					'block'         => array(
+						'blockName'    => 'core/group',
+						'attrs'        => array(
+							'layout' => array(
+								'type'        => 'flex',
+								'orientation' => 'horizontal',
+								'flexWrap'    => 'nowrap',
+							),
+						),
+						'innerBlocks'  => array(),
+						'innerHTML'    => '<div class="wp-block-group"></div>',
+						'innerContent' => array(
+							'<div class="wp-block-group"></div>',
+						),
+					),
+				),
+				'expected_output' => '/<div class="wp-block-group is-horizontal is-nowrap is-layout-flex wp-container-core-group-is-layout-[a-f0-9]{8} wp-block-group-is-layout-flex"><\\/div>/',
+			),
+			'single wrapper block layout with grid type'   => array(
+				'args'            => array(
+					'block_content' => '<div class="wp-block-group"></div>',
+					'block'         => array(
+						'blockName'    => 'core/group',
+						'attrs'        => array(
+							'layout' => array(
+								'type' => 'grid',
+							),
+						),
+						'innerBlocks'  => array(),
+						'innerHTML'    => '<div class="wp-block-group"></div>',
+						'innerContent' => array(
+							'<div class="wp-block-group"></div>',
+						),
+					),
+				),
+				'expected_output' => '/<div class="wp-block-group is-layout-grid wp-container-core-group-is-layout-[a-f0-9]{8} wp-block-group-is-layout-grid"><\\/div>/',
+			),
 		);
 	}
 
