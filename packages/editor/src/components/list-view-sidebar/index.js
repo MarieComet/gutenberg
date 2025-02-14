@@ -81,6 +81,13 @@ export default function ListViewSidebar() {
 			// Either focus the list view selected item or the active tab in the
 			// tablist. Must have a fallback because the list view does not
 			// render when there are no blocks.
+			// Important: The `core/editor/toggle-list-view` keyboard shortcut
+			// callback runs when the `keydown` event fires. At that point the
+			// ListView hasn't received focus yet and its internal mechanism to
+			// handle the tabindex attribute hasn't run yet. As such, there may
+			// be an additional item that is 'tabbable' but it's not the
+			// selected item. Filtering based on the `data-is-selected` attribute
+			// attribute makes sure to target the selected item.
 			const listViewSelectedItem = focus.tabbable
 				.find( listViewRef.current )
 				.filter( ( item ) =>
