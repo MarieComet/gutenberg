@@ -633,4 +633,143 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 			),
 		);
 	}
+
+	/**
+	 * Check that gutenberg_render_layout_support_flag() renders consistent hashes
+	 * for the container class when the relevant layout properties are the same.
+	 *
+	 * @dataProvider data_layout_support_flag_renders_consistent_container_hash
+	 *
+	 * @covers ::gutenberg_render_layout_support_flag
+	 *
+	 * @param array $attrs1 Dataset to test.
+	 * @param array $attrs2 Dataset to test.
+	 */
+	public function test_layout_support_flag_renders_consistent_container_hash( $attrs1, $attrs2 ) {
+		switch_theme( 'default' );
+
+		$args_base = array(
+			'block_content' => '<div class="wp-block-group"></div>',
+			'block'         => array(
+				'blockName'    => 'core/group',
+				'innerBlocks'  => array(),
+				'innerHTML'    => '<div class="wp-block-group"></div>',
+				'innerContent' => array(
+					'<div class="wp-block-group"></div>',
+				),
+			),
+		);
+
+		$ids = array_map(
+			function ( $attrs ) use ( $args_base ) {
+				$args = $args_base;
+
+				$args['block']['attrs'] = $attrs;
+
+				/*
+				 * The `appearance-tools` theme support is temporarily added to ensure
+				 * that the block gap support is enabled during rendering, which is
+				 * necessary to compute styles for layouts with block gap values.
+				 */
+				add_theme_support( 'appearance-tools' );
+				$output = gutenberg_render_layout_support_flag( $args['block_content'], $args['block'] );
+				remove_theme_support( 'appearance-tools' );
+
+				/*
+				 * Iterate over the list of classes of the first rendered element to find
+				 * the hash generated for the container's layout class.
+				 */
+				$processor = new WP_HTML_Tag_Processor( $output );
+				$matcher   = '/wp-container-core-group-is-layout-([a-f0-9]{8})/';
+				if ( $processor->next_tag() ) {
+					foreach ( $processor->class_list() as $class ) {
+						if ( preg_match( $matcher, $class, $matches ) ) {
+							return $matches[1];
+						}
+					}
+				}
+				return '';
+			},
+			// Items are repeated to test hash consistency for the same attributes.
+			array( $attrs1, $attrs1, $attrs2, $attrs2 )
+		);
+
+		$this->assertSame( $ids[0], $ids[1] );
+		$this->assertSame( $ids[2], $ids[3] );
+		$this->assertNotSame( $ids[0], $ids[2] );
+	}
+
+	/**
+	 * Data provider for test_layout_support_flag_renders_consistent_container_hash.
+	 *
+	 * @return array
+	 */
+	public function data_layout_support_flag_renders_consistent_container_hash() {
+		return array(
+			'default type'     => array(
+				'attrs1' => array(
+					'layout' => array(
+						'type' => 'default',
+					),
+					'style'  => array(
+						'spacing' => array(
+							'blockGap' => '12px',
+						),
+					),
+				),
+				'attrs2' => array(
+					'layout' => array(
+						'type' => 'default',
+					),
+					'style'  => array(
+						'spacing' => array(
+							'blockGap' => '24px',
+						),
+					),
+				),
+			),
+			'constrained type' => array(
+				'attrs1' => array(
+					'layout' => array(
+						'type'           => 'constrained',
+						'justifyContent' => 'left',
+					),
+				),
+				'attrs2' => array(
+					'layout' => array(
+						'type'           => 'constrained',
+						'justifyContent' => 'right',
+					),
+				),
+			),
+			'flex type'        => array(
+				'attrs1' => array(
+					'layout' => array(
+						'type'        => 'flex',
+						'orientation' => 'horizontal',
+						'flexWrap'    => 'nowrap',
+					),
+				),
+				'attrs2' => array(
+					'layout' => array(
+						'type'        => 'flex',
+						'orientation' => 'vertical',
+					),
+				),
+			),
+			'grid type'        => array(
+				'attrs1' => array(
+					'layout' => array(
+						'type' => 'grid',
+					),
+				),
+				'attrs2' => array(
+					'layout' => array(
+						'type'        => 'grid',
+						'columnCount' => 3,
+					),
+				),
+			),
+		);
+	}
 }
