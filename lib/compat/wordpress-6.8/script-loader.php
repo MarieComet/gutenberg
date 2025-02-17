@@ -5,8 +5,6 @@
  * @package gutenberg
  */
 
-add_action( 'wp_default_styles', 'gutenberg_register_admin_schemes_stylesheet' );
-
 /**
  * Register the base styles asset.
  *
@@ -19,3 +17,4 @@ function gutenberg_register_admin_schemes_stylesheet( $styles ) {
 		gutenberg_url( 'build/base-styles/admin-schemes.css' )
 	);
 }
+add_action( 'wp_default_styles', 'gutenberg_register_admin_schemes_stylesheet' );
