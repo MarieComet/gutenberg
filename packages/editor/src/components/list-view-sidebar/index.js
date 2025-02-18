@@ -8,10 +8,11 @@ import {
 import { useFocusOnMount, useMergeRefs } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { focus } from '@wordpress/dom';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 import { useShortcut } from '@wordpress/keyboard-shortcuts';
 import { ESCAPE } from '@wordpress/keycodes';
+import { store as preferencesStore } from '@wordpress/preferences';
 
 /**
  * Internal dependencies
@@ -22,9 +23,27 @@ import { store as editorStore } from '../../store';
 
 const { TabbedSidebar } = unlock( blockEditorPrivateApis );
 
+// Used to count how many times the component renders and determine the initial focus logic.
+let renderCounter = 0;
+
 export default function ListViewSidebar() {
 	const { setIsListViewOpened } = useDispatch( editorStore );
-	const { getListViewToggleRef } = unlock( useSelect( editorStore ) );
+
+	const { listViewToggleRef, showListViewByDefault } = useSelect(
+		( select ) => {
+			const { getListViewToggleRef } = unlock( select( editorStore ) );
+			const _showListViewByDefault = select( preferencesStore ).get(
+				'core',
+				'showListViewByDefault'
+			);
+
+			return {
+				listViewToggleRef: getListViewToggleRef(),
+				showListViewByDefault: _showListViewByDefault,
+			};
+		},
+		[]
+	);
 
 	// This hook handles focus when the sidebar first renders.
 	const focusOnMountRef = useFocusOnMount( 'firstElement' );
@@ -32,8 +51,8 @@ export default function ListViewSidebar() {
 	// When closing the list view, focus should return to the toggle button.
 	const closeListView = useCallback( () => {
 		setIsListViewOpened( false );
-		getListViewToggleRef().current?.focus();
-	}, [ getListViewToggleRef, setIsListViewOpened ] );
+		listViewToggleRef.current?.focus();
+	}, [ listViewToggleRef, setIsListViewOpened ] );
 
 	const closeOnEscape = useCallback(
 		( event ) => {
@@ -44,6 +63,19 @@ export default function ListViewSidebar() {
 		},
 		[ closeListView ]
 	);
+
+	const firstRenderCheckRef = useRef( false );
+
+	useEffect( () => {
+		// This extra check avoids duplicate updates of the counter in development
+		// mode (React.StrictMode) or because of potential re-renders triggered
+		// by components higher up the tree.
+		if ( firstRenderCheckRef.current ) {
+			return;
+		}
+		renderCounter++;
+		firstRenderCheckRef.current = true;
+	}, [] );
 
 	// Use internal state instead of a ref to make sure that the component
 	// re-renders when the dropZoneElement updates.
@@ -64,7 +96,17 @@ export default function ListViewSidebar() {
 		setDropZoneElement,
 	] );
 
-	const tabsPanelRef = useMergeRefs( [ focusOnMountRef, tabsRef ] );
+	// focusOnMountRef ref is used to set initial focus to the first tab in the
+	// ListViewSidebar while the tabsRef is used to manage focus for the ARIA tabs UI.
+	let tabsPanelRef = useMergeRefs( [ focusOnMountRef, tabsRef ] );
+
+	// When the 'Always open List View' preference is enabled and the ListViewSidebar
+	// renders for the first time on page load, initial focus should not be managed.
+	// Rather, the tab sequence should normally start from the document root. In
+	// this case, we only pass the tabsRef and omit the focusOnMountRef.
+	if ( showListViewByDefault && renderCounter === 1 ) {
+		tabsPanelRef = tabsRef;
+	}
 
 	/*
 	 * Callback function to handle list view or outline focus.
