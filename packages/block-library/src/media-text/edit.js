@@ -180,16 +180,13 @@ function MediaTextEdit( {
 		mediaPosition,
 		mediaType,
 		mediaUrl,
+		mediaSizeSlug,
 		mediaWidth,
 		rel,
 		verticalAlignment,
 		allowedBlocks,
 		useFeaturedImage,
 	} = attributes;
-	const { getSettings } = useSelect( blockEditorStore );
-	const { imageDefaultSize } = getSettings();
-	const mediaSizeSlug =
-		attributes.mediaSizeSlug || imageDefaultSize || DEFAULT_MEDIA_SIZE_SLUG;
 
 	const [ featuredImage ] = useEntityProp(
 		'postType',
@@ -212,10 +209,31 @@ function MediaTextEdit( {
 		[ featuredImage, useFeaturedImage ]
 	);
 
+	const { image } = useSelect(
+		( select ) => {
+			return {
+				image:
+					mediaId && isSelected
+						? select( coreStore ).getMedia( mediaId, {
+								context: 'view',
+						  } )
+						: null,
+			};
+		},
+		[ isSelected, mediaId ]
+	);
+
 	const featuredImageURL = useFeaturedImage
 		? featuredImageMedia?.media_details?.sizes?.[ mediaSizeSlug ]
 				?.source_url ?? featuredImageMedia?.source_url
 		: '';
+
+	const featuredMediaSizeSlug =
+		useFeaturedImage &&
+		featuredImageMedia?.media_details?.sizes?.[ mediaSizeSlug ]?.source_url
+			? mediaSizeSlug
+			: DEFAULT_MEDIA_SIZE_SLUG;
+
 	const featuredImageAlt = useFeaturedImage
 		? featuredImageMedia?.alt_text
 		: '';
@@ -243,20 +261,6 @@ function MediaTextEdit( {
 			useFeaturedImage: ! useFeaturedImage,
 		} );
 	};
-
-	const { image } = useSelect(
-		( select ) => {
-			return {
-				image:
-					mediaId && isSelected
-						? select( coreStore ).getMedia( mediaId, {
-								context: 'view',
-						  } )
-						: null,
-			};
-		},
-		[ isSelected, mediaId ]
-	);
 
 	const refMedia = useRef();
 	const imperativeFocalPointPreview = ( value ) => {
@@ -461,7 +465,9 @@ function MediaTextEdit( {
 			{ mediaType === 'image' && (
 				<MediaTextResolutionTool
 					image={ useFeaturedImage ? featuredImageMedia : image }
-					value={ mediaSizeSlug }
+					value={
+						useFeaturedImage ? featuredMediaSizeSlug : mediaSizeSlug
+					}
 					onChange={ updateImage }
 				/>
 			) }
