@@ -413,7 +413,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 	public function test_layout_support_flag_renders_classnames_on_wrapper( $args, $expected_output ) {
 		switch_theme( 'default' );
 		$actual_output = gutenberg_render_layout_support_flag( $args['block_content'], $args['block'] );
-		$this->assertMatchesRegularExpression( $expected_output, $actual_output );
+		$this->assertEquals( $expected_output, $actual_output );
 	}
 
 	/**
@@ -440,7 +440,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"><\\/div>/',
+				'expected_output' => '<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow"></div>',
 			),
 			'single wrapper block layout with constrained type' => array(
 				'args'            => array(
@@ -459,7 +459,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<div class="wp-block-group is-layout-constrained wp-block-group-is-layout-constrained"><\\/div>/',
+				'expected_output' => '<div class="wp-block-group is-layout-constrained wp-block-group-is-layout-constrained"></div>',
 			),
 			'multiple wrapper block layout with flow type' => array(
 				'args'            => array(
@@ -480,7 +480,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<div class="wp-block-group"><div class="wp-block-group__inner-wrapper is-layout-flow wp-block-group-is-layout-flow"><\\/div><\\/div>/',
+				'expected_output' => '<div class="wp-block-group"><div class="wp-block-group__inner-wrapper is-layout-flow wp-block-group-is-layout-flow"></div></div>',
 			),
 			'block with child layout'                      => array(
 				'args'            => array(
@@ -501,7 +501,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<p class="wp-container-content-[a-f0-9]{8}">Some text.<\\/p>/',
+				'expected_output' => '<p class="wp-container-content-b7aa651c">Some text.</p>',
 			),
 			'single wrapper block layout with flex type'   => array(
 				'args'            => array(
@@ -522,7 +522,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<div class="wp-block-group is-horizontal is-nowrap is-layout-flex wp-container-core-group-is-layout-[a-f0-9]{8} wp-block-group-is-layout-flex"><\\/div>/',
+				'expected_output' => '<div class="wp-block-group is-horizontal is-nowrap is-layout-flex wp-container-core-group-is-layout-67f0b8e2 wp-block-group-is-layout-flex"></div>',
 			),
 			'single wrapper block layout with grid type'   => array(
 				'args'            => array(
@@ -541,7 +541,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_output' => '/<div class="wp-block-group is-layout-grid wp-container-core-group-is-layout-[a-f0-9]{8} wp-block-group-is-layout-grid"><\\/div>/',
+				'expected_output' => '<div class="wp-block-group is-layout-grid wp-container-core-group-is-layout-9649a0d9 wp-block-group-is-layout-grid"></div>',
 			),
 		);
 	}
@@ -642,61 +642,49 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 	 *
 	 * @covers ::gutenberg_render_layout_support_flag
 	 *
-	 * @param array $attrs1 Dataset to test.
-	 * @param array $attrs2 Dataset to test.
+	 * @param array $block_attrs    Dataset to test.
+	 * @param array $expected_hash  Hash generated for the passed dataset.
 	 */
-	public function test_layout_support_flag_renders_consistent_container_hash( $attrs1, $attrs2 ) {
+	public function test_layout_support_flag_renders_consistent_container_hash( $block_attrs, $expected_hash ) {
 		switch_theme( 'default' );
 
-		$args_base = array(
-			'block_content' => '<div class="wp-block-group"></div>',
-			'block'         => array(
-				'blockName'    => 'core/group',
-				'innerBlocks'  => array(),
-				'innerHTML'    => '<div class="wp-block-group"></div>',
-				'innerContent' => array(
-					'<div class="wp-block-group"></div>',
-				),
+		$block_content = '<div class="wp-block-group"></div>';
+		$block         = array(
+			'blockName'    => 'core/group',
+			'innerBlocks'  => array(),
+			'innerHTML'    => '<div class="wp-block-group"></div>',
+			'innerContent' => array(
+				'<div class="wp-block-group"></div>',
 			),
+			'attrs'        => $block_attrs,
 		);
 
-		$ids = array_map(
-			function ( $attrs ) use ( $args_base ) {
-				$args = $args_base;
+		/*
+		 * The `appearance-tools` theme support is temporarily added to ensure
+		 * that the block gap support is enabled during rendering, which is
+		 * necessary to compute styles for layouts with block gap values.
+		 */
+		add_theme_support( 'appearance-tools' );
+		$output = gutenberg_render_layout_support_flag( $block_content, $block );
+		remove_theme_support( 'appearance-tools' );
 
-				$args['block']['attrs'] = $attrs;
-
-				/*
-				 * The `appearance-tools` theme support is temporarily added to ensure
-				 * that the block gap support is enabled during rendering, which is
-				 * necessary to compute styles for layouts with block gap values.
-				 */
-				add_theme_support( 'appearance-tools' );
-				$output = gutenberg_render_layout_support_flag( $args['block_content'], $args['block'] );
-				remove_theme_support( 'appearance-tools' );
-
-				/*
-				 * Iterate over the list of classes of the first rendered element to find
-				 * the hash generated for the container's layout class.
-				 */
-				$processor = new WP_HTML_Tag_Processor( $output );
-				$matcher   = '/wp-container-core-group-is-layout-([a-f0-9]{8})/';
-				if ( $processor->next_tag() ) {
-					foreach ( $processor->class_list() as $class ) {
-						if ( preg_match( $matcher, $class, $matches ) ) {
-							return $matches[1];
-						}
-					}
+		/*
+		 * Iterate over the list of classes of the first rendered element to find
+		 * the hash generated for the container's layout class.
+		 */
+		$hash      = '';
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$matcher   = '/wp-container-core-group-is-layout-([a-f0-9]{8})/';
+		if ( $processor->next_tag() ) {
+			foreach ( $processor->class_list() as $class ) {
+				if ( preg_match( $matcher, $class, $matches ) ) {
+					$hash = $matches[1];
+					break;
 				}
-				return '';
-			},
-			// Items are repeated to test hash consistency for the same attributes.
-			array( $attrs1, $attrs1, $attrs2, $attrs2 )
-		);
+			}
+		}
 
-		$this->assertSame( $ids[0], $ids[1] );
-		$this->assertSame( $ids[2], $ids[3] );
-		$this->assertNotSame( $ids[0], $ids[2] );
+		$this->assertSame( $expected_hash, $hash );
 	}
 
 	/**
@@ -706,8 +694,8 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 	 */
 	public function data_layout_support_flag_renders_consistent_container_hash() {
 		return array(
-			'default type'     => array(
-				'attrs1' => array(
+			'default type block gap 12px'      => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type' => 'default',
 					),
@@ -717,7 +705,10 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'attrs2' => array(
+				'expected_hash'    => 'c5c7d83f',
+			),
+			'default type block gap 24px'      => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type' => 'default',
 					),
@@ -727,48 +718,61 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
+				'expected_hash'    => '634f0b9d',
 			),
-			'constrained type' => array(
-				'attrs1' => array(
+			'constrained type justified left'  => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type'           => 'constrained',
 						'justifyContent' => 'left',
 					),
 				),
-				'attrs2' => array(
+				'expected_hash'    => '12dd3699',
+			),
+			'constrained type justified right' => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type'           => 'constrained',
 						'justifyContent' => 'right',
 					),
 				),
+				'expected_hash'    => 'f1f2ed93',
 			),
-			'flex type'        => array(
-				'attrs1' => array(
+			'flex type horizontal' => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type'        => 'flex',
 						'orientation' => 'horizontal',
 						'flexWrap'    => 'nowrap',
 					),
 				),
-				'attrs2' => array(
+				'expected_hash'    => '2487dcaa',
+			),
+			'flex type vertical'               => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type'        => 'flex',
 						'orientation' => 'vertical',
 					),
 				),
+				'expected_hash'    => 'fe9cc265',
 			),
-			'grid type'        => array(
-				'attrs1' => array(
+			'grid type'                        => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type' => 'grid',
 					),
 				),
-				'attrs2' => array(
+				'expected_hash'    => '478b6e6b',
+			),
+			'grid type 3 columns'              => array(
+				'block_attributes' => array(
 					'layout' => array(
 						'type'        => 'grid',
 						'columnCount' => 3,
 					),
 				),
+				'expected_hash'    => 'd3b710ac',
 			),
 		);
 	}
