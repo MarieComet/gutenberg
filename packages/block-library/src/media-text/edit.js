@@ -181,7 +181,6 @@ function MediaTextEdit( {
 		mediaType,
 		mediaUrl,
 		mediaWidth,
-		mediaSizeSlug,
 		rel,
 		verticalAlignment,
 		allowedBlocks,
