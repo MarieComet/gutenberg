@@ -212,20 +212,6 @@ function MediaTextEdit( {
 		[ featuredImage, useFeaturedImage ]
 	);
 
-	const { image } = useSelect(
-		( select ) => {
-			return {
-				image:
-					mediaId && isSelected
-						? select( coreStore ).getMedia( mediaId, {
-								context: 'view',
-						  } )
-						: null,
-			};
-		},
-		[ isSelected, mediaId ]
-	);
-
 	const featuredImageURL = useFeaturedImage
 		? featuredImageMedia?.media_details?.sizes?.[ mediaSizeSlug ]
 				?.source_url ?? featuredImageMedia?.source_url
@@ -258,7 +244,7 @@ function MediaTextEdit( {
 		} );
 	};
 
-	const { imageSizes, image } = useSelect(
+	const { image } = useSelect(
 		( select ) => {
 			return {
 				image:
@@ -267,7 +253,6 @@ function MediaTextEdit( {
 								context: 'view',
 						  } )
 						: null,
-				imageSizes: getSettings()?.imageSizes,
 			};
 		},
 		[ isSelected, mediaId ]
@@ -325,11 +310,7 @@ function MediaTextEdit( {
 	};
 
 	const currentImageMedia = useFeaturedImage ? featuredImageMedia : image;
-	const imageSizeOptions = imageSizes
-		.filter( ( { slug } ) =>
-			getImageSourceUrlBySizeSlug( currentImageMedia, slug )
-		)
-		.map( ( { name, slug } ) => ( { value: slug, label: name } ) );
+
 	const updateImage = ( newMediaSizeSlug ) => {
 		const newUrl = getImageSourceUrlBySizeSlug(
 			currentImageMedia,
@@ -479,7 +460,7 @@ function MediaTextEdit( {
 			) }
 			{ mediaType === 'image' && (
 				<MediaTextResolutionTool
-					image={ image }
+					image={ useFeaturedImage ? featuredImageMedia : image }
 					value={ mediaSizeSlug }
 					onChange={ updateImage }
 				/>
