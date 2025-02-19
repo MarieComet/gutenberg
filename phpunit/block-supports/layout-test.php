@@ -738,7 +738,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 				),
 				'expected_hash'    => 'f1f2ed93',
 			),
-			'flex type horizontal' => array(
+			'flex type horizontal'             => array(
 				'block_attributes' => array(
 					'layout' => array(
 						'type'        => 'flex',
