@@ -642,10 +642,10 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 	 *
 	 * @covers ::gutenberg_render_layout_support_flag
 	 *
-	 * @param array $block_attrs    Dataset to test.
-	 * @param array $expected_hash  Hash generated for the passed dataset.
+	 * @param array $block_attrs     Dataset to test.
+	 * @param array $expected_class  Class generated for the passed dataset.
 	 */
-	public function test_layout_support_flag_renders_consistent_container_hash( $block_attrs, $expected_hash ) {
+	public function test_layout_support_flag_renders_consistent_container_hash( $block_attrs, $expected_class ) {
 		switch_theme( 'default' );
 
 		$block_content = '<div class="wp-block-group"></div>';
@@ -668,23 +668,14 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 		$output = gutenberg_render_layout_support_flag( $block_content, $block );
 		remove_theme_support( 'appearance-tools' );
 
-		/*
-		 * Iterate over the list of classes of the first rendered element to find
-		 * the hash generated for the container's layout class.
-		 */
-		$hash      = '';
+		// Process the output and look for the expected class in the first rendered element.
 		$processor = new WP_HTML_Tag_Processor( $output );
-		$matcher   = '/wp-container-core-group-is-layout-([a-f0-9]{8})/';
-		if ( $processor->next_tag() ) {
-			foreach ( $processor->class_list() as $class ) {
-				if ( preg_match( $matcher, $class, $matches ) ) {
-					$hash = $matches[1];
-					break;
-				}
-			}
-		}
+		$processor->next_tag();
 
-		$this->assertSame( $expected_hash, $hash );
+		$this->assertTrue(
+			$processor->has_class( $expected_class ),
+			"Expected class '$expected_class' not found in the rendered output, probably because of a different hash."
+		);
 	}
 
 	/**
@@ -705,7 +696,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_hash'    => 'c5c7d83f',
+				'expected_class'   => 'wp-container-core-group-is-layout-c5c7d83f',
 			),
 			'default type block gap 24px'      => array(
 				'block_attributes' => array(
@@ -718,7 +709,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						),
 					),
 				),
-				'expected_hash'    => '634f0b9d',
+				'expected_class'   => 'wp-container-core-group-is-layout-634f0b9d',
 			),
 			'constrained type justified left'  => array(
 				'block_attributes' => array(
@@ -727,7 +718,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'justifyContent' => 'left',
 					),
 				),
-				'expected_hash'    => '12dd3699',
+				'expected_class'   => 'wp-container-core-group-is-layout-12dd3699',
 			),
 			'constrained type justified right' => array(
 				'block_attributes' => array(
@@ -736,7 +727,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'justifyContent' => 'right',
 					),
 				),
-				'expected_hash'    => 'f1f2ed93',
+				'expected_class'   => 'wp-container-core-group-is-layout-f1f2ed93',
 			),
 			'flex type horizontal'             => array(
 				'block_attributes' => array(
@@ -746,7 +737,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'flexWrap'    => 'nowrap',
 					),
 				),
-				'expected_hash'    => '2487dcaa',
+				'expected_class'   => 'wp-container-core-group-is-layout-2487dcaa',
 			),
 			'flex type vertical'               => array(
 				'block_attributes' => array(
@@ -755,7 +746,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'orientation' => 'vertical',
 					),
 				),
-				'expected_hash'    => 'fe9cc265',
+				'expected_class'   => 'wp-container-core-group-is-layout-fe9cc265',
 			),
 			'grid type'                        => array(
 				'block_attributes' => array(
@@ -763,7 +754,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'type' => 'grid',
 					),
 				),
-				'expected_hash'    => '478b6e6b',
+				'expected_class'   => 'wp-container-core-group-is-layout-478b6e6b',
 			),
 			'grid type 3 columns'              => array(
 				'block_attributes' => array(
@@ -772,7 +763,7 @@ class WP_Block_Supports_Layout_Test extends WP_UnitTestCase {
 						'columnCount' => 3,
 					),
 				),
-				'expected_hash'    => 'd3b710ac',
+				'expected_class'   => 'wp-container-core-group-is-layout-d3b710ac',
 			),
 		);
 	}
