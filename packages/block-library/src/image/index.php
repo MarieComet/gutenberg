@@ -150,14 +150,14 @@ function block_core_image_render_lightbox( $block_content, $block, $block_instan
 		return $block_content;
 	}
 
-	$alt                = $p->get_attribute( 'alt' );
-	$img_uploaded_src   = $p->get_attribute( 'src' );
-	$img_class_names    = $p->get_attribute( 'class' );
-	$img_styles         = $p->get_attribute( 'style' );
-	$img_width          = 'none';
-	$img_height         = 'none';
-	$aria_label         = __( 'Enlarge image' );
-	$screen_reader_text = __( 'Enlarged image' );
+	$alt               = $p->get_attribute( 'alt' );
+	$img_uploaded_src  = $p->get_attribute( 'src' );
+	$img_class_names   = $p->get_attribute( 'class' );
+	$img_styles        = $p->get_attribute( 'style' );
+	$img_width         = 'none';
+	$img_height        = 'none';
+	$aria_label        = __( 'Enlarge' );
+	$dialog_aria_label = __( 'Enlarged image' );
 
 	if ( isset( $block['attrs']['id'] ) ) {
 		$img_uploaded_src = wp_get_attachment_url( $block['attrs']['id'] );
@@ -186,6 +186,7 @@ function block_core_image_render_lightbox( $block_content, $block, $block_instan
 					'targetWidth'      => $img_width,
 					'targetHeight'     => $img_height,
 					'scaleAttr'        => $block['attrs']['scale'] ?? false,
+					'ariaLabel'        => $dialog_aria_label,
 					'alt'              => $alt,
 					'screenReaderText' => empty( $alt ) ? $screen_reader_text : "$screen_reader_text: $alt",
 					'galleryId'        => $block_instance->context['galleryId'] ?? null,
@@ -290,6 +291,7 @@ function block_core_image_print_lightbox_overlay() {
 			data-wp-on-async--click="actions.hideLightbox"
 			data-wp-on-async-window--resize="callbacks.setOverlayStyles"
 			data-wp-on-async-window--scroll="actions.handleScroll"
+			data-wp-bind--style="state.overlayStyles"
 			tabindex="-1"
 			>
 				<button type="button" aria-label="$close_button_label" style="fill: $close_button_color" class="close-button">
@@ -313,7 +315,6 @@ function block_core_image_print_lightbox_overlay() {
 				</div>
 				<div data-wp-watch="callbacks.setScreenReaderText" aria-live="polite" aria-atomic="true" class="lightbox-speak screen-reader-text"></div>
 				<div class="scrim" style="background-color: $background_color" aria-hidden="true"></div>
-				<style data-wp-text="state.overlayStyles"></style>
 		</div>
 HTML;
 }
