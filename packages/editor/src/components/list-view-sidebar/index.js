@@ -57,6 +57,9 @@ export default function ListViewSidebar() {
 	const closeOnEscape = useCallback(
 		( event ) => {
 			if ( event.keyCode === ESCAPE && ! event.defaultPrevented ) {
+				// Always use `event.preventDefault` before calling `closeListView`.
+				// This is important to prevent the `core/editor/toggle-list-view`
+				// shortcut callback from being twice.
 				event.preventDefault();
 				closeListView();
 			}
@@ -148,23 +151,36 @@ export default function ListViewSidebar() {
 		}
 	}
 
-	const handleToggleListViewShortcut = useCallback( () => {
-		// If the sidebar has focus, it is safe to close.
-		if (
-			sidebarRef.current.contains(
-				sidebarRef.current.ownerDocument.activeElement
-			)
-		) {
-			closeListView();
-		} else {
-			// If the list view or outline does not have focus, focus should be moved to it.
-			handleSidebarFocus( tab );
-		}
-	}, [ closeListView, tab ] );
+	const handleToggleListViewShortcut = useCallback(
+		( event ) => {
+			// If the sidebar has focus, it is safe to close.
+			if (
+				sidebarRef.current.contains(
+					sidebarRef.current.ownerDocument.activeElement
+				)
+			) {
+				// Always use `event.preventDefault` before calling `closeListView`.
+				// This is important to prevent the `core/editor/toggle-list-view`
+				// shortcut callback from running twice.
+				event.preventDefault();
+				closeListView();
+			} else {
+				// If the list view or outline does not have focus, focus should be moved to it.
+				handleSidebarFocus( tab );
+			}
+		},
+		[ closeListView, tab ]
+	);
 
 	// This only fires when the sidebar is open because of the conditional rendering.
-	// It is the same shortcut to open but that is defined as a global shortcut and only fires when the sidebar is closed.
-	useShortcut( 'core/editor/toggle-list-view', handleToggleListViewShortcut );
+	// It is the same shortcut to open the sidebar but that is defined as a global
+	// shortcut. However, when the `showListViewByDefault` preference is enabled,
+	// the sidebar is open by default and the shortcut callback would be invoked
+	// twice (here and in the global shortcut). To prevent that, we pass the event
+	// for some additional logic in the global shortcut based on `event.defaultPrevented`.
+	useShortcut( 'core/editor/toggle-list-view', ( event ) => {
+		handleToggleListViewShortcut( event );
+	} );
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
