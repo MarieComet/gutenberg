@@ -135,12 +135,10 @@ function block_core_gallery_render( $attributes, $content, $block ) {
 
 	wp_style_engine_get_stylesheet_from_css_rules(
 		$gallery_styles,
-		array(
-			'context' => 'block-supports',
-		)
+		array( 'context' => 'block-supports' )
 	);
 
-	// Get all image IDs from the state that match this gallery's ID.
+	// Gets all image IDs from the state that match this gallery's ID.
 	$state      = wp_interactivity_state( 'core/image' );
 	$gallery_id = $block->context['galleryId'] ?? null;
 	$image_ids  = array();
@@ -156,14 +154,34 @@ function block_core_gallery_render( $attributes, $content, $block ) {
 	$processed_content->set_attribute(
 		'data-wp-context',
 		wp_json_encode(
-			array(
-				'images' => $image_ids,
-			),
+			array( 'galleryId' => $gallery_id ),
 			JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 		)
 	);
 
-	add_filter( 'render_block_core/gallery', 'block_core_gallery_render_lightbox' );
+	// Populates the aria label for each image in the gallery.
+	if ( ! empty( $image_ids ) ) {
+		if ( 1 <= count( $image_ids ) ) {
+			for ( $i = 0; $i < count( $image_ids ); $i++ ) {
+				$image_id = $image_ids[ $i ];
+				$alt      = $state['metadata'][ $image_id ]['alt'];
+				wp_interactivity_state(
+					'core/image',
+					array(
+						'metadata' => array(
+							$image_id => array(
+								'customAriaLabel' => empty( $alt )
+									/* translators: %1$s: current image index, %2$s: total number of images */
+									? sprintf( __( 'Enlarged image %1$s of %2$s' ), $i + 1, count( $image_ids ) )
+									/* translators: %1$s: current image index, %2$s: total number of images, %3$s: Image alt text */
+									: sprintf( __( 'Enlarged image %1$s of %2$s: %3$s' ), $i + 1, count( $image_ids ), $alt ),
+							),
+						),
+					)
+				);
+			}
+		}
+	}
 
 	// The WP_HTML_Tag_Processor class calls get_updated_html() internally
 	// when the instance is treated as a string, but here we explicitly
@@ -209,65 +227,6 @@ function block_core_gallery_render( $attributes, $content, $block ) {
 	);
 
 	return $content;
-}
-
-/**
- * Handles state updates needed for the lightbox behavior in a Gallery Block.
- *
- * Now that the Gallery Block contains inner Image Blocks,
- * we add translations for the screen reader text before rendering the gallery
- * so that the Image Block can pick it up in its render_callback.
- *
- * @since 6.7.0
- *
- * @param string $block_content Rendered block content.
- *
- * @return string Filtered block content.
- */
-function block_core_gallery_render_lightbox( $block_content ) {
-	$state        = wp_interactivity_state( 'core/gallery' );
-	$gallery_id   = $state['galleryId'];
-	$images       = $state['images'][ $gallery_id ] ?? array();
-	$translations = array();
-
-	if ( ! empty( $images ) ) {
-		if ( 1 === count( $images ) ) {
-			$image_id                  = $images[0];
-			$translations[ $image_id ] = __( 'Enlarged image', 'gutenberg' );
-		} else {
-			for ( $i = 0; $i < count( $images ); $i++ ) {
-				$image_id = $images[ $i ];
-				/* translators: %1$s: current image index, %2$s: total number of images */
-				$translations[ $image_id ] = sprintf( __( 'Enlarged image %1$s of %2$s', 'gutenberg' ), $i + 1, count( $images ) );
-			}
-		}
-
-		$image_state = wp_interactivity_state( 'core/image' );
-
-		foreach ( $translations as $image_id => $translation ) {
-			$alt = $image_state['metadata'][ $image_id ]['alt'];
-			wp_interactivity_state(
-				'core/image',
-				array(
-					'metadata' => array(
-						$image_id => array(
-							'screenReaderText' => empty( $alt ) ? $translation : "$translation: $alt",
-						),
-					),
-				)
-			);
-		}
-	}
-
-	// reset galleryId
-	wp_interactivity_state(
-		'core/gallery',
-		array(
-			'galleryId' => null,
-		)
-	);
-
-	return $block_content;
 }
 
 /**
