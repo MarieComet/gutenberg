@@ -132,7 +132,7 @@ export default function ListViewSidebar() {
 			// handle the tabindex attribute hasn't run yet. As such, there may
 			// be an additional item that is 'tabbable' but it's not the
 			// selected item. Filtering based on the `data-is-selected` attribute
-			// attribute makes sure to target the selected item.
+			// makes sure to target the selected item.
 			const listViewSelectedItem = focus.tabbable
 				.find( listViewRef.current )
 				.filter( ( item ) =>
