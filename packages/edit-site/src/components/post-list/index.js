@@ -384,6 +384,15 @@ export default function PostList( { postType } ) {
 		closeModal();
 	};
 
+	const isBlockBasedTheme = useSelect(
+		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
+		[]
+	);
+
+	if ( ! isBlockBasedTheme ) {
+		return null;
+	}
+
 	return (
 		<Page
 			title={ labels?.name }
