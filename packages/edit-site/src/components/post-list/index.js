@@ -390,7 +390,13 @@ export default function PostList( { postType } ) {
 	);
 
 	if ( ! isBlockBasedTheme ) {
-		return null;
+		return (
+			<p className="edit-site-layout__area__unsupported">
+				{ __(
+					'The theme you are currently using is not compatible with the Site Editor.'
+				) }
+			</p>
+		);
 	}
 
 	return (

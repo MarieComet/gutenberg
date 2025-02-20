@@ -5,7 +5,6 @@ import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -33,13 +32,7 @@ export default function DataViewsSidebarContent( { postType } ) {
 	}
 
 	if ( ! isBlockBasedTheme && postType === 'page' ) {
-		return (
-			<p className="edit-site-layout__area__unsupported">
-				{ __(
-					'The theme you are currently using is not compatible with the Site Editor.'
-				) }
-			</p>
-		);
+		return null;
 	}
 
 	const isCustomBoolean = isCustom === 'true';
