@@ -207,7 +207,7 @@
 	visibility: hidden;
 	cursor: zoom-out;
 
-	.close-button {
+	.wp-lightbox-close-button {
 		position: absolute;
 		top: calc(env(safe-area-inset-top) + 16px); // equivalent to $grid-unit-20
 		right: calc(env(safe-area-inset-right) + 16px); // equivalent to $grid-unit-20
@@ -228,8 +228,8 @@
 		}
 	}
 
-	.prev-button,
-	.next-button {
+	.wp-lightbox-navigation-container-prev,
+	.wp-lightbox-navigation-container-next {
 		display: none;
 		position: absolute;
 		top: 50%;
@@ -237,37 +237,67 @@
 		padding: 0;
 		cursor: pointer;
 		z-index: 5000000;
-		min-width: 40px; // equivalent to $button-size-next-default-40px
-		min-height: 40px; // equivalent to $button-size-next-default-40px;
-		align-items: center;
-		justify-content: center;
 
 		&[hidden] {
 			display: none;
 		}
+
+		@include break-mobile() {
+			display: block;
+		}
+	}
+
+	.wp-lightbox-navigation-button {
+		min-width: 40px; // equivalent to $button-size-next-default-40px
+		min-height: 40px; // equivalent to $button-size-next-default-40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		&[aria-disabled="true"] svg {
 			opacity: 0.3;
 		}
 
 		&:hover,
-		&:focus,
-		&:not(:hover):not(:active):not(.has-background) {
+		&:focus {
 			background: none;
 			border: none;
-		}
 
-		@include break-mobile() {
-			display: flex;
+			+ .wp-lightbox-navigation-tooltip {
+				display: block;
+			}
 		}
 	}
 
-	.prev-button {
-		left: calc(env(safe-area-inset-left) + 16px); // equivalent to $grid-unit-20
+	.wp-lightbox-navigation-tooltip {
+		display: none;
+		background: #000;
+		border-radius: 2px;
+		color: #fff;
+		text-align: center;
+		line-height: 1.4;
+		font-size: 12px;
+		padding: 4px 8px;
+		z-index: 5000000;
+		margin: 0;
+		position: absolute;
+		top: calc(100% + 8px);
 	}
 
-	.next-button {
-		right: calc(env(safe-area-inset-right) + 16px); // equivalent to $grid-unit-20
+	.wp-lightbox-navigation-container-prev {
+		left: calc(env(safe-area-inset-left) + 16px);
+
+		.wp-lightbox-navigation-tooltip {
+			left: 0;
+		}
+	}
+
+	.wp-lightbox-navigation-container-next {
+		right: calc(env(safe-area-inset-right) + 16px);
+
+		.wp-lightbox-navigation-tooltip {
+			right: 0;
+		}
 	}
 
 	.lightbox-image-container {
