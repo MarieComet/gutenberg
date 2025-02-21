@@ -247,16 +247,6 @@ export default function EditSiteEditor( {
 		duration: disableMotion ? 0 : 0.2,
 	};
 
-	// Do not render the editor preview for pages or navigation menus in classic themes,
-	// because editing these in the Site Editor is not supported.
-	// The wp_template post type is used in the condition because it is used on the page screen.
-	if (
-		! isBlockBasedTheme &&
-		( postType === 'wp_navigation' || postType === 'wp_template' )
-	) {
-		return null;
-	}
-
 	// Replace the title and icon displayed in the DocumentBar when there's an overlay visible.
 	const title = getEditorCanvasContainerTitle( editorCanvasView );
 
