@@ -167,23 +167,22 @@ const { state, actions, callbacks } = store(
 					}, 450 );
 				}
 			},
-			showPreviousImage( e ) {
+			showPreviousImage: withSyncEvent( ( event ) => {
+				event.stopPropagation();
 				if ( state.hasPreviousImage ) {
-					e.stopPropagation();
 					state.selectedImageId =
 						state.galleryImages[ state.selectedImageIndex - 1 ];
 					callbacks.setOverlayStyles();
 				}
-			},
-			showNextImage( e ) {
+			} ),
+			showNextImage: withSyncEvent( ( event ) => {
+				event.stopPropagation();
 				if ( state.hasNextImage ) {
-					e.stopPropagation();
-
 					state.selectedImageId =
 						state.galleryImages[ state.selectedImageIndex + 1 ];
 					callbacks.setOverlayStyles();
 				}
-			},
+			} ),
 			handleKeydown: withSyncEvent( ( event ) => {
 				if ( state.overlayEnabled ) {
 					if ( event.key === 'Escape' ) {
