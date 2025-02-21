@@ -6,6 +6,7 @@ import {
 	getContext,
 	getElement,
 	getConfig,
+	withSyncEvent,
 } from '@wordpress/interactivity';
 
 /**
@@ -183,7 +184,7 @@ const { state, actions, callbacks } = store(
 					callbacks.setOverlayStyles();
 				}
 			},
-			handleKeydown( event ) {
+			handleKeydown: withSyncEvent( ( event ) => {
 				if ( state.overlayEnabled ) {
 					if ( event.key === 'Escape' ) {
 						actions.hideLightbox();
@@ -193,8 +194,8 @@ const { state, actions, callbacks } = store(
 						actions.showNextImage( event );
 					}
 				}
-			},
-			handleTouchMove( event ) {
+			} ),
+			handleTouchMove: withSyncEvent( ( event ) => {
 				// On mobile devices, prevents triggering the scroll event because
 				// otherwise the page jumps around when it resets the scroll position.
 				// This also means that closing the lightbox requires that a user
@@ -204,7 +205,7 @@ const { state, actions, callbacks } = store(
 				if ( state.overlayEnabled ) {
 					event.preventDefault();
 				}
-			},
+			} ),
 			handleTouchStart() {
 				isTouching = true;
 			},
