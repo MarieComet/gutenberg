@@ -321,7 +321,6 @@ function block_core_image_print_lightbox_overlay() {
 						<img data-wp-bind--alt="state.selectedImage.alt" data-wp-bind--class="state.selectedImage.imgClassNames" data-wp-bind--style="state.imgStyles" data-wp-bind--src="state.enlargedSrc">
 					</figure>
 				</div>
-				<div data-wp-text="state.ariaLabel" aria-live="polite" aria-atomic="true" class="lightbox-speak screen-reader-text"></div>
 				<div class="scrim" style="background-color: $background_color" aria-hidden="true"></div>
 		</div>
 HTML;
