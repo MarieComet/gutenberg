@@ -246,7 +246,7 @@
 			display: none;
 		}
 
-		&[aria-disabled="true"] {
+		&[aria-disabled="true"] svg {
 			opacity: 0.3;
 		}
 
