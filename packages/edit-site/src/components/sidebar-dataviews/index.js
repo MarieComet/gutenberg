@@ -27,11 +27,7 @@ export default function DataViewsSidebarContent( { postType } ) {
 		[]
 	);
 
-	if ( ! postType ) {
-		return null;
-	}
-
-	if ( ! isBlockBasedTheme && postType === 'page' ) {
+	if ( ! postType || ( ! isBlockBasedTheme && postType === 'page' ) ) {
 		return null;
 	}
 

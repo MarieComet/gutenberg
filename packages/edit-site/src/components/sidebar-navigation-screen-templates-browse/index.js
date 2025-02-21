@@ -20,15 +20,14 @@ export default function SidebarNavigationScreenTemplatesBrowse( { backPath } ) {
 		<SidebarNavigationScreen
 			title={ __( 'Templates' ) }
 			description={
-				isBlockBasedTheme
-					? __(
-							'Create new templates, or reset any customizations made to the templates supplied by your theme.'
-					  )
-					: null
+				isBlockBasedTheme &&
+				__(
+					'Create new templates, or reset any customizations made to the templates supplied by your theme.'
+				)
 			}
 			backPath={ backPath }
 			content={
-				isBlockBasedTheme ? <DataviewsTemplatesSidebarContent /> : ''
+				isBlockBasedTheme && <DataviewsTemplatesSidebarContent />
 			}
 		/>
 	);
