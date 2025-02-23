@@ -25,6 +25,11 @@ let isTouching = false;
  */
 let lastTouchTime = 0;
 
+const focusableSelectors = [
+	'.wp-lightbox-close-button',
+	'.wp-lightbox-navigation-button',
+];
+
 const { state, actions, callbacks } = store(
 	'core/image',
 	{
@@ -191,6 +196,27 @@ const { state, actions, callbacks } = store(
 						actions.showPreviousImage( event );
 					} else if ( event.key === 'ArrowRight' ) {
 						actions.showNextImage( event );
+					} else if ( event.key === 'Tab' ) {
+						// Traps focus within the overlay.
+						const focusableElements = Array.from(
+							document.querySelectorAll( focusableSelectors )
+						);
+						const firstFocusableElement = focusableElements[ 0 ];
+						const lastFocusableElement =
+							focusableElements[ focusableElements.length - 1 ];
+						if (
+							event.shiftKey &&
+							event.target === firstFocusableElement
+						) {
+							event.preventDefault();
+							lastFocusableElement.focus();
+						} else if (
+							! event.shiftKey &&
+							event.target === lastFocusableElement
+						) {
+							event.preventDefault();
+							firstFocusableElement.focus();
+						}
 					}
 				}
 			} ),
