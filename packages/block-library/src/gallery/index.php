@@ -138,7 +138,7 @@ function block_core_gallery_render( $attributes, $content, $block ) {
 		array( 'context' => 'block-supports' )
 	);
 
-	if ( $attributes['lightBoxNavigation']) {
+	if ( $attributes['lightBoxNavigation'] ) {
 		// Gets all image IDs from the state that match this gallery's ID.
 		$state      = wp_interactivity_state( 'core/image' );
 		$gallery_id = $block->context['galleryId'] ?? null;
