@@ -327,6 +327,7 @@ function block_core_image_print_lightbox_overlay() {
 					</button>
 					<p id="wp_lightbox_navigation_button_next" class="wp-lightbox-navigation-tooltip" role="tooltip">$next_button_label</p>
 				</div>
+				<div data-wp-text="state.ariaLabel" aria-live="polite" aria-atomic="true" class="screen-reader-text"></div>
 				<div class="scrim" style="background-color: $background_color" aria-hidden="true"></div>
 		</div>
 HTML;
