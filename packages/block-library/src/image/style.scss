@@ -236,7 +236,7 @@
 		transform: translateY(-50%);
 		padding: 0;
 		cursor: pointer;
-		z-index: 5000000;
+		z-index: 2000002;
 
 		&[hidden] {
 			display: none;
@@ -279,7 +279,6 @@
 		line-height: 1.4;
 		font-size: 12px;
 		padding: 4px 8px;
-		z-index: 5000000;
 		margin: 0;
 		position: absolute;
 		top: calc(100% + 8px);
@@ -310,7 +309,7 @@
 		transform: translate(-50%, -50%);
 		width: var(--wp--lightbox-container-width);
 		height: var(--wp--lightbox-container-height);
-		z-index: 9999999999;
+		z-index: 2000001;
 	}
 
 	.wp-block-image {
