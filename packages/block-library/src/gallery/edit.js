@@ -125,8 +125,15 @@ export default function GalleryEdit( props ) {
 		  )
 		: LINK_OPTIONS;
 
-	const { columns, imageCrop, randomOrder, linkTarget, linkTo, sizeSlug } =
-		attributes;
+	const {
+		columns,
+		imageCrop,
+		randomOrder,
+		linkTarget,
+		linkTo,
+		sizeSlug,
+		lightBoxNavigation,
+	} = attributes;
 
 	const {
 		__unstableMarkNextChangeAsNotPersistent,
@@ -442,6 +449,12 @@ export default function GalleryEdit( props ) {
 		} );
 	}
 
+	function toggleLightboxNavigation() {
+		setAttributes( {
+			lightBoxNavigation: ! attributes.lightBoxNavigation,
+		} );
+	}
+
 	function updateImagesSize( newSizeSlug ) {
 		setAttributes( { sizeSlug: newSizeSlug } );
 		const changedAttributes = {};
@@ -623,6 +636,15 @@ export default function GalleryEdit( props ) {
 							onChange={ toggleOpenInNewTab }
 						/>
 					) }
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label={ __( 'Lightbox navigation' ) }
+						checked={ lightBoxNavigation }
+						onChange={ toggleLightboxNavigation }
+						help={ __(
+							'Enable navigation between images with "Expand on click" enabled.'
+						) }
+					/>
 					{ Platform.isWeb && ! imageSizeOptions && hasImageIds && (
 						<BaseControl
 							className="gallery-image-sizes"
