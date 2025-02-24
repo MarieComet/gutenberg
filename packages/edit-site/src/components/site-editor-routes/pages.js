@@ -19,11 +19,14 @@ import { PostEdit } from '../post-edit';
 
 const { useLocation } = unlock( routerPrivateApis );
 
-const ContentComponent = () => {
-	const isBlockBasedTheme = useSelect(
+const useIsBlockBasedTheme = () =>
+	useSelect(
 		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
 		[]
 	);
+
+const ContentComponent = () => {
+	const isBlockBasedTheme = useIsBlockBasedTheme();
 
 	return isBlockBasedTheme ? (
 		<PostList postType="page" />
@@ -34,6 +37,15 @@ const ContentComponent = () => {
 			) }
 		</Notice>
 	);
+};
+
+const PreviewComponent = ( { query } ) => {
+	const isBlockBasedTheme = useIsBlockBasedTheme();
+	const isListView =
+		( query.layout === 'list' || ! query.layout ) &&
+		query.isCustom !== 'true';
+
+	return isListView && isBlockBasedTheme ? <Editor /> : null;
 };
 
 function MobilePagesView() {
@@ -56,10 +68,7 @@ export const pagesRoute = {
 		),
 		content: <ContentComponent />,
 		preview( { query } ) {
-			const isListView =
-				( query.layout === 'list' || ! query.layout ) &&
-				query.isCustom !== 'true';
-			return isListView ? <Editor /> : undefined;
+			return <PreviewComponent query={ query } />;
 		},
 		mobile: <MobilePagesView />,
 		edit( { query } ) {
