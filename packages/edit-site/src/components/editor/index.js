@@ -183,7 +183,6 @@ export default function EditSiteEditor( {
 		],
 		[ settings.styles, canvas, currentPostIsTrashed ]
 	);
-
 	const { resetZoomLevel } = unlock( useDispatch( blockEditorStore ) );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const history = useHistory();
