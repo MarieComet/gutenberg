@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useEntityRecord, store as coreStore } from '@wordpress/core-data';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -68,11 +68,11 @@ export default function SidebarNavigationScreenNavigationMenu( { backPath } ) {
 
 	if ( ! isBlockBasedTheme ) {
 		return (
-			<p className="edit-site-layout__area__unsupported">
+			<Notice status="warning" isDismissible={ false }>
 				{ __(
 					'The theme you are currently using is not compatible with the Site Editor.'
 				) }
-			</p>
+			</Notice>
 		);
 	}
 

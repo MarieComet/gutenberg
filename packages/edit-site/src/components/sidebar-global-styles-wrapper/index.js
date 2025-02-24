@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from '@wordpress/element';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { useViewportMatch } from '@wordpress/compose';
-import { Button } from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { seen } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
@@ -82,11 +82,11 @@ export default function GlobalStylesUIWrapper() {
 
 	if ( ! isBlockBasedTheme ) {
 		return (
-			<p className="edit-site-layout__area__unsupported">
+			<Notice status="warning" isDismissible={ false }>
 				{ __(
 					'The theme you are currently using is not compatible with the Site Editor.'
 				) }
-			</p>
+			</Notice>
 		);
 	}
 
