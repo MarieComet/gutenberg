@@ -21,7 +21,6 @@ test.describe( 'a11y (@firefox, @webkit)', () => {
 		page,
 		pageUtils,
 		editor,
-		browserName,
 	} ) => {
 		// To do: run with iframe.
 		await editor.switchToLegacyCanvas();
@@ -49,14 +48,12 @@ test.describe( 'a11y (@firefox, @webkit)', () => {
 		// When full screen mode is enabled, check the first tabbable element
 		// within the 'Editor top bar' region is the 'View Posts' link otherwise
 		// check it's the 'Block Inserter' button.
-		// In webkit (Safari) links aren't tabbable by default so we always test
-		// for the 'Block Inserter' button.
-		let elementToTest = isFullScreenMode
+		// When running this test locally, make sure that in macOS webkit (Safari)
+		// links are focusable and tabbable by setting the related preferences at
+		// system and browser level.
+		const elementToTest = isFullScreenMode
 			? 'role=link[name=/View Posts/i]'
 			: 'role=button[name=/Block Inserter/i]';
-		if ( browserName === 'webkit' ) {
-			elementToTest = 'role=button[name=/Block Inserter/i]';
-		}
 
 		await expect( page.locator( elementToTest ) ).toBeFocused();
 	} );
