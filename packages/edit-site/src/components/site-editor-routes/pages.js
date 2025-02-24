@@ -3,6 +3,9 @@
  */
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
+import { Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,11 +19,28 @@ import { PostEdit } from '../post-edit';
 
 const { useLocation } = unlock( routerPrivateApis );
 
+const ContentComponent = () => {
+	const isBlockBasedTheme = useSelect(
+		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
+		[]
+	);
+
+	return isBlockBasedTheme ? (
+		<PostList postType="page" />
+	) : (
+		<Notice status="warning" isDismissible={ false }>
+			{ __(
+				'The theme you are currently using is not compatible with the Site Editor.'
+			) }
+		</Notice>
+	);
+};
+
 function MobilePagesView() {
 	const { query = {} } = useLocation();
 	const { canvas = 'view' } = query;
 
-	return canvas === 'edit' ? <Editor /> : <PostList postType="page" />;
+	return canvas === 'edit' ? <Editor /> : <ContentComponent />;
 }
 
 export const pagesRoute = {
@@ -34,7 +54,7 @@ export const pagesRoute = {
 				content={ <DataViewsSidebarContent postType="page" /> }
 			/>
 		),
-		content: <PostList postType="page" />,
+		content: <ContentComponent />,
 		preview( { query } ) {
 			const isListView =
 				( query.layout === 'list' || ! query.layout ) &&

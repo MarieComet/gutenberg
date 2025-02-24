@@ -384,21 +384,6 @@ export default function PostList( { postType } ) {
 		closeModal();
 	};
 
-	const isBlockBasedTheme = useSelect(
-		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
-		[]
-	);
-
-	if ( ! isBlockBasedTheme ) {
-		return (
-			<p className="edit-site-layout__area__unsupported">
-				{ __(
-					'The theme you are currently using is not compatible with the Site Editor.'
-				) }
-			</p>
-		);
-	}
-
 	return (
 		<Page
 			title={ labels?.name }
