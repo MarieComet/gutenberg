@@ -21,6 +21,7 @@ test.describe( 'a11y (@firefox, @webkit)', () => {
 		page,
 		pageUtils,
 		editor,
+		browserName,
 	} ) => {
 		// To do: run with iframe.
 		await editor.switchToLegacyCanvas();
@@ -38,13 +39,26 @@ test.describe( 'a11y (@firefox, @webkit)', () => {
 		// Navigate to the 'Editor top bar' region.
 		await pageUtils.pressKeys( 'ctrl+`' );
 
-		// This test assumes the Editor is not in Fullscreen mode. Check the
-		// first tabbable element within the 'Editor top bar' region is the
-		// 'Block Inserter' button.
 		await pageUtils.pressKeys( 'Tab' );
-		await expect(
-			page.locator( 'role=button[name=/Block Inserter/i]' )
-		).toBeFocused();
+
+		const isFullScreenMode = await page.evaluate( () => {
+			return window.wp.data
+				.select( 'core/edit-post' )
+				.isFeatureActive( 'fullscreenMode' );
+		} );
+		// When full screen mode is enabled, check the first tabbable element
+		// within the 'Editor top bar' region is the 'View Posts' link otherwise
+		// check it's the 'Block Inserter' button.
+		// In webkit (Safari) links aren't tabbable by default so we always test
+		// for the 'Block Inserter' button.
+		let elementToTest = isFullScreenMode
+			? 'role=link[name=/View Posts/i]'
+			: 'role=button[name=/Block Inserter/i]';
+		if ( browserName === 'webkit' ) {
+			elementToTest = 'role=button[name=/Block Inserter/i]';
+		}
+
+		await expect( page.locator( elementToTest ) ).toBeFocused();
 	} );
 
 	test( 'should constrain tabbing within a modal', async ( {

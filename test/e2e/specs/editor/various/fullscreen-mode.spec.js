@@ -4,12 +4,18 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 test.describe( 'Fullscreen Mode', () => {
-	test.beforeEach( async ( { admin } ) => {
+	test.beforeEach( async ( { admin, editor } ) => {
 		await admin.createNewPost();
+		await editor.setPreferences( 'core/edit-post', {
+			fullscreenMode: false,
+		} );
 	} );
 
-	test.afterEach( async ( { requestUtils } ) => {
+	test.afterEach( async ( { requestUtils, editor } ) => {
 		await requestUtils.deleteAllPosts();
+		await editor.setPreferences( 'core/edit-post', {
+			fullscreenMode: true,
+		} );
 	} );
 
 	test( 'should open the fullscreen mode from the more menu', async ( {
