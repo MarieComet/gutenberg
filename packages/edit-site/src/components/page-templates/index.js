@@ -3,15 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback, useEffect } from '@wordpress/element';
-import {
-	privateApis as corePrivateApis,
-	store as coreStore,
-} from '@wordpress/core-data';
+import { privateApis as corePrivateApis } from '@wordpress/core-data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
 import { addQueryArgs } from '@wordpress/url';
-import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -192,21 +188,6 @@ export default function PageTemplates() {
 			);
 		}
 	} );
-
-	const isBlockBasedTheme = useSelect(
-		( select ) => select( coreStore ).getCurrentTheme()?.is_block_theme,
-		[]
-	);
-
-	if ( ! isBlockBasedTheme ) {
-		return (
-			<p className="edit-site-layout__area__unsupported">
-				{ __(
-					'The theme you are currently using is not compatible with the Site Editor.'
-				) }
-			</p>
-		);
-	}
 
 	return (
 		<Page
