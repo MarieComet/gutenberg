@@ -178,7 +178,7 @@ function gutenberg_add_styles_submenu_item() {
 		global $submenu;
 
 		$styles_menu_item = array(
-			__( 'Design', 'gutenberg' ),
+			_x( 'Design', 'Design menu item', 'gutenberg' ),
 			'edit_theme_options',
 			'site-editor.php',
 		);
