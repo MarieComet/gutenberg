@@ -157,6 +157,7 @@ export default function EditSiteEditor( {
 		postWithTemplate ? context.postType : postType,
 		postWithTemplate ? context.postId : postId
 	);
+	const _isPreviewingTheme = isPreviewingTheme();
 	const hasDefaultEditorCanvasView = ! useHasEditorCanvasContainer();
 	const iframeProps = useEditorIframeProps();
 	const isEditMode = canvas === 'edit';
@@ -183,8 +184,6 @@ export default function EditSiteEditor( {
 		[ settings.styles, canvas, currentPostIsTrashed ]
 	);
 
-	// Disable Reason: useDispatch needs to be before the early return.
-	// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 	const { resetZoomLevel } = unlock( useDispatch( blockEditorStore ) );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const history = useHistory();
@@ -242,15 +241,13 @@ export default function EditSiteEditor( {
 		]
 	);
 
+	// Replace the title and icon displayed in the DocumentBar when there's an overlay visible.
+	const title = getEditorCanvasContainerTitle( editorCanvasView );
+
 	const isReady = ! isLoading;
 	const transition = {
 		duration: disableMotion ? 0 : 0.2,
 	};
-
-	// Replace the title and icon displayed in the DocumentBar when there's an overlay visible.
-	const title = getEditorCanvasContainerTitle( editorCanvasView );
-
-	const _isPreviewingTheme = isPreviewingTheme();
 
 	return ! isBlockBasedTheme && isHomeRoute ? (
 		<SitePreview />
