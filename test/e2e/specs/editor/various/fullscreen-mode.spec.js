@@ -74,6 +74,12 @@ test.describe( 'Fullscreen Mode', () => {
 		// Check the View Posts link is visible.
 		await expect( viewPostsLink ).toBeVisible();
 
+		await expect(
+			page
+				.getByRole( 'button', { name: 'Dismiss this notice' } )
+				.filter( { hasText: 'Fullscreen mode activated' } )
+		).toBeVisible();
+
 		// Emulates CTRL+Shift+Alt + F
 		await pageUtils.pressKeys( 'secondary+F' );
 
@@ -82,5 +88,11 @@ test.describe( 'Fullscreen Mode', () => {
 
 		// Check the View Posts link is not visible.
 		await expect( viewPostsLink ).toBeHidden();
+
+		await expect(
+			page
+				.getByRole( 'button', { name: 'Dismiss this notice' } )
+				.filter( { hasText: 'Fullscreen mode deactivated' } )
+		).toBeVisible();
 	} );
 } );
