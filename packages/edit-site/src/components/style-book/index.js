@@ -10,6 +10,7 @@ import {
 	Disabled,
 	Composite,
 	privateApis as componentsPrivateApis,
+	Notice,
 } from '@wordpress/components';
 import { __, _x, sprintf } from '@wordpress/i18n';
 import {
@@ -488,11 +489,11 @@ export const StyleBookPreview = ( { userConfig = {}, isStatic = false } ) => {
 
 	if ( ! isBlockTheme && ! hasStyleBook ) {
 		return (
-			<p className="edit-site-style-book__unsupported">
+			<Notice status="warning" isDismissible={ false }>
 				{ __(
 					'The theme you are currently using does not support the Stylebook.'
 				) }
-			</p>
+			</Notice>
 		);
 	}
 
