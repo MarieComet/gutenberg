@@ -34,9 +34,9 @@ function render_block_core_query( $attributes, $content, $block ) {
 			$p->set_attribute(
 				'data-wp-context',
 				wp_json_encode(
-					[
+					array(
 						'isCurrentNavigationOrigin' => false,
-					]
+					)
 				)
 			);
 			$p->set_attribute( 'data-wp-key', $attributes['queryId'] );
