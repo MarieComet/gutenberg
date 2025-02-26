@@ -35,13 +35,13 @@ function render_block_core_query( $attributes, $content, $block ) {
 				'data-wp-context',
 				wp_json_encode(
 					[
-						'routerRegion' => 'query-' . $attributes['queryId'],
-						'isLoading'    => false,
+						'routerRegion'              => 'query-' . $attributes['queryId'],
+						'isCurrentNavigationOrigin' => false,
 					]
 				)
 			);
 			$p->set_attribute( 'data-wp-key', $attributes['queryId'] );
-			$p->set_attribute( 'data-wp-class--is-loading', 'context.isLoading' );
+			$p->set_attribute( 'data-wp-class--is-current-navigation-origin', 'context.isCurrentNavigationOrigin' );
 			$content = $p->get_updated_html();
 		}
 	}
