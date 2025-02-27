@@ -68,12 +68,12 @@
 }
 
 .editor-post-publish-panel__header-publish-button {
-	padding-right: $grid-unit-05;
+	padding-left: $grid-unit-05;
 	justify-content: center;
 }
 
 .editor-post-publish-panel__header-cancel-button {
-	padding-left: $grid-unit-05;
+	padding-right: $grid-unit-05;
 }
 
 .editor-post-publish-panel__header-published {
@@ -210,9 +210,11 @@
 		left: auto;
 		width: $sidebar-width + $border-width;
 		border-left: $border-width solid $gray-300;
-		transform: translateX(+100%);
-		animation: editor-post-publish-panel__slide-in-animation 0.1s forwards;
-		@include reduce-motion("animation");
+
+		@media not (prefers-reduced-motion) {
+			transform: translateX(+100%);
+			animation: editor-post-publish-panel__slide-in-animation 0.1s forwards;
+		}
 
 		body.is-fullscreen-mode & {
 			top: 0;

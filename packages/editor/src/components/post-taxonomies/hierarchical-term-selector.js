@@ -175,9 +175,9 @@ export function HierarchicalTermSelector( { slug } ) {
 		( select ) => {
 			const { getCurrentPost, getEditedPostAttribute } =
 				select( editorStore );
-			const { getTaxonomy, getEntityRecords, isResolving } =
+			const { getEntityRecord, getEntityRecords, isResolving } =
 				select( coreStore );
-			const _taxonomy = getTaxonomy( slug );
+			const _taxonomy = getEntityRecord( 'root', 'taxonomy', slug );
 			const post = getCurrentPost();
 
 			return {
@@ -310,7 +310,7 @@ export function HierarchicalTermSelector( { slug } ) {
 		const defaultName =
 			slug === 'category' ? __( 'Category' ) : __( 'Term' );
 		const termAddedMessage = sprintf(
-			/* translators: %s: taxonomy name */
+			/* translators: %s: term name. */
 			_x( '%s added', 'term' ),
 			taxonomy?.labels?.singular_name ?? defaultName
 		);
@@ -341,7 +341,7 @@ export function HierarchicalTermSelector( { slug } ) {
 
 		const resultCount = getResultCount( newFilteredTermsTree );
 		const resultsFoundMessage = sprintf(
-			/* translators: %d: number of results */
+			/* translators: %d: number of results. */
 			_n( '%d result found.', '%d results found.', resultCount ),
 			resultCount
 		);
@@ -411,6 +411,7 @@ export function HierarchicalTermSelector( { slug } ) {
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					label={ filterLabel }
+					placeholder={ filterLabel }
 					value={ filterValue }
 					onChange={ setFilter }
 				/>
@@ -428,8 +429,7 @@ export function HierarchicalTermSelector( { slug } ) {
 			{ ! loading && hasCreateAction && (
 				<FlexItem>
 					<Button
-						// TODO: Switch to `true` (40px size) if possible
-						__next40pxDefaultSize={ false }
+						__next40pxDefaultSize
 						onClick={ onToggleForm }
 						className="editor-post-taxonomies__hierarchical-terms-add"
 						aria-expanded={ showForm }
