@@ -35,6 +35,14 @@ function render_block_core_query( $attributes, $content, $block ) {
 				'data-wp-context',
 				wp_json_encode(
 					array(
+						/**
+						 * Checks whether the current navigation was originated from this Query block.
+						 *
+						 * Usage:
+						 *   ```js
+						 *   const { isCurrentNavigationOrigin } = getContext( 'core/query' );
+						 *   ```
+						 */
 						'isCurrentNavigationOrigin' => false,
 					)
 				)
