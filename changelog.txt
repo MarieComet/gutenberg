@@ -1,7 +1,37 @@
 == Changelog ==
 
-= 20.3.0-rc.1 =
+= 20.0.3 =
 
+## Changelog
+
+### Bug Fixes
+
+#### Block Hooks
+
+- Fix truncation of post content. (https://github.com/WordPress/gutenberg/pull/68926)
+- Fix duplicated insertion in Post Content. (https://github.com/WordPress/gutenberg/pull/69142)
+- Enable first/last child insertion next to Classic block. (https://github.com/WordPress/gutenberg/pull/69241)
+
+#### Block Library
+
+- Template Part block: Guard against `get_block_file_template` returning `null`. (https://github.com/WordPress/gutenberg/pull/69309)
+
+### Code Quality
+
+#### Block Hooks
+
+- Add end-to-end test Coverage. (https://github.com/WordPress/gutenberg/pull/69044)
+
+
+= 20.0.2 =
+
+### Bug Fixes
+
+#### Block Editor
+- Fix 'isBlockVisibleInTheInserter' selector helper performance ([68898](https://github.com/WordPress/gutenberg/pull/68898))
+
+
+= 20.3.0 =
 
 ## Changelog
 
@@ -90,6 +120,7 @@
 
 #### Interactivity API
 - iAPI Router: Fix CSS rule order in some constructed style sheets. ([68923](https://github.com/WordPress/gutenberg/pull/68923))
+- iAPI Router: Revert "Handle styles assets on region-based navigation" ([69222](https://github.com/WordPress/gutenberg/pull/69222))
 
 
 ### Accessibility
