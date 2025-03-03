@@ -12,7 +12,7 @@ import { useRef, useMemo } from '@wordpress/element';
 import { create, getTextContent } from '@wordpress/rich-text';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
-import { Path, SVG, Line, Rect } from '@wordpress/components';
+import { Path, SVG, Line, Rect, Notice } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -211,11 +211,17 @@ export default function DocumentOutline( {
 				</>
 			) }
 			{ isShowingTemplate && mainElements.length === 0 && (
-				<p>
-					{ __(
-						'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
-					) }
-				</p>
+				<Notice
+					spokenMessage={ null }
+					status="warning"
+					isDismissible={ false }
+				>
+					<p>
+						{ __(
+							'The main element is missing. Select the block that contains your most important content and add the main HTML element in the Advanced panel.'
+						) }
+					</p>
+				</Notice>
 			) }
 			<ul>
 				{ hasTitle && (
