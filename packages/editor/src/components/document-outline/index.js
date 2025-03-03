@@ -8,7 +8,7 @@ import clsx from 'clsx';
  */
 import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useRef } from '@wordpress/element';
+import { useRef, useMemo } from '@wordpress/element';
 import { create, getTextContent } from '@wordpress/rich-text';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as coreStore } from '@wordpress/core-data';
@@ -90,44 +90,35 @@ const incorrectMainTag = [
 /**
  * Returns an array of heading blocks and blocks with the main tagName.
  *
- * @param {?Array}  blocks            An array of blocks.
- * @param {boolean} isShowingTemplate Indicates if a template is being edited or previewed.
+ * @param {?Array} blocks An array of blocks.
  *
  * @return {Array} An array of heading blocks and blocks with the main tagName.
  */
-const computeOutlineElements = ( blocks = [], isShowingTemplate = false ) => {
-	return blocks.flatMap( ( block = {} ) => {
-		const isHeading = block.name === 'core/heading';
-		const isMain =
-			isShowingTemplate && block.attributes?.tagName === 'main';
-
-		if ( isHeading ) {
-			return {
-				...block,
-				type: 'heading',
-				level: block.attributes.level,
-				isEmpty: isEmptyHeading( block ),
-			};
-		}
-
-		if ( isMain ) {
-			const children = computeOutlineElements(
-				block.innerBlocks || [],
-				isShowingTemplate
+const computeOutlineElements = ( blocks = [] ) => {
+	return blocks
+		.filter( ( block ) => {
+			return (
+				block.name === 'core/heading' ||
+				block.attributes?.tagName === 'main'
 			);
-			return [
-				{
+		} )
+		.map( ( block ) => {
+			if ( block.name === 'core/heading' ) {
+				return {
+					...block,
+					type: 'heading',
+					level: block.attributes.level,
+					isEmpty: isEmptyHeading( block ),
+				};
+			}
+			if ( block.attributes?.tagName === 'main' ) {
+				return {
 					...block,
 					type: 'main',
-					children,
-				},
-				// Flatten the children so that they are not nested under the main.
-				...children,
-			];
-		}
-
-		return computeOutlineElements( block.innerBlocks, isShowingTemplate );
-	} );
+				};
+			}
+			return null;
+		} );
 };
 
 const isEmptyHeading = ( heading ) =>
@@ -148,9 +139,8 @@ export default function DocumentOutline( {
 	hasOutlineItemsDisabled,
 } ) {
 	const { selectBlock } = useDispatch( blockEditorStore );
-	const { blocks, title, isTitleSupported, isShowingTemplate } = useSelect(
+	const { title, isTitleSupported, isShowingTemplate } = useSelect(
 		( select ) => {
-			const { getBlocks } = select( blockEditorStore );
 			const { getEditedPostAttribute, getRenderingMode } =
 				select( editorStore );
 			const { getPostType } = select( coreStore );
@@ -158,7 +148,6 @@ export default function DocumentOutline( {
 
 			return {
 				title: getEditedPostAttribute( 'title' ),
-				blocks: getBlocks(),
 				isTitleSupported: postType?.supports?.title ?? false,
 				isShowingTemplate:
 					postType?.slug === 'wp_template' ||
@@ -166,8 +155,23 @@ export default function DocumentOutline( {
 			};
 		}
 	);
+
+	const blocks = useSelect( ( select ) => {
+		const { getClientIdsWithDescendants, getBlock } =
+			select( blockEditorStore );
+		const clientIds = getClientIdsWithDescendants();
+		// Note: Don't modify data inside the `Array.map` callback,
+		// all compulations should happen in `computeOutlineHeadings`.
+		return clientIds.map( ( id ) => getBlock( id ) );
+	} );
+
 	const prevHeadingLevelRef = useRef( 1 );
-	const outlineElements = computeOutlineElements( blocks, isShowingTemplate );
+
+	const outlineElements = useMemo(
+		() => computeOutlineElements( blocks ),
+		[ blocks ]
+	);
+
 	const headings = outlineElements.filter(
 		( item ) => item.type === 'heading'
 	);
@@ -214,6 +218,17 @@ export default function DocumentOutline( {
 				</p>
 			) }
 			<ul>
+				{ hasTitle && (
+					<DocumentOutlineItem
+						level={ __( 'Title' ) }
+						isValid
+						onSelect={ onSelect }
+						href={ `#${ titleNode.id }` }
+						isDisabled={ hasOutlineItemsDisabled }
+					>
+						{ title }
+					</DocumentOutlineItem>
+				) }
 				{ outlineElements.map( ( item ) => {
 					const isHeading = item.type === 'heading';
 					const isMain = item.type === 'main';
@@ -227,7 +242,7 @@ export default function DocumentOutline( {
 						  ( item.level !== 1 ||
 								( ! hasMultipleH1 && ! hasTitle ) );
 
-					if ( isShowingTemplate && isMain ) {
+					if ( isMain ) {
 						return (
 							<DocumentOutlineItem
 								key={ item.clientId }
