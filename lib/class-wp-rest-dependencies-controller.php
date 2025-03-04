@@ -103,7 +103,7 @@ abstract class WP_REST_Dependencies_Controller extends WP_REST_Controller {
 		$filter = array();
 
 		if ( 'edit' === $context ) {
-			// Eqneueu editor assets to include conditionally registered assets.
+			// Enqueue editor assets to include conditionally registered assets.
 			add_filter( 'should_load_block_editor_scripts_and_styles', '__return_true' );
 			do_action( 'enqueue_block_assets' );
 			do_action( 'enqueue_block_editor_assets' );
