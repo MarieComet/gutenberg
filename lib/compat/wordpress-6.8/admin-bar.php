@@ -30,3 +30,18 @@ function gutenberg_wp_admin_bar_edit_site_menu( $wp_admin_bar ) {
 }
 
 add_action( 'admin_bar_menu', 'gutenberg_wp_admin_bar_edit_site_menu', 41 );
+
+/**
+ * Hide the admin bar when the classic theme site preview is active.
+ *
+ * @param bool $show_admin_bar Whether the admin bar should be shown.
+ * @return bool Whether to show the admin bar.
+ */
+function gutenberg_hide_admin_bar_classic_theme_preview( $show_admin_bar ) {
+	if ( isset( $_GET['wp_site_preview'] ) && 1 === (int) $_GET['wp_site_preview'] ) {
+		return false;
+	}
+	return $show_admin_bar;
+}
+
+add_action( 'show_admin_bar', 'gutenberg_hide_admin_bar_classic_theme_preview' );
