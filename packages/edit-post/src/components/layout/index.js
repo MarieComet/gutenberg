@@ -481,7 +481,7 @@ function Layout( {
 		document.body.classList.remove( 'show-icon-labels' );
 	}
 
-	const navigateRegionsProps = useNavigateRegions();
+	const navigateRegionsRef = useNavigateRegions( { isGlobal: true } );
 
 	const className = clsx( 'edit-post-layout', 'is-mode-' + mode, {
 		'has-metaboxes': hasActiveMetaboxes,
@@ -568,11 +568,7 @@ function Layout( {
 			<ErrorBoundary canCopyContent>
 				<CommandMenu />
 				<WelcomeGuide postType={ currentPostType } />
-				<div
-					className={ navigateRegionsProps.className }
-					{ ...navigateRegionsProps }
-					ref={ navigateRegionsProps.ref }
-				>
+				<div ref={ navigateRegionsRef }>
 					<Editor
 						settings={ editorSettings }
 						initialEdits={ initialEdits }
