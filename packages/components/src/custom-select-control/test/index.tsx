@@ -22,7 +22,7 @@ const UncontrolledCustomSelectControl = (
 const customClassName = 'amber-skies';
 const customStyles = {
 	backgroundColor: 'rgb(127, 255, 212)',
-	rotate: '13deg',
+	transform: 'rotate(13deg)',
 };
 
 const props = {

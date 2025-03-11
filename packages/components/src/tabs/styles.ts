@@ -265,7 +265,7 @@ export const TabChevron = styled( Icon )`
 		}
 	}
 	&:dir( rtl ) {
-		rotate: 180deg;
+		transform: rotate(180deg);
 	}
 `;
 

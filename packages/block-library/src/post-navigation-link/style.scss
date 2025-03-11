@@ -22,6 +22,6 @@
 
 	&.has-text-align-right[style*="writing-mode: vertical-rl"],
 	&.has-text-align-left[style*="writing-mode: vertical-lr"] {
-		rotate: 180deg;
+		transform: rotate(180deg);
 	}
 }
